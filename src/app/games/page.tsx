@@ -35,6 +35,15 @@ const games: Game[] = [
     difficulty: 'Easy'
   },
   {
+    id: 'sudoku',
+    name: 'Sudoku',
+    description: 'Classic number puzzle game. Fill the 9x9 grid with digits!',
+    tags: ['Puzzle', 'Logic', 'TypeScript'],
+    component: SudokuGame,
+    image: '/game-sudoku.svg',
+    difficulty: 'Medium'
+  },
+  {
     id: 'tetris',
     name: 'Tetris',
     description: 'The classic falling blocks puzzle game. Clear lines to score!',
@@ -69,16 +78,8 @@ const games: Game[] = [
     component: SpaceInvadersGameComponent,
     image: '/game-space.svg',
     difficulty: 'Hard'
-  },
-  {
-    id: 'sudoku',
-    name: 'Sudoku',
-    description: 'Classic number puzzle game. Fill the 9x9 grid with digits!',
-    tags: ['Puzzle', 'Logic', 'TypeScript'],
-    component: SudokuGame,
-    image: '/game-sudoku.svg',
-    difficulty: 'Medium'
   }
+  
 ];
 
 const allTags = Array.from(new Set(games.flatMap(game => game.tags)));
