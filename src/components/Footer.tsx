@@ -22,9 +22,9 @@ export function Footer() {
 
         {/* Social Links */}
         <div className="flex">
-          {/* X (Twitter) */}
+          {/* F (Facebook) */}
           <motion.a
-            href="https://twitter.com"
+            href="https://facebook.com"
             target="_blank"
             rel="noopener noreferrer"
             whileHover={{ scale: 1.05 }}
@@ -33,7 +33,7 @@ export function Footer() {
           >
             <Image
               src="/images/x-icon.svg"
-              alt="X (Twitter)"
+              alt="X (Facebook)"
               width={24}
               height={24}
               className="w-6 h-6"

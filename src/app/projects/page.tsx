@@ -139,7 +139,7 @@ export default function ProjectsPage() {
 
   return (
     <div className="min-h-screen bg-dark-primary flex flex-col">
-      <Header activeTab="_projects" />
+      <Header activeTab="_duan" />
       
       <main className="flex-1 flex overflow-hidden">
         {/* Left Sidebar - Technology Filter */}

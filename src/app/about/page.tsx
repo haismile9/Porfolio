@@ -87,37 +87,39 @@ export default function AboutPage() {
 
   const contactFiles: FileItem[] = [
     {
-      name: 'user@gmail.com',
+      name: 'nguyenhonghaimwg2005@gmail.com',
       type: 'file',
       icon: '/images/icon-message.svg',
       content: `/**
- * Contact Information
+ * Thông tin liên hệ
  * 
- * Email: user@gmail.com
- * Response Time: 24 hours
- * Languages: English, Spanish
+ * Email: nguyenhonghaimwg2005@gmail.com
+ * Thời gian phản hồi: Trong vòng 24 giờ
+ * Ngôn ngữ: Tiếng Anh, Tiếng Tây Ban Nha
  * 
- * Preferred contact method for:
- * - Business inquiries
- * - Project collaborations
- * - Technical discussions
- */`
+ * Ưu tiên liên hệ cho các mục đích:
+ * - Hợp tác dự án
+ * - Trao đổi kỹ thuật
+ * - Các cơ hội hợp tác kinh doanh
+ */
+`
     },
     {
-      name: '+3598246359',
+      name: '+334204526',
       type: 'file',
       icon: '/images/icon-phone.svg', 
       content: `/**
- * Phone Contact
+ * Liên hệ qua điện thoại
  * 
- * Phone: +3598246359
- * Available: Mon-Fri 9AM-6PM EST
+ * Số điện thoại: +33420426
+ * Thời gian liên hệ: Thứ 2 - Thứ 6, từ 9h sáng đến 6h chiều
  * 
- * Best for:
- * - Urgent project matters
- * - Technical consultations
- * - Interview scheduling
- */`
+ * Phù hợp nhất cho:
+ * - Các vấn đề dự án khẩn cấp
+ * - Tư vấn kỹ thuật
+ * - Sắp xếp lịch phỏng vấn
+ */
+`
     }
   ];
 
@@ -181,7 +183,7 @@ export default function AboutPage() {
 
   return (
     <div className="min-h-screen bg-dark-primary flex flex-col">
-      <Header activeTab="_about-me" />
+      <Header activeTab="_gioi-thieu" />
       
       <main className="flex-1 flex overflow-hidden">
         {/* Left Sidebar - Tab Navigation */}

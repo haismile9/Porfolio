@@ -4,9 +4,9 @@ import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 
 const menuItems = [
-  { name: '_hello', href: '/', active: false },
-  { name: '_about-me', href: '/about', active: false },
-  { name: '_projects', href: '/projects', active: false },
+  { name: '_xinchao', href: '/', active: false },
+  { name: '_gioi-thieu', href: '/about', active: false },
+  { name: '_duan', href: '/projects', active: false },
   { name: '_games', href: '/games', active: false},
   { name: '_contact-me', href: '/contact', active: false },
 ]
@@ -15,7 +15,7 @@ interface HeaderProps {
   activeTab?: string
 }
 
-export function Header({ activeTab = '_hello' }: HeaderProps) {
+export function Header({ activeTab = '_xinchao' }: HeaderProps) {
   return (
     <motion.header
       initial={{ opacity: 0, y: -20 }}
