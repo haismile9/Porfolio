@@ -7,6 +7,7 @@ import { Footer } from '@/components/Footer';
 import { SnakeGame } from '@/components/SnakeGame';
 import { SudokuGame } from '@/components/sudoku';
 import { 
+
   TetrisGameComponent, 
   PongGameComponent, 
   BreakoutGameComponent, 

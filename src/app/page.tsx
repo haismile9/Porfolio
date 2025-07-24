@@ -106,7 +106,7 @@ export default function HomePage() {
                   transition={{ duration: 0.3, delay: 1.6 }}
                   className="text-base font-fira text-text-secondary leading-[1.5]"
                 >
-                  // complete the game to continue
+                  {/* complete the game to continue */}
                 </motion.p>
                 <motion.p 
                   initial={{ opacity: 0 }}
@@ -114,7 +114,7 @@ export default function HomePage() {
                   transition={{ duration: 0.3, delay: 1.8 }}
                   className="text-base font-fira text-text-secondary leading-[1.5]"
                 >
-                  // find my profile on Github:
+                  {/* find my profile on Github: */}
                 </motion.p>
                 <motion.p 
                   initial={{ opacity: 0 }}
@@ -125,7 +125,7 @@ export default function HomePage() {
                   <span className="text-accent-blue">const</span>{' '}
                   <span className="text-text-primary">githubLink</span>{' '}
                   <span className="text-text-secondary">=</span>{' '}
-                  <span className="text-accent-green">"https://github.com/haismile9"</span>
+                  <span className="text-accent-green">&quot;https://github.com/haismile9&quot;</span>
                 </motion.p>
               </motion.div>
             </motion.div>

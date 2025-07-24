@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 
@@ -191,19 +192,19 @@ export default function AboutPage() {
               onClick={() => setActiveTab('professional-info')}
               className={`w-6 h-6 ${activeTab === 'professional-info' ? 'opacity-100' : 'opacity-50'}`}
             >
-              <img src="/images/icon-professional-info.svg" alt="Professional Info" />
+              <Image src="/images/icon-professional-info.svg" alt="Professional Info" width={24} height={24} />
             </button>
             <button
               onClick={() => setActiveTab('personal-info')}
               className={`w-6 h-6 ${activeTab === 'personal-info' ? 'opacity-100' : 'opacity-50'}`}
             >
-              <img src="/images/icon-personal-info.svg" alt="Personal Info" />
+              <Image src="/images/icon-personal-info.svg" alt="Personal Info" width={24} height={24} />
             </button>
             <button
               onClick={() => setActiveTab('hobbies')}
               className={`w-6 h-6 ${activeTab === 'hobbies' ? 'opacity-100' : 'opacity-50'}`}
             >
-              <img src="/images/icon-hobbies.svg" alt="Hobbies" />
+              <Image src="/images/icon-hobbies.svg" alt="Hobbies" width={24} height={24} />
             </button>
           </div>
 
@@ -317,7 +318,7 @@ export default function AboutPage() {
                       }`}
                       onClick={() => selectFile(item.name, item.content)}
                     >
-                      {item.icon && <img src={item.icon} alt={item.name} className="w-4 h-4" />}
+                      {item.icon && <Image src={item.icon} alt={item.name} width={16} height={16} className="w-4 h-4" />}
                       <span>{item.name}</span>
                     </div>
                   </div>
@@ -380,7 +381,7 @@ export default function AboutPage() {
             {/* Code Snippets Area */}
             <div className="w-1/2 bg-dark-primary p-6 relative overflow-auto">
               <div className="text-text-secondary font-mono mb-8 text-lg">
-                // Code snippet showcase:
+                {/* Code snippet showcase: */}
               </div>
               
               {/* Gist Snippets */}
@@ -439,7 +440,7 @@ export default function AboutPage() {
                   {/* Footer section */}
                   <div className="flex justify-between items-start pt-4 border-t border-dark-border">
                     <div className="text-text-secondary text-sm leading-relaxed">
-                      My work here was 5 months ago. It was for the project called "...". Some other text can be placed here.
+                      My work here was 5 months ago. It was for the project called &quot;...&quot;. Some other text can be placed here.
                     </div>
                     <motion.button
                       whileHover={{ scale: 1.1 }}

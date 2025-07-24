@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -325,9 +326,11 @@ export default function ProjectsPage() {
                           animate={{ opacity: 1, scale: 1 }}
                           transition={{ delay: 0.3 + index * 0.1 }}
                         >
-                          <img 
-                            src={getTechIcon(project.primaryTech)} 
+                          <Image 
+                            src={getTechIcon(project.primaryTech) || '/images/icon-react.svg'} 
                             alt={project.primaryTech}
+                            width={20}
+                            height={20}
                             className="w-5 h-5"
                           />
                         </motion.div>

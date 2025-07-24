@@ -386,8 +386,8 @@ export function SnakeGame() {
           {/* Game Controls */}
           <div className="flex flex-col items-center gap-2 lg:gap-3 p-2 lg:p-2.5 bg-code-surface rounded-lg">
             <p className="text-xs lg:text-sm font-fira text-text-primary leading-[1.4] text-center">
-              // use keyboard<br />
-              // arrows to play
+              {/* use keyboard */}<br />
+              {/* arrows to play */}
             </p>
             
             <div className="flex flex-col items-center gap-1 lg:gap-2">
@@ -450,7 +450,7 @@ export function SnakeGame() {
           {/* Food Left */}
           <div className="flex flex-col items-center gap-2 px-2.5">
             <p className="text-xs lg:text-sm font-fira text-text-primary leading-[1.4]">
-              // food left
+              {/* food left */}
             </p>
             <div className="flex flex-col gap-2 w-[100px] lg:w-[136px]">
               <div className="flex gap-1 lg:gap-2">
