@@ -9,51 +9,61 @@ import { Button } from '@/components/ui/button'
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-dark-bg flex flex-col">
-      {/* Background */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-[20px] right-[20px] w-[780px] h-[742px] pointer-events-none">
-          {/* Blue blur */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 0.4, scale: 1 }}
-            transition={{ duration: 1.5, delay: 0.2 }}
-            className="absolute top-[158px] left-[223px] w-[556px] h-[584px]"
-          >
+    <div className="min-h-screen bg-dark-bg flex flex-col overflow-hidden relative">
+      {/* Background Blur Effects */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Blue blur - positioned in top-right area */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
+          animate={{ opacity: 1, scale: 1, rotate: 0 }}
+          transition={{ duration: 2, delay: 0.2, ease: "easeOut" }}
+          className="absolute -top-32 -right-32 w-[700px] h-[700px] lg:w-[881px] lg:h-[831px] lg:-top-40 lg:-right-40"
+          style={{ zIndex: 1 }}
+        >
+          <div className="relative w-full h-full">
             <Image
               src="/images/blue-blur.svg"
               alt=""
-              width={556}
-              height={584}
-              className="w-full h-full object-cover blur-[174px]"
+              width={881}
+              height={831}
+              className="w-full h-full object-contain"
+              priority
             />
-          </motion.div>
-          
-          {/* Green blur */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 0.4, scale: 1 }}
-            transition={{ duration: 1.5, delay: 0.4 }}
-            className="absolute top-0 left-0 w-[525px] h-[490px]"
-          >
+          </div>
+        </motion.div>
+        
+        {/* Green blur - positioned in center-left area */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8, rotate: 10 }}
+          animate={{ opacity: 1, scale: 1, rotate: 0 }}
+          transition={{ duration: 2.5, delay: 0.5, ease: "easeOut" }}
+          className="absolute top-20 -left-32 w-[600px] h-[550px] lg:w-[864px] lg:h-[783px] lg:top-32 lg:-left-40"
+          style={{ zIndex: 2 }}
+        >
+          <div className="relative w-full h-full">
             <Image
               src="/images/green-blur.svg"
               alt=""
-              width={525}
-              height={490}
-              className="w-full h-full object-cover blur-[174px]"
+              width={864}
+              height={783}
+              className="w-full h-full object-contain"
+              priority
             />
-          </motion.div>
-        </div>
+          </div>
+        </motion.div>
+
+        {/* Additional subtle gradient overlays for depth */}
+        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-blue-900/5" style={{ zIndex: 3 }} />
+        <div className="absolute inset-0 bg-gradient-to-tl from-transparent via-transparent to-teal-900/5" style={{ zIndex: 4 }} />
       </div>
 
       {/* Main container */}
-      <div className="relative z-10 flex flex-col min-h-screen bg-dark-surface">
+      <div className="relative flex flex-col min-h-screen bg-transparent" style={{ zIndex: 10 }}>
         <Header />
         
         {/* Main content */}
         <main className="flex-1 flex items-center justify-center px-8 py-16">
-          <div className="flex items-center gap-[146px] w-full max-w-7xl">
+          <div className="flex items-center gap-[146px] w-full max-w-7xl relative" style={{ zIndex: 11 }}>
             {/* About container */}
             <motion.div
               initial={{ opacity: 0, x: -50 }}
