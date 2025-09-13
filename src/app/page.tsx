@@ -98,7 +98,7 @@ export default function HomePage() {
                     transition={{ duration: 0.5, delay: 1.2 }}
                     className="text-3xl font-fira leading-[1.4] text-accent-blue"
                   >
-                    &gt; Front-end developer
+                    &gt; Full-tack developer
                   </motion.p>
                 </div>
               </div>

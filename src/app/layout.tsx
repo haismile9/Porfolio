@@ -3,8 +3,8 @@ import { PageTransition } from '@/components/PageTransition'
 import '@/styles/globals.css'
 
 export const metadata: Metadata = {
-  title: 'Smile - Front-end Developer',
-  description: 'Portfolio website of Smile, a front-end developer',
+  title: 'Smile - Full-tack developer',
+  description: 'Portfolio website of Smile, a Full-tack developer',
 }
 
 export default function RootLayout({
