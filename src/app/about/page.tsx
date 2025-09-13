@@ -124,21 +124,25 @@ export default function AboutPage() {
   ];
 
   const defaultContent = `/**
- * About me
- * I have 5 years of еxperience in web
- * development lorem ipsum dolor sit amet, 
- * consectetur adipiscing elit, sed do eiusmod
- * tempor incididunt ut labore et dolore
- * magna aliqua. Ut enim ad minim veniam,
- * quis nostrud exercitation ullamco laboris
- * nisi ut aliquip ex ea commodo consequat.
- * Duis aute irure dolor in reprehenderit in
- *
- * Duis aute irure dolor in reprehenderit in
- * voluptate velit esse cillum dolore eu fugiat 
- * nulla pariatur. Excepteur sint occaecat 
- * officia deserunt mollit anim id est laborum.
- */`;
+/**
+ * About Me
+ * 
+ * I am Nguyễn Hải, a Frontend Developer who started as an intern 
+ * and now working officially in the field of web development. 
+ * Currently a final-year IT student at Văn Lang Sài Gòn College. 
+ * 
+ * I have hands-on experience with React, Tailwind, and JavaScript, 
+ * and also explore backend with Node.js, Prisma, and PostgreSQL. 
+ * 
+ * Recently, I am working on an IoMT (Internet of Medical Things) 
+ * project to manage medical devices and environment parameters, 
+ * which strengthens my interest in Full-stack development and 
+ * software solutions for healthcare.
+ * 
+ * My career goal is to become a Full-stack Developer and 
+ * contribute to impactful projects that improve daily life.
+ */
+`;
 
   const toggleFolder = (folderName: string) => {
     setExpandedFolders(prev => 
