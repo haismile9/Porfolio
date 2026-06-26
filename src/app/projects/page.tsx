@@ -126,9 +126,9 @@ export default function ProjectsPage() {
         {/* Left Sidebar - Technology Filter */}
         <motion.div 
           className="w-full lg:w-80 bg-dark-secondary lg:border-r border-b lg:border-b-0 border-dark-border flex flex-col shrink-0 max-h-[40vh] lg:max-h-none overflow-y-auto lg:overflow-visible"
-          initial={{ x: -300, opacity: 0 }}
+          initial={{ x: -50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
         >
           {/* Projects Section */}
           <div className="p-4 lg:p-6">
@@ -229,7 +229,7 @@ export default function ProjectsPage() {
             className="flex border-b border-dark-border bg-dark-secondary"
             initial={{ y: -50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.4, duration: 0.5 }}
+            transition={{ delay: 0.4, duration: 0.8 }}
           >
             <motion.div 
               className="flex items-center gap-3 px-6 py-3 border-r border-dark-border bg-dark-primary"

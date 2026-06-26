@@ -362,9 +362,9 @@ export default function AboutPage() {
       <main className="flex-1 flex flex-col lg:flex-row overflow-y-auto lg:overflow-hidden min-w-0">
         {/* Desktop Sidebars */}
         <motion.div 
-          initial={{ opacity: 0, x: -20 }}
+          initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
           className="hidden lg:flex w-80 bg-dark-secondary border-r border-dark-border shrink-0 h-full min-w-0"
         >
           {/* Leftmost Sidebar - Tab Icons */}
@@ -391,9 +391,9 @@ export default function AboutPage() {
 
           {/* Second Sidebar - File Tree Content */}
           <motion.div 
-            initial={{ opacity: 0, x: -20 }}
+            initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
             className="flex-1 flex flex-col overflow-hidden min-w-0"
           >
             <div className="flex-1 overflow-y-auto">
@@ -417,9 +417,9 @@ export default function AboutPage() {
 
         {/* Mobile Accordion Sidebar */}
         <motion.div 
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
           className="lg:hidden flex flex-col w-full bg-dark-bg shrink-0 min-w-0"
         >
           <div className="text-text-secondary px-4 py-3 border-b border-dark-border font-fira text-sm">
@@ -521,9 +521,9 @@ export default function AboutPage() {
 
         {/* Main Content Area */}
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.5 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
           className="flex-1 flex flex-col min-w-0"
         >
           {/* File Tabs */}
