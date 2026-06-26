@@ -79,16 +79,17 @@ export function ClientShell({ children }: ClientShellProps) {
       
       <div className="flex flex-1 overflow-hidden relative z-0">
         {/* Main Content Area */}
-        <main className="flex-1 flex flex-col overflow-y-auto overflow-x-hidden relative min-w-0 @container">
+        <motion.main layout transition={{ duration: 0.8, ease: 'anticipate' }} className="flex-1 flex flex-col overflow-y-auto overflow-x-hidden relative min-w-0 @container">
           <PageTransition>
             {children}
           </PageTransition>
-        </main>
+        </motion.main>
         
         {/* IDE-style Split View Chat Panel */}
         <AnimatePresence>
           {isChatOpen && (
             <motion.div 
+              layout
               initial={{ x: '100%', opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: '100%', opacity: 0 }}
