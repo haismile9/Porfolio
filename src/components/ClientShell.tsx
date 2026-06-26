@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { usePathname } from 'next/navigation'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 import { Header } from './Header'
 import { Footer } from './Footer'
@@ -86,22 +86,30 @@ export function ClientShell({ children }: ClientShellProps) {
         </main>
         
         {/* IDE-style Split View Chat Panel */}
-        {isChatOpen && (
-          <div className="absolute inset-0 z-50 lg:relative lg:inset-auto w-full lg:w-1/2 border-l border-dark-border bg-dark-bg flex flex-col lg:z-20 shadow-xl">
-            {/* Close button on mobile */}
-            <div className="lg:hidden flex justify-end p-2 border-b border-dark-border">
-              <button 
-                onClick={() => setIsChatOpen(false)}
-                className="p-2 text-text-secondary hover:text-white"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-            <ChatBox />
-          </div>
-        )}
+        <AnimatePresence>
+          {isChatOpen && (
+            <motion.div 
+              initial={{ x: '100%', opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: '100%', opacity: 0 }}
+              transition={{ duration: 0.8, ease: 'anticipate' }}
+              className="absolute inset-0 z-50 lg:relative lg:inset-auto w-full lg:w-1/2 border-l border-dark-border bg-dark-bg flex flex-col lg:z-20 shadow-xl"
+            >
+              {/* Close button on mobile */}
+              <div className="lg:hidden flex justify-end p-2 border-b border-dark-border">
+                <button 
+                  onClick={() => setIsChatOpen(false)}
+                  className="p-2 text-text-secondary hover:text-white"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <ChatBox />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       <div className="relative z-10">
