@@ -251,6 +251,16 @@ export default function AboutPage() {
     return findContent([...personalInfoFiles, ...professionalInfoFiles, ...hobbiesFiles, ...contactFiles]) || defaultContent;
   };
 
+  const getCleanContent = (rawContent: string) => {
+    if (!rawContent) return '';
+    return rawContent
+      .replace(/^\/\*\*\s*\n/, '')
+      .replace(/\n\s*\*\/\s*$/, '')
+      .split('\n')
+      .map(line => line.replace(/^\s*\*\s?/, ''))
+      .join('\n');
+  };
+
   const renderFileTree = (files: FileItem[], title: string) => {
     return (
       <motion.div 
@@ -549,7 +559,8 @@ export default function AboutPage() {
           <div className="flex flex-1 min-w-0">
             {/* Code Area */}
             <div className="flex-1 bg-dark-primary p-4 lg:p-6 relative min-w-0">
-              <div className="flex gap-4 lg:gap-10 h-full overflow-y-auto overflow-x-hidden">
+              {/* Desktop View: Line Numbers and Raw Content */}
+              <div className="hidden lg:flex gap-10 h-full overflow-y-auto overflow-x-hidden">
                 {/* Line Numbers */}
                 <div className="text-text-secondary text-right select-none text-lg leading-relaxed shrink-0">
                   {Array.from({length: 16}, (_, i) => (
@@ -562,6 +573,14 @@ export default function AboutPage() {
                   {getCurrentContent()}
                 </div>
               </div>
+
+              {/* Mobile View: Clean Content without Line Numbers */}
+              <div className="flex lg:hidden h-full overflow-y-auto overflow-x-hidden">
+                <div className="text-text-secondary font-mono leading-relaxed whitespace-pre-wrap text-[15px] flex-1 min-w-0 break-words">
+                  {getCleanContent(getCurrentContent())}
+                </div>
+              </div>
+
               
               {/* Scroll indicator */}
               <div className="absolute right-2 top-1/2 transform -translate-y-1/2 w-1 h-16 bg-text-secondary rounded"></div>
