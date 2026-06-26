@@ -32,24 +32,6 @@ export function Footer({ onToggleChat, isChatOpen }: FooterProps) {
 
         {/* Social Links */}
         <div className="flex flex-row h-full">
-          {/* F (Facebook) */}
-          <motion.a
-            href="https://facebook.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="flex items-center justify-center w-12 lg:w-auto lg:px-4 py-4 border-r border-dark-border text-text-muted hover:text-text-primary transition-colors h-full"
-          >
-            <Image
-              src="/images/x-icon.svg"
-              alt="X (Facebook)"
-              width={20}
-              height={20}
-              className="w-5 h-5 lg:w-6 lg:h-6"
-            />
-          </motion.a>
-
           {/* LinkedIn */}
           <motion.a
             href="https://linkedin.com/in/smile9/"
