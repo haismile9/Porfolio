@@ -14,32 +14,58 @@ interface FileItem {
 
 const fileTree: FileItem[] = [
   {
-    name: 'haismile',
+    name: 'honghai',
     type: 'folder',
     children: [
       {
-        name: 'summary.txt',
+        name: 'experience.ts',
         type: 'file',
         icon: '/images/icon-markdown.svg',
         content: `/**
- * SUMMARY
+ * PROFESSIONAL EXPERIENCE
  *
- * Name    : Nguyen Hong Hai
- * Role    : Full-stack Developer
- * Email   : nguyenhai@haismile.dev
- * Website : haismile.dev
- * Address : Ung Van Khiem, Ward 25, Binh Thanh, HCM City
+ * ══════════════════════════════════════════════
+ *  Hoang Phuc Thanh Immigration & Trade Co., Ltd
+ * ══════════════════════════════════════════════
  *
- * I am a Full-stack Developer with 1 year of experience
- * specializing in Node.js, NestJS, and React.js.
+ * [1] Full-stack Developer          Sep 2025 – Present
+ *     Project : Real-time Medical Device Management System
+ *     Team    : 4 members
  *
- * I have a proven track record in building real-time IoT
- * medical device management systems and optimizing complex
- * backend logic.
+ *     A comprehensive system for hospitals to monitor
+ *     medical device status and lifecycles in real-time.
  *
- * I am dedicated to building scalable architecture and
- * high-quality code to deliver impactful backend solutions
- * and enhance system performance.
+ *     • Architected core backend services with Node.js
+ *       (Express.js) — device data, lifecycle tracking,
+ *       and maintenance scheduling.
+ *     • Implemented real-time alerting via Socket.io,
+ *       enabling instant notifications for device failures
+ *       and maintenance triggers.
+ *     • Built interactive dashboard with React.js and
+ *       dynamic charts to visualize device performance
+ *       and lifecycle data.
+ *     • Optimized PostgreSQL queries, reducing average
+ *       response time by ~40% under large-dataset conditions.
+ *     • Set up company server infrastructure: Ubuntu servers,
+ *       Nginx reverse proxy, Docker Compose deployments,
+ *       and self-managed CI/CD pipelines.
+ *     • Deployed and administered MinIO S3 object storage
+ *       for centralized asset management across projects.
+ *
+ * ──────────────────────────────────────────────
+ * [2] Intern Front-end Developer    Jun 2025 – Sep 2025
+ *     Project : CRM System
+ *     Team    : 3 members
+ *
+ *     An internal tool to manage customer relationships
+ *     and streamline communication workflows.
+ *
+ *     • Developed responsive UI components using React.js
+ *       and Tailwind CSS, ensuring seamless UX across devices.
+ *     • Integrated RESTful APIs to handle customer data,
+ *       improving data entry efficiency by 20%.
+ *     • Collaborated under Agile/Scrum methodology to
+ *       deliver features on time.
  */`
       },
       {
@@ -49,80 +75,29 @@ const fileTree: FileItem[] = [
         content: `/**
  * TECHNICAL SKILLS
  *
- * Programming Languages:
- *   JavaScript, TypeScript, HTML5, CSS3
+ * Languages:
+ *   JavaScript  TypeScript  HTML5  CSS3
  *
- * Frameworks / Platforms:
- *   NodeJS, Express.js, NestJS, ReactJS, Vite, Next.js
+ * Frameworks & Platforms:
+ *   NodeJS  Express.js  NestJS
+ *   ReactJS  Vite  Next.js
  *
  * Database & ORM:
- *   MS SQL Server, MySQL, PostgreSQL, Redis, Prisma
+ *   MS SQL Server  MySQL  PostgreSQL
+ *   Redis  Prisma
  *
  * API Design & Tools:
- *   RESTful API, Swagger, Postman, Docker, Git
+ *   RESTful API  Swagger  Postman
+ *   Docker  Git
  *
  * DevOps & Infrastructure:
- *   Docker (Compose), CI/CD, Linux (Ubuntu),
- *   Windows Server, MinIO S3
+ *   Docker Compose  CI/CD
+ *   Linux (Ubuntu)  Windows Server
+ *   MinIO S3  Nginx
  *
- * Other:
- *   Strong knowledge of OOP and Design Patterns
- *   (Singleton, Factory)
- */`
-      },
-      {
-        name: 'experience.ts',
-        type: 'file',
-        icon: '/images/icon-markdown.svg',
-        content: `/**
- * PROFESSIONAL EXPERIENCE
- *
- * ─────────────────────────────────────────────
- * Hoang Phuc Thanh Immigration & Trade Co., Ltd
- * ─────────────────────────────────────────────
- *
- * [1] Full-stack Developer          Sep 2025 - Present
- *     Project: Real-time Medical Device Management System
- *     Team Size: 4
- *
- *     Description:
- *     A comprehensive system for hospitals to monitor
- *     medical device status and lifecycles in real-time.
- *
- *     Responsibilities:
- *     • Architected core backend services with Node.js
- *       (Express.js) to manage device data, lifecycle
- *       tracking, and maintenance scheduling.
- *     • Implemented real-time alerting via Socket.io,
- *       enabling instant notifications for device failures
- *       and maintenance triggers.
- *     • Built interactive dashboard with React.js and
- *       dynamic charts to visualize device performance
- *       and lifecycle data.
- *     • Optimized PostgreSQL queries, reducing average
- *       response time by ~40% under large-dataset conditions.
- *     • Set up and managed company server infrastructure:
- *       Ubuntu servers, Nginx reverse proxy, Docker Compose
- *       deployments, and self-managed CI/CD pipelines.
- *     • Deployed and administered MinIO S3 object storage
- *       for centralized asset management across projects.
- *
- * ─────────────────────────────────────────────
- * [2] Intern Front-end Developer    Jun 2025 - Sep 2025
- *     Project: CRM System
- *     Team Size: 3
- *
- *     Description:
- *     An internal tool to manage customer relationships
- *     and streamline communication workflows.
- *
- *     Responsibilities:
- *     • Developed responsive UI components using React.js
- *       and Tailwind CSS across devices.
- *     • Integrated RESTful APIs to handle customer data,
- *       improving data entry efficiency by 20%.
- *     • Collaborated under Agile/Scrum methodology to
- *       deliver features on time.
+ * Concepts:
+ *   OOP  Design Patterns (Singleton, Factory)
+ *   Microservices  Real-time (Socket.io)
  */`
       },
       {
@@ -132,17 +107,20 @@ const fileTree: FileItem[] = [
         content: `/**
  * EDUCATION
  *
- * Van Lang Sai Gon College          2023 - 2025
- * Major: Information Technology
- * GPA  : 3.17 / 4.0
+ * Van Lang Sai Gon College          2023 – 2025
+ * Major : Information Technology
+ * GPA   : 3.17 / 4.0
  *
- * Honors & Awards:
+ * ─────────────────────────
+ * Honors & Awards
+ * ─────────────────────────
  *
- * 🥉 3rd Prize – Altair Engineering Challenge 2025
+ * 🥉 3rd Prize
+ *    Altair Engineering Challenge 2025
  *    Excellence in solving complex engineering
  *    optimization problems.
  *
- * ⭐ Outstanding Student Award (2023 - 2024)
+ * ⭐ Outstanding Student Award (2023 – 2024)
  *    Awarded for exceptional academic performance
  *    and active professional contributions.
  */`
@@ -154,30 +132,146 @@ const fileTree: FileItem[] = [
         content: `/**
  * PERSONAL PROJECTS
  *
- * ─────────────────────────────────────────────
- * E-commerce Platform              Nov 2025 - Present
- * ─────────────────────────────────────────────
+ * ══════════════════════════════════════════════
+ *  E-commerce Platform              Nov 2025 – Present
+ * ══════════════════════════════════════════════
  *
  * Tech Stack:
- *   Express.js, Next.js, React.js,
- *   PostgreSQL, MinIO S3
+ *   Express.js  Next.js  React.js
+ *   PostgreSQL  MinIO S3
  *
  * Website : lumieyewear.com
  * GitHub  : haismile9/LUMIweb
  *
+ * ──────────────────────────────────────────────
  * Highlights:
- *   • E-commerce Ecosystem:
+ *
+ * 🛍  E-commerce Ecosystem
  *     Built a high-performance storefront and admin
  *     dashboard using Next.js (SSR) and React.js.
  *
- *   • Backend & Security:
+ * 🔐 Backend & Security
  *     Engineered a centralized backend with Express.js,
- *     implementing JWT authentication and RBAC for
- *     secure access.
+ *     implementing JWT authentication and RBAC
+ *     for secure access control.
  *
- *   • Storage & Payment:
+ * 💳 Storage & Payment
  *     Integrated MinIO S3 for asset management and
  *     MoMo / VNPay gateways for secure transactions.
+ */`
+      }
+    ]
+  },
+  {
+    name: 'smile',
+    type: 'folder',
+    children: [
+      {
+        name: 'bio.txt',
+        type: 'file',
+        icon: '/images/icon-markdown.svg',
+        content: `/**
+ * HI THERE 👋 I'M HAI
+ *
+ * I'm a Full-stack Developer based in Ho Chi Minh City,
+ * Vietnam. I build things for the web — and sometimes
+ * for the fun of it.
+ *
+ * I started coding because I wanted to understand how
+ * things work under the hood. That curiosity turned into
+ * a career, and I haven't looked back since.
+ *
+ * My stack leans backend-heavy (Node.js, NestJS, PostgreSQL)
+ * but I genuinely enjoy crafting smooth frontend experiences
+ * too. I believe good software is both powerful and pleasant
+ * to use.
+ *
+ * When I'm not writing code, I'm probably:
+ *   → Playing strategy games 🎮
+ *   → Exploring a new framework or tool
+ *   → Listening to lo-fi while debugging at midnight 🎵
+ *
+ * ──────────────────────────────────────────────
+ * A bit about the name "haismile9":
+ *
+ *   hai   = my name (Hong Hai)
+ *   smile = the vibe I try to bring to everything I build
+ *   9     = just a number, but it stuck 😄
+ * ──────────────────────────────────────────────
+ *
+ * I'm always open to interesting conversations,
+ * collaboration, or just saying hello.
+ *
+ * 📬 nguyenhai@haismile.dev
+ */`
+      },
+      {
+        name: 'interests.md',
+        type: 'file',
+        icon: '/images/icon-hobbies.svg',
+        content: `/**
+ * WHAT I'M INTO
+ *
+ * 💻 Technology
+ *   I love staying on top of what's happening in the
+ *   backend and DevOps world. Recently exploring:
+ *   → Event-driven architecture
+ *   → Edge computing & serverless
+ *   → Rust (because everyone says it's hard 😄)
+ *
+ * 🎮 Gaming
+ *   Strategy games are my comfort zone.
+ *   I like games that make you think 2 steps ahead.
+ *   Current obsession: anything with base-building mechanics.
+ *
+ * 🎵 Music
+ *   Lo-fi hip hop and ambient music when coding.
+ *   Occasionally something with more energy for debugging
+ *   sessions that go past midnight.
+ *
+ * 🧩 Problem Solving
+ *   There's something deeply satisfying about breaking
+ *   a complex problem into small, solvable pieces.
+ *   It's basically what I do all day — and I love it.
+ *
+ * 📖 Learning
+ *   I read tech blogs, watch conference talks, and
+ *   occasionally fall down Wikipedia rabbit holes.
+ *   Knowledge compounds — I believe in learning daily.
+ */`
+      },
+      {
+        name: 'fun-facts.js',
+        type: 'file',
+        icon: '/images/icon-hobbies.svg',
+        content: `/**
+ * FUN FACTS ABOUT ME
+ *
+ * const hai = {
+ *
+ *   currentCity    : "Ho Chi Minh City, Vietnam 🇻🇳",
+ *
+ *   languages      : ["Vietnamese 🇻🇳", "English 🇬🇧"],
+ *
+ *   coffeeOrTea    : "Coffee ☕ (always)",
+ *
+ *   codeEditor     : "VS Code (dark theme, obviously)",
+ *
+ *   typingSpeed    : "fast enough to keep up with my thoughts",
+ *
+ *   debuggingStyle : "console.log() first, ask questions later",
+ *
+ *   superpower     : "Turning caffeine into backend services",
+ *
+ *   lifePhilosophy : "Build things that matter. Keep it simple.
+ *                     Smile while doing it. 😊",
+ *
+ *   funFact        : "The name 'haismile9' was supposed to be
+ *                     temporary. That was years ago.",
+ *
+ *   currentlyLearning: "Always something new.",
+ *
+ * };
  */`
       }
     ]
@@ -185,9 +279,9 @@ const fileTree: FileItem[] = [
 ];
 
 export default function AboutPage() {
-  const [openTabs, setOpenTabs] = useState<string[]>(['summary.txt']);
-  const [selectedFile, setSelectedFile] = useState<string>('summary.txt');
-  const [expandedFolders, setExpandedFolders] = useState<string[]>(['haismile']);
+  const [openTabs, setOpenTabs] = useState<string[]>(['bio.txt']);
+  const [selectedFile, setSelectedFile] = useState<string>('bio.txt');
+  const [expandedFolders, setExpandedFolders] = useState<string[]>(['honghai', 'smile']);
 
   const toggleFolder = (folderName: string) => {
     setExpandedFolders(prev =>
@@ -231,6 +325,12 @@ export default function AboutPage() {
     return '/images/icon-markdown.svg';
   };
 
+  const getFolderColor = (name: string) => {
+    if (name === 'honghai') return 'text-accent-primary';
+    if (name === 'smile') return 'text-accent-orange';
+    return 'text-accent-orange';
+  };
+
   const renderTree = (items: FileItem[], depth = 0) => (
     <>
       {items.map((item, i) => (
@@ -244,17 +344,19 @@ export default function AboutPage() {
             <>
               <button
                 onClick={() => toggleFolder(item.name)}
-                className="w-full flex items-center gap-2 px-3 py-1.5 text-sm hover:bg-white/5 transition-colors text-left"
+                className="w-full flex items-center gap-2 py-1.5 text-sm hover:bg-white/5 transition-colors text-left"
                 style={{ paddingLeft: `${12 + depth * 16}px` }}
               >
                 <motion.span
                   animate={{ rotate: expandedFolders.includes(item.name) ? 90 : 0 }}
                   transition={{ duration: 0.2 }}
-                  className="text-accent-orange text-xs"
+                  className={`text-xs ${getFolderColor(item.name)}`}
                 >
                   ▶
                 </motion.span>
-                <span className="text-accent-orange font-fira">{item.name}</span>
+                <span className={`font-fira font-medium ${getFolderColor(item.name)}`}>
+                  {item.name}
+                </span>
               </button>
               <AnimatePresence>
                 {expandedFolders.includes(item.name) && item.children && (
@@ -271,8 +373,9 @@ export default function AboutPage() {
               </AnimatePresence>
             </>
           ) : (
-            <button
+            <motion.button
               onClick={() => selectFile(item.name)}
+              whileHover={{ x: 3 }}
               className={`w-full flex items-center gap-2 py-1.5 text-sm transition-colors text-left ${
                 selectedFile === item.name
                   ? 'bg-white/10 text-white'
@@ -288,7 +391,7 @@ export default function AboutPage() {
                 className="shrink-0"
               />
               <span className="font-fira truncate">{item.name}</span>
-            </button>
+            </motion.button>
           )}
         </motion.div>
       ))}
@@ -335,7 +438,7 @@ export default function AboutPage() {
         >
           {/* Tabs */}
           {openTabs.length > 0 && (
-            <div className="flex border-b border-dark-border bg-dark-secondary overflow-x-auto">
+            <div className="flex border-b border-dark-border bg-dark-secondary overflow-x-auto shrink-0">
               {openTabs.map(tab => (
                 <div
                   key={tab}
@@ -346,15 +449,10 @@ export default function AboutPage() {
                   }`}
                   onClick={() => setSelectedFile(tab)}
                 >
-                  <Image
-                    src={getIconForFile(tab)}
-                    alt={tab}
-                    width={14}
-                    height={14}
-                  />
+                  <Image src={getIconForFile(tab)} alt={tab} width={14} height={14} />
                   <span className="text-sm font-fira">{tab}</span>
                   <button
-                    className="text-text-secondary hover:text-white ml-1 leading-none"
+                    className="text-text-secondary hover:text-white ml-1 leading-none text-base"
                     onClick={(e) => closeTab(tab, e)}
                   >
                     ×
@@ -364,28 +462,30 @@ export default function AboutPage() {
             </div>
           )}
 
-          {/* Content Area */}
+          {/* Content */}
           {openTabs.length === 0 ? (
             <div className="flex-1 flex flex-col items-center justify-center bg-dark-primary p-6 gap-4">
               <Image src="/images/smile_logo.png" alt="Logo" width={100} height={100} className="opacity-10" />
               <h2 className="text-xl font-fira text-text-secondary">No file is open</h2>
-              <p className="text-text-secondary opacity-50 text-sm">Select a file from the explorer to view its contents.</p>
+              <p className="text-text-secondary opacity-50 text-sm text-center">
+                Select a file from the explorer to view its contents.
+              </p>
             </div>
           ) : (
             <div className="flex-1 bg-dark-primary overflow-hidden">
-              {/* Desktop: line numbers */}
+              {/* Desktop: with line numbers */}
               <div className="hidden lg:flex h-full overflow-y-auto overflow-x-hidden">
-                <div className="text-text-secondary text-right select-none text-sm leading-7 px-4 py-6 shrink-0 min-w-[3rem] border-r border-dark-border/40">
+                <div className="text-text-secondary text-right select-none text-sm leading-7 px-4 py-6 shrink-0 min-w-[3rem] border-r border-dark-border/40 font-mono">
                   {lines.map((_, i) => (
                     <div key={i}>{i + 1}</div>
                   ))}
                 </div>
-                <div className="text-text-secondary font-mono text-sm leading-7 px-6 py-6 whitespace-pre-wrap flex-1 min-w-0">
+                <div className="text-text-secondary font-mono text-sm leading-7 px-6 py-6 whitespace-pre-wrap flex-1 min-w-0 break-words">
                   {content}
                 </div>
               </div>
 
-              {/* Mobile: no line numbers */}
+              {/* Mobile: clean content */}
               <div className="flex lg:hidden h-full overflow-y-auto p-4">
                 <div className="text-text-secondary font-mono text-sm leading-6 whitespace-pre-wrap flex-1 min-w-0">
                   {content
