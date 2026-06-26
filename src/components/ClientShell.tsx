@@ -79,7 +79,7 @@ export function ClientShell({ children }: ClientShellProps) {
       
       <div className="flex flex-1 overflow-hidden relative z-0">
         {/* Main Content Area */}
-        <main className="flex-1 flex flex-col overflow-auto relative min-w-0">
+        <main className="flex-1 flex flex-col overflow-auto relative min-w-0 @container">
           <PageTransition>
             {children}
           </PageTransition>

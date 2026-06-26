@@ -65,7 +65,7 @@ export default function HomePage() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.3, delay: 1.6 }}
-                  className="hidden lg:block text-base font-fira text-text-secondary leading-[1.5]"
+                  className="hidden @5xl:block text-base font-fira text-text-secondary leading-[1.5]"
                 >
                   {'//'} complete the game to continue
                 </motion.p>
@@ -96,7 +96,7 @@ export default function HomePage() {
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.8 }}
-              className="hidden lg:block"
+              className="hidden @5xl:block"
             >
               <SnakeGame />
             </motion.div>
