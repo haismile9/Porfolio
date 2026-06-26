@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
+import { GitHubHeatmap } from '@/components/GitHubHeatmap';
 
 interface FileItem {
   name: string;
@@ -80,6 +81,11 @@ const fileTree: FileItem[] = [
   "music": ["Playing Guitar 🎸", "Rap Music 🎧"],
   "philosophy": "Build things that matter. Keep it simple. Smile while doing it. 😊"
 }`
+      },
+      {
+        name: 'github-activity.svg',
+        type: 'file',
+        content: ''
       }
     ]
   },
@@ -222,6 +228,8 @@ export default function AboutPage() {
         return '/images/icon-markdown.svg'; // Or another icon if available
       case 'others.json':
         return '/images/icon-markdown.svg';
+      case 'github-activity.svg':
+        return '/images/github-icon.svg';
       default:
         if (name.endsWith('.ts') || name.endsWith('.js') || name.endsWith('.json')) return '/images/icon-hobbies.svg';
         return '/images/icon-markdown.svg';
@@ -375,11 +383,15 @@ export default function AboutPage() {
           {/* Content */}
           {openTabs.length === 0 ? (
             <div className="flex-1 flex flex-col items-center justify-center bg-dark-primary p-6 gap-4">
-              <Image src="/images/smile_logo.png" alt="Logo" width={100} height={100} className="opacity-10" />
+              <Image src="/images/smile_logo/OIP-Photoroom.png" alt="Logo" width={100} height={100} className="opacity-10" />
               <h2 className="text-xl font-fira text-text-secondary">No file is open</h2>
               <p className="text-text-secondary opacity-50 text-sm text-center">
                 Select a file from the explorer to view its contents.
               </p>
+            </div>
+          ) : selectedFile === 'github-activity.svg' ? (
+            <div className="flex-1 bg-dark-primary overflow-hidden">
+              <GitHubHeatmap />
             </div>
           ) : (
             <div className="flex-1 bg-dark-primary overflow-hidden">
