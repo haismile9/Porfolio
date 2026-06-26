@@ -22,50 +22,70 @@ const fileTree: FileItem[] = [
         type: 'file',
         icon: '/images/icon-markdown.svg',
         content: `/**
- * PROFESSIONAL EXPERIENCE
+ * EXPERIENCE & PROJECTS
  *
  * ══════════════════════════════════════════════
- *  Hoang Phuc Thanh Immigration & Trade Co., Ltd
+ *  WORK EXPERIENCE
  * ══════════════════════════════════════════════
  *
  * [1] Full-stack Developer          Sep 2025 – Present
+ *     Hoang Phuc Thanh Immigration & Trade Co., Ltd
  *     Project : Real-time Medical Device Management System
  *     Team    : 4 members
  *
- *     A comprehensive system for hospitals to monitor
- *     medical device status and lifecycles in real-time.
+ *     A system for hospitals to monitor medical device
+ *     status and lifecycles in real-time.
  *
- *     • Architected core backend services with Node.js
- *       (Express.js) — device data, lifecycle tracking,
- *       and maintenance scheduling.
- *     • Implemented real-time alerting via Socket.io,
- *       enabling instant notifications for device failures
- *       and maintenance triggers.
+ *     • Architected core backend with Node.js (Express.js)
+ *       — device data, lifecycle tracking, maintenance scheduling.
+ *     • Implemented real-time alerting via Socket.io for
+ *       instant notifications on device failures.
  *     • Built interactive dashboard with React.js and
- *       dynamic charts to visualize device performance
- *       and lifecycle data.
- *     • Optimized PostgreSQL queries, reducing average
- *       response time by ~40% under large-dataset conditions.
- *     • Set up company server infrastructure: Ubuntu servers,
- *       Nginx reverse proxy, Docker Compose deployments,
- *       and self-managed CI/CD pipelines.
- *     • Deployed and administered MinIO S3 object storage
- *       for centralized asset management across projects.
+ *       dynamic charts for device performance visualization.
+ *     • Optimized PostgreSQL queries → ~40% faster response
+ *       time under large-dataset conditions.
+ *     • Managed Ubuntu servers, Nginx reverse proxy,
+ *       Docker Compose and self-managed CI/CD pipelines.
+ *     • Deployed MinIO S3 for centralized asset management.
  *
  * ──────────────────────────────────────────────
  * [2] Intern Front-end Developer    Jun 2025 – Sep 2025
+ *     Hoang Phuc Thanh Immigration & Trade Co., Ltd
  *     Project : CRM System
  *     Team    : 3 members
  *
- *     An internal tool to manage customer relationships
+ *     Internal tool to manage customer relationships
  *     and streamline communication workflows.
  *
- *     • Developed responsive UI components using React.js
- *       and Tailwind CSS, ensuring seamless UX across devices.
- *     • Integrated RESTful APIs to handle customer data,
- *       improving data entry efficiency by 20%.
- *     • Collaborated under Agile/Scrum methodology to
- *       deliver features on time.
+ *     • Built responsive UI with React.js & Tailwind CSS.
+ *     • Integrated RESTful APIs → improved data entry
+ *       efficiency by 20%.
+ *     • Worked under Agile/Scrum methodology.
+ *
+ * ══════════════════════════════════════════════
+ *  PERSONAL PROJECT
+ * ══════════════════════════════════════════════
+ *
+ * [3] E-commerce Platform           Nov 2025 – Present
+ *     Stack   : Express.js, Next.js, React.js,
+ *               PostgreSQL, MinIO S3
+ *     Website : lumieyewear.com
+ *     GitHub  : haismile9/LUMIweb
+ *
+ *     Built independently to go beyond internship scope
+ *     and apply full-stack skills end-to-end.
+ *
+ *     🛍  E-commerce Ecosystem
+ *         High-performance storefront + admin dashboard
+ *         using Next.js (SSR) and React.js.
+ *
+ *     🔐 Backend & Security
+ *         Centralized backend with Express.js, JWT auth
+ *         and RBAC for role-based access control.
+ *
+ *     💳 Storage & Payment
+ *         MinIO S3 for assets + MoMo/VNPay payment
+ *         gateways for secure transactions.
  */`
       },
       {
@@ -125,41 +145,6 @@ const fileTree: FileItem[] = [
  *    and active professional contributions.
  */`
       },
-      {
-        name: 'projects.json',
-        type: 'file',
-        icon: '/images/icon-hobbies.svg',
-        content: `/**
- * PERSONAL PROJECTS
- *
- * ══════════════════════════════════════════════
- *  E-commerce Platform              Nov 2025 – Present
- * ══════════════════════════════════════════════
- *
- * Tech Stack:
- *   Express.js  Next.js  React.js
- *   PostgreSQL  MinIO S3
- *
- * Website : lumieyewear.com
- * GitHub  : haismile9/LUMIweb
- *
- * ──────────────────────────────────────────────
- * Highlights:
- *
- * 🛍  E-commerce Ecosystem
- *     Built a high-performance storefront and admin
- *     dashboard using Next.js (SSR) and React.js.
- *
- * 🔐 Backend & Security
- *     Engineered a centralized backend with Express.js,
- *     implementing JWT authentication and RBAC
- *     for secure access control.
- *
- * 💳 Storage & Payment
- *     Integrated MinIO S3 for asset management and
- *     MoMo / VNPay gateways for secure transactions.
- */`
-      }
     ]
   },
   {
@@ -279,7 +264,7 @@ const fileTree: FileItem[] = [
 ];
 
 export default function AboutPage() {
-  const [openTabs, setOpenTabs] = useState<string[]>(['bio.txt']);
+  const [openTabs, setOpenTabs] = useState<string[]>(['bio.txt', 'experience.ts']);
   const [selectedFile, setSelectedFile] = useState<string>('bio.txt');
   const [expandedFolders, setExpandedFolders] = useState<string[]>(['honghai', 'smile']);
 
