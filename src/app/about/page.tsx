@@ -3,10 +3,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
-// Tab types matching Figma design
-type TabType = 'professional-info' | 'personal-info' | 'hobbies';
 
-// File interface
 interface FileItem {
   name: string;
   type: 'file' | 'folder';
@@ -15,375 +12,350 @@ interface FileItem {
   content?: string;
 }
 
+const fileTree: FileItem[] = [
+  {
+    name: 'haismile',
+    type: 'folder',
+    children: [
+      {
+        name: 'summary.txt',
+        type: 'file',
+        icon: '/images/icon-markdown.svg',
+        content: `/**
+ * SUMMARY
+ *
+ * Name    : Nguyen Hong Hai
+ * Role    : Full-stack Developer
+ * Email   : nguyenhai@haismile.dev
+ * Website : haismile.dev
+ * Address : Ung Van Khiem, Ward 25, Binh Thanh, HCM City
+ *
+ * I am a Full-stack Developer with 1 year of experience
+ * specializing in Node.js, NestJS, and React.js.
+ *
+ * I have a proven track record in building real-time IoT
+ * medical device management systems and optimizing complex
+ * backend logic.
+ *
+ * I am dedicated to building scalable architecture and
+ * high-quality code to deliver impactful backend solutions
+ * and enhance system performance.
+ */`
+      },
+      {
+        name: 'tech-stack.js',
+        type: 'file',
+        icon: '/images/icon-hobbies.svg',
+        content: `/**
+ * TECHNICAL SKILLS
+ *
+ * Programming Languages:
+ *   JavaScript, TypeScript, HTML5, CSS3
+ *
+ * Frameworks / Platforms:
+ *   NodeJS, Express.js, NestJS, ReactJS, Vite, Next.js
+ *
+ * Database & ORM:
+ *   MS SQL Server, MySQL, PostgreSQL, Redis, Prisma
+ *
+ * API Design & Tools:
+ *   RESTful API, Swagger, Postman, Docker, Git
+ *
+ * DevOps & Infrastructure:
+ *   Docker (Compose), CI/CD, Linux (Ubuntu),
+ *   Windows Server, MinIO S3
+ *
+ * Other:
+ *   Strong knowledge of OOP and Design Patterns
+ *   (Singleton, Factory)
+ */`
+      },
+      {
+        name: 'experience.ts',
+        type: 'file',
+        icon: '/images/icon-markdown.svg',
+        content: `/**
+ * PROFESSIONAL EXPERIENCE
+ *
+ * ─────────────────────────────────────────────
+ * Hoang Phuc Thanh Immigration & Trade Co., Ltd
+ * ─────────────────────────────────────────────
+ *
+ * [1] Full-stack Developer          Sep 2025 - Present
+ *     Project: Real-time Medical Device Management System
+ *     Team Size: 4
+ *
+ *     Description:
+ *     A comprehensive system for hospitals to monitor
+ *     medical device status and lifecycles in real-time.
+ *
+ *     Responsibilities:
+ *     • Architected core backend services with Node.js
+ *       (Express.js) to manage device data, lifecycle
+ *       tracking, and maintenance scheduling.
+ *     • Implemented real-time alerting via Socket.io,
+ *       enabling instant notifications for device failures
+ *       and maintenance triggers.
+ *     • Built interactive dashboard with React.js and
+ *       dynamic charts to visualize device performance
+ *       and lifecycle data.
+ *     • Optimized PostgreSQL queries, reducing average
+ *       response time by ~40% under large-dataset conditions.
+ *     • Set up and managed company server infrastructure:
+ *       Ubuntu servers, Nginx reverse proxy, Docker Compose
+ *       deployments, and self-managed CI/CD pipelines.
+ *     • Deployed and administered MinIO S3 object storage
+ *       for centralized asset management across projects.
+ *
+ * ─────────────────────────────────────────────
+ * [2] Intern Front-end Developer    Jun 2025 - Sep 2025
+ *     Project: CRM System
+ *     Team Size: 3
+ *
+ *     Description:
+ *     An internal tool to manage customer relationships
+ *     and streamline communication workflows.
+ *
+ *     Responsibilities:
+ *     • Developed responsive UI components using React.js
+ *       and Tailwind CSS across devices.
+ *     • Integrated RESTful APIs to handle customer data,
+ *       improving data entry efficiency by 20%.
+ *     • Collaborated under Agile/Scrum methodology to
+ *       deliver features on time.
+ */`
+      },
+      {
+        name: 'education.md',
+        type: 'file',
+        icon: '/images/icon-markdown.svg',
+        content: `/**
+ * EDUCATION
+ *
+ * Van Lang Sai Gon College          2023 - 2025
+ * Major: Information Technology
+ * GPA  : 3.17 / 4.0
+ *
+ * Honors & Awards:
+ *
+ * 🥉 3rd Prize – Altair Engineering Challenge 2025
+ *    Excellence in solving complex engineering
+ *    optimization problems.
+ *
+ * ⭐ Outstanding Student Award (2023 - 2024)
+ *    Awarded for exceptional academic performance
+ *    and active professional contributions.
+ */`
+      },
+      {
+        name: 'projects.json',
+        type: 'file',
+        icon: '/images/icon-hobbies.svg',
+        content: `/**
+ * PERSONAL PROJECTS
+ *
+ * ─────────────────────────────────────────────
+ * E-commerce Platform              Nov 2025 - Present
+ * ─────────────────────────────────────────────
+ *
+ * Tech Stack:
+ *   Express.js, Next.js, React.js,
+ *   PostgreSQL, MinIO S3
+ *
+ * Website : lumieyewear.com
+ * GitHub  : haismile9/LUMIweb
+ *
+ * Highlights:
+ *   • E-commerce Ecosystem:
+ *     Built a high-performance storefront and admin
+ *     dashboard using Next.js (SSR) and React.js.
+ *
+ *   • Backend & Security:
+ *     Engineered a centralized backend with Express.js,
+ *     implementing JWT authentication and RBAC for
+ *     secure access.
+ *
+ *   • Storage & Payment:
+ *     Integrated MinIO S3 for asset management and
+ *     MoMo / VNPay gateways for secure transactions.
+ */`
+      }
+    ]
+  }
+];
+
 export default function AboutPage() {
   const [openTabs, setOpenTabs] = useState<string[]>(['summary.txt']);
   const [selectedFile, setSelectedFile] = useState<string>('summary.txt');
-  const [expandedFolders, setExpandedFolders] = useState<string[]>(['bio', 'education', 'experience', 'skills', 'interests']);
-
-  const professionalInfoFiles: FileItem[] = [
-    {
-      name: 'experience',
-      type: 'folder',
-      children: [
-        {
-          name: 'work.ts',
-          type: 'file',
-          icon: '/images/icon-markdown.svg',
-          content: `/**
- * PROFESSIONAL EXPERIENCE
- * 
- * Hoang Phuc Thanh Immigration & Trade Co., Ltd
- * Full-stack Developer (Sep 2025 - Present)
- * Project: Real-time Medical Device Management System
- * 
- * Intern Front-end Developer (Jun 2025 - Sep 2025)
- * Project: CRM System
- * 
- * PERSONAL PROJECT
- * 
- * E-commerce (Nov 2025 - Present)
- * Tech stack: Express.js, Next.js, React.js, PostgreSQL, MinIO S3
- * Website: lumieyewear.com | GitHub: haismile9/LUMIweb
- */`
-        }
-      ]
-    },
-    {
-      name: 'skills',
-      type: 'folder',
-      children: [
-        {
-          name: 'tech-stack.js',
-          type: 'file',
-          icon: '/images/icon-hobbies.svg',
-          content: `/**
- * TECHNICAL SKILLS
- * 
- * - Programming Languages: JavaScript, TypeScript, HTML5, CSS3
- * - Frameworks/Platforms: NodeJS, Express.js, NestJS, ReactJS, Vite, Next.js
- * - Database & ORM: MS SQL Server, MySQL, PostgreSQL, Redis, Prisma
- * - API Design & Tools: RESTful API, Swagger, Postman, Docker, Git
- * - DevOps & Infrastructure: Docker (Compose), CI/CD, Linux (Ubuntu), Windows Server, MinIO S3
- * - Other: Strong knowledge of OOP and Design Patterns
- */`
-        }
-      ]
-    }
-  ];
-
-  const personalInfoFiles: FileItem[] = [
-    {
-      name: 'bio',
-      type: 'folder',
-      children: [
-        {
-          name: 'summary.txt',
-          type: 'file',
-          icon: '/images/icon-markdown.svg',
-          content: `/**
- * SUMMARY
- * I am a Full-stack Developer with 1 year of experience specializing in Node.js, NestJS, and React.js.
- * I have a proven track record in building real time IoT medical device management systems
- * and optimizing complex backend logic.
- * I am dedicated to building scalable architecture and high-quality code to deliver impactful
- * backend solutions and enhance system performance.
- */`
-        }
-      ]
-    },
-    {
-      name: 'interests',
-      type: 'folder',
-      children: [
-        {
-          name: 'hobbies.md',
-          type: 'file',
-          icon: '/images/icon-hobbies.svg',
-          content: `/**
- * INTERESTS
- * 
- * - Building scalable web applications
- * - Learning new technologies
- * - Mobile app development
- * - Problem solving
- */`
-        }
-      ]
-    },
-    {
-      name: 'education',
-      type: 'folder',
-      children: [
-        {
-          name: 'college.md',
-          type: 'file',
-          icon: '/images/icon-markdown.svg',
-          content: `/**
- * EDUCATION
- * 
- * 2023 - 2025
- * Van Lang Sai Gon College
- * Major: Information Technology
- * GPA: 3.17/4.0
- * 
- * Honors & Awards:
- * - 3rd Prize – Altair Engineering Challenge 2025
- * - Outstanding Student Award (2023 - 2024)
- */`
-        }
-      ]
-    }
-  ];
-
-  const hobbiesFiles: FileItem[] = [
-    {
-      name: 'gaming',
-      type: 'folder',
-      children: [
-        {
-          name: 'favorites.txt',
-          type: 'file',
-          icon: '/images/icon-hobbies.svg',
-          content: `/**
- * GAMES
- * 
- * I like to play strategy and puzzle games.
- */`
-        }
-      ]
-    }
-  ];
-
-
-
-  const defaultContent = `/**
- * About Me
- * 
- * I am Nguyen Hong Hai, a Full-stack Developer with 1 year of experience 
- * specializing in Node.js, NestJS, and React.js. 
- * 
- * I have a proven track record in building real time IoT medical device 
- * management systems and optimizing complex backend logic. I am dedicated 
- * to building scalable architecture and high-quality code to deliver 
- * impactful backend solutions and enhance system performance.
- * 
- * Recently, I architected core backend services with Express.js to manage 
- * device data, lifecycle tracking, and implemented real-time alerting via Socket.io.
- */
-`;
+  const [expandedFolders, setExpandedFolders] = useState<string[]>(['haismile']);
 
   const toggleFolder = (folderName: string) => {
-    setExpandedFolders(prev => 
-      prev.includes(folderName) 
+    setExpandedFolders(prev =>
+      prev.includes(folderName)
         ? prev.filter(f => f !== folderName)
         : [...prev, folderName]
     );
   };
 
-  const selectFile = (fileName: string, content?: string) => {
+  const selectFile = (fileName: string) => {
     setSelectedFile(fileName);
     if (!openTabs.includes(fileName)) {
       setOpenTabs(prev => [...prev, fileName]);
     }
   };
 
-  const closeTab = (tabName: string) => {
-    setOpenTabs(prev => prev.filter(t => t !== tabName));
+  const closeTab = (tabName: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const newTabs = openTabs.filter(t => t !== tabName);
+    setOpenTabs(newTabs);
     if (selectedFile === tabName) {
-      const remaining = openTabs.filter(t => t !== tabName);
-      setSelectedFile(remaining[remaining.length - 1] || '');
+      setSelectedFile(newTabs[newTabs.length - 1] || '');
     }
   };
 
-  const getCurrentContent = () => {
-    // Find content for selected file
-    const findContent = (files: FileItem[]): string | undefined => {
-      for (const file of files) {
-        if (file.name === selectedFile && file.content) {
-          return file.content;
-        }
-        if (file.children) {
-          const found = findContent(file.children);
+  const getCurrentContent = (): string => {
+    const findContent = (items: FileItem[]): string | undefined => {
+      for (const item of items) {
+        if (item.name === selectedFile && item.content) return item.content;
+        if (item.children) {
+          const found = findContent(item.children);
           if (found) return found;
         }
       }
-      return undefined;
     };
-
-    return findContent([...personalInfoFiles, ...professionalInfoFiles, ...hobbiesFiles]) || defaultContent;
+    return findContent(fileTree) || '';
   };
 
-  const getCleanContent = (rawContent: string) => {
-    if (!rawContent) return '';
-    return rawContent
-      .replace(/^\/\*\*\s*\n/, '')
-      .replace(/\n\s*\*\/\s*$/, '')
-      .split('\n')
-      .map(line => line.replace(/^\s*\*\s?/, ''))
-      .join('\n');
+  const getIconForFile = (name: string) => {
+    if (name.endsWith('.ts') || name.endsWith('.js') || name.endsWith('.json')) return '/images/icon-hobbies.svg';
+    return '/images/icon-markdown.svg';
   };
 
-
-
-  const renderFileTree = (files: FileItem[], title: string) => {
-    return (
-      <motion.div 
-      className="p-3"
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.3 }}
-    >
-      <motion.div 
-        className="hidden lg:flex text-accent-orange text-sm mb-4 items-center gap-2"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-      >
-        <span>▼</span>
-        <span>{title}</span>
-      </motion.div>
-      
-      {/* File Tree */}
-      {files.map((item, index) => (
-        <motion.div 
-          key={item.name} 
-          className="ml-4 mb-2"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 + index * 0.1 }}
+  const renderTree = (items: FileItem[], depth = 0) => (
+    <>
+      {items.map((item, i) => (
+        <motion.div
+          key={item.name}
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.05 * i }}
         >
-          <motion.div 
-            className="flex items-center gap-2 text-text-secondary text-sm py-1 cursor-pointer hover:text-white transition-colors"
-            onClick={() => item.type === 'folder' && toggleFolder(item.name)}
-            whileHover={{ x: 2 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            {item.type === 'folder' && (
-              <>
-                <motion.span 
-                  className="text-accent-orange"
+          {item.type === 'folder' ? (
+            <>
+              <button
+                onClick={() => toggleFolder(item.name)}
+                className="w-full flex items-center gap-2 px-3 py-1.5 text-sm hover:bg-white/5 transition-colors text-left"
+                style={{ paddingLeft: `${12 + depth * 16}px` }}
+              >
+                <motion.span
                   animate={{ rotate: expandedFolders.includes(item.name) ? 90 : 0 }}
                   transition={{ duration: 0.2 }}
+                  className="text-accent-orange text-xs"
                 >
                   ▶
                 </motion.span>
-                <motion.div
-                  whileHover={{ scale: 1.1 }}
-                  className="w-4 h-4 flex items-center justify-center"
-                >
-                  <Image src="/images/icon-folder.svg" alt="folder" width={16} height={16} />
-                </motion.div>
-              </>
-            )}
-            <span>{item.name}</span>
-          </motion.div>
-          
-          <AnimatePresence>
-            {item.children && expandedFolders.includes(item.name) && (
-              <motion.div 
-                className="ml-6"
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                {item.children.map((child, childIndex) => (
-                  <motion.div 
-                    key={child.name}
-                    className={`flex items-center gap-2 text-sm py-1 cursor-pointer transition-all ${
-                      selectedFile === child.name ? 'text-white bg-dark-border/20' : 'text-text-secondary hover:text-white'
-                    }`}
-                    onClick={() => selectFile(child.name, child.content)}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: childIndex * 0.05 }}
-                    whileHover={{ x: 4, backgroundColor: 'rgba(255,255,255,0.05)' }}
-                    whileTap={{ scale: 0.98 }}
+                <span className="text-accent-orange font-fira">{item.name}</span>
+              </button>
+              <AnimatePresence>
+                {expandedFolders.includes(item.name) && item.children && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.25 }}
+                    className="overflow-hidden"
                   >
-                    {child.icon && (
-                      <motion.div
-                        whileHover={{ rotate: 5 }}
-                        className="w-4 h-4 flex items-center justify-center"
-                      >
-                        <Image src={child.icon} alt={child.name} width={16} height={16} />
-                      </motion.div>
-                    )}
-                    <span>{child.name}</span>
+                    {renderTree(item.children, depth + 1)}
                   </motion.div>
-                ))}
-              </motion.div>
-            )}
-          </AnimatePresence>
+                )}
+              </AnimatePresence>
+            </>
+          ) : (
+            <button
+              onClick={() => selectFile(item.name)}
+              className={`w-full flex items-center gap-2 py-1.5 text-sm transition-colors text-left ${
+                selectedFile === item.name
+                  ? 'bg-white/10 text-white'
+                  : 'text-text-secondary hover:text-white hover:bg-white/5'
+              }`}
+              style={{ paddingLeft: `${28 + depth * 16}px` }}
+            >
+              <Image
+                src={item.icon || getIconForFile(item.name)}
+                alt={item.name}
+                width={14}
+                height={14}
+                className="shrink-0"
+              />
+              <span className="font-fira truncate">{item.name}</span>
+            </button>
+          )}
         </motion.div>
       ))}
-    </motion.div>
+    </>
   );
-};
+
+  const content = getCurrentContent();
+  const lines = content.split('\n');
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden relative bg-dark-primary min-w-0">
       <main className="flex-1 flex flex-col lg:flex-row overflow-y-auto lg:overflow-hidden min-w-0">
+
         {/* Desktop Sidebar */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="hidden lg:flex w-64 bg-dark-secondary border-r border-dark-border shrink-0 h-full min-w-0 flex-col"
+          className="hidden lg:flex w-64 bg-dark-secondary border-r border-dark-border shrink-0 h-full flex-col"
         >
-
-          
-          <div className="flex-1 overflow-y-auto">
-            {renderFileTree(personalInfoFiles, 'personal-info')}
-            {renderFileTree(professionalInfoFiles, 'professional-info')}
-            {renderFileTree(hobbiesFiles, 'hobbies')}
-            
-
+          <div className="flex-1 overflow-y-auto py-2">
+            {renderTree(fileTree)}
           </div>
         </motion.div>
 
         {/* Mobile Sidebar */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="lg:hidden flex flex-col w-full bg-dark-bg shrink-0 min-w-0"
+          className="lg:hidden flex flex-col w-full bg-dark-secondary shrink-0 border-b border-dark-border"
         >
-
-          
-          <div className="bg-dark-secondary">
-            {renderFileTree(personalInfoFiles, 'personal-info')}
-            {renderFileTree(professionalInfoFiles, 'professional-info')}
-            {renderFileTree(hobbiesFiles, 'hobbies')}
-            
-
+          <div className="py-2">
+            {renderTree(fileTree)}
           </div>
         </motion.div>
 
-        {/* Main Content Area */}
-        <motion.div 
+        {/* Main Content */}
+        <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
           className="flex-1 flex flex-col min-w-0"
         >
-          {/* File Tabs */}
+          {/* Tabs */}
           {openTabs.length > 0 && (
-            <div className="flex border-b border-dark-border bg-dark-secondary">
-              {openTabs.map((tab) => (
-                <div 
+            <div className="flex border-b border-dark-border bg-dark-secondary overflow-x-auto">
+              {openTabs.map(tab => (
+                <div
                   key={tab}
-                  className={`flex items-center gap-2 px-4 py-2 border-r border-dark-border cursor-pointer ${
-                    selectedFile === tab ? 'bg-dark-primary text-white' : 'text-text-secondary hover:text-white'
+                  className={`flex items-center gap-2 px-4 py-2 border-r border-dark-border cursor-pointer shrink-0 transition-colors ${
+                    selectedFile === tab
+                      ? 'bg-dark-primary text-white'
+                      : 'text-text-secondary hover:text-white'
                   }`}
                   onClick={() => setSelectedFile(tab)}
                 >
-                  <span className="text-sm">{tab}</span>
-                  <button 
-                    className="text-text-secondary hover:text-white"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      closeTab(tab);
-                    }}
+                  <Image
+                    src={getIconForFile(tab)}
+                    alt={tab}
+                    width={14}
+                    height={14}
+                  />
+                  <span className="text-sm font-fira">{tab}</span>
+                  <button
+                    className="text-text-secondary hover:text-white ml-1 leading-none"
+                    onClick={(e) => closeTab(tab, e)}
                   >
                     ×
                   </button>
@@ -392,43 +364,40 @@ export default function AboutPage() {
             </div>
           )}
 
-          {/* Content Split */}
-          <div className="flex flex-1 min-w-0">
-            {openTabs.length === 0 ? (
-              <div className="flex-1 flex flex-col items-center justify-center bg-dark-primary p-6 relative min-w-0">
-                <Image src="/images/smile_logo.png" alt="Logo" width={120} height={120} className="opacity-20 mb-6" />
-                <h2 className="text-2xl font-fira text-text-secondary mb-2">No file is open</h2>
-                <p className="text-text-secondary opacity-50">Select a file from the explorer to view its contents.</p>
-              </div>
-            ) : (
-              <div className="flex-1 bg-dark-primary p-4 lg:p-6 relative min-w-0">
-                {/* Desktop View: Line Numbers and Raw Content */}
-                <div className="hidden lg:flex gap-10 h-full overflow-y-auto overflow-x-hidden">
-                  {/* Line Numbers */}
-                  <div className="text-text-secondary text-right select-none text-lg leading-relaxed shrink-0">
-                    {Array.from({length: Math.max(1, getCurrentContent().split('\n').length)}, (_, i) => (
-                      <div key={i} className="leading-relaxed">{i + 1}</div>
-                    ))}
-                  </div>
-                  
-                  {/* Code Content */}
-                  <div className="text-text-secondary font-mono leading-relaxed whitespace-pre-wrap text-lg flex-1 min-w-0 break-words">
-                    {getCurrentContent()}
-                  </div>
+          {/* Content Area */}
+          {openTabs.length === 0 ? (
+            <div className="flex-1 flex flex-col items-center justify-center bg-dark-primary p-6 gap-4">
+              <Image src="/images/smile_logo.png" alt="Logo" width={100} height={100} className="opacity-10" />
+              <h2 className="text-xl font-fira text-text-secondary">No file is open</h2>
+              <p className="text-text-secondary opacity-50 text-sm">Select a file from the explorer to view its contents.</p>
+            </div>
+          ) : (
+            <div className="flex-1 bg-dark-primary overflow-hidden">
+              {/* Desktop: line numbers */}
+              <div className="hidden lg:flex h-full overflow-y-auto overflow-x-hidden">
+                <div className="text-text-secondary text-right select-none text-sm leading-7 px-4 py-6 shrink-0 min-w-[3rem] border-r border-dark-border/40">
+                  {lines.map((_, i) => (
+                    <div key={i}>{i + 1}</div>
+                  ))}
                 </div>
+                <div className="text-text-secondary font-mono text-sm leading-7 px-6 py-6 whitespace-pre-wrap flex-1 min-w-0">
+                  {content}
+                </div>
+              </div>
 
-                {/* Mobile View: Clean Content without Line Numbers */}
-                <div className="flex lg:hidden h-full overflow-y-auto overflow-x-hidden">
-                  <div className="text-text-secondary font-mono leading-relaxed whitespace-pre-wrap text-[15px] flex-1 min-w-0 break-words">
-                    {getCleanContent(getCurrentContent())}
-                  </div>
+              {/* Mobile: no line numbers */}
+              <div className="flex lg:hidden h-full overflow-y-auto p-4">
+                <div className="text-text-secondary font-mono text-sm leading-6 whitespace-pre-wrap flex-1 min-w-0">
+                  {content
+                    .replace(/^\/\*\*\s*\n/, '')
+                    .replace(/\n\s*\*\/\s*$/, '')
+                    .split('\n')
+                    .map(l => l.replace(/^\s*\*\s?/, ''))
+                    .join('\n')}
                 </div>
-                
-                {/* Scroll indicator */}
-                <div className="absolute right-2 top-1/2 transform -translate-y-1/2 w-1 h-16 bg-text-secondary rounded"></div>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </motion.div>
       </main>
     </div>
