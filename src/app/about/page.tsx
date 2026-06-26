@@ -154,26 +154,7 @@ export default function AboutPage() {
     }
   ];
 
-  const contactFiles: FileItem[] = [
-    {
-      name: 'nguyenhai@haismile.dev',
-      type: 'file',
-      icon: '/images/icon-message.svg',
-      content: `/**
- * Thông tin liên hệ
- * 
- * Email: nguyenhai@haismile.dev
- * Thời gian phản hồi: Trong vòng 24 giờ
- * Ngôn ngữ: Tiếng Việt, Tiếng Anh
- * 
- * Ưu tiên liên hệ cho các mục đích:
- * - Hợp tác dự án
- * - Trao đổi kỹ thuật
- * - Các cơ hội hợp tác kinh doanh
- */
-`
-    },
-  ];
+
 
   const defaultContent = `/**
  * About Me
@@ -229,7 +210,7 @@ export default function AboutPage() {
       return undefined;
     };
 
-    return findContent([...personalInfoFiles, ...professionalInfoFiles, ...hobbiesFiles, ...contactFiles]) || defaultContent;
+    return findContent([...personalInfoFiles, ...professionalInfoFiles, ...hobbiesFiles]) || defaultContent;
   };
 
   const getCleanContent = (rawContent: string) => {
@@ -242,23 +223,7 @@ export default function AboutPage() {
       .join('\n');
   };
 
-  const ContactList = () => (
-    <>
-      {contactFiles.map((item) => (
-        <div key={item.name} className="ml-4 mb-2">
-          <div 
-            className={`flex items-center gap-2 text-sm py-1 cursor-pointer hover:text-white ${
-              selectedFile === item.name ? 'text-white bg-dark-border/20' : 'text-text-secondary'
-            }`}
-            onClick={() => selectFile(item.name, item.content)}
-          >
-            {item.icon && <Image src={item.icon} alt={item.name} width={16} height={16} className="w-4 h-4" />}
-            <span>{item.name}</span>
-          </div>
-        </div>
-      ))}
-    </>
-  );
+
 
   const renderFileTree = (files: FileItem[], title: string) => {
     return (
@@ -372,13 +337,7 @@ export default function AboutPage() {
             {renderFileTree(professionalInfoFiles, 'professional-info')}
             {renderFileTree(hobbiesFiles, 'hobbies')}
             
-            <div className="p-3 mt-4 border-t border-dark-border">
-              <div className="text-text-secondary text-sm mb-4 flex items-center gap-2">
-                <span>▼</span>
-                <span>contacts</span>
-              </div>
-              <ContactList />
-            </div>
+
           </div>
         </motion.div>
 
@@ -396,13 +355,7 @@ export default function AboutPage() {
             {renderFileTree(professionalInfoFiles, 'professional-info')}
             {renderFileTree(hobbiesFiles, 'hobbies')}
             
-            <div className="p-3 mt-4 border-t border-dark-border">
-              <div className="text-text-secondary text-sm mb-4 flex items-center gap-2">
-                <span>▼</span>
-                <span>contacts</span>
-              </div>
-              <ContactList />
-            </div>
+
           </div>
         </motion.div>
 
