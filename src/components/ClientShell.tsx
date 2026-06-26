@@ -77,7 +77,7 @@ export function ClientShell({ children }: ClientShellProps) {
         <Header activeTab={activeTab} />
       </div>
       
-      <div className="flex flex-1 overflow-hidden relative z-0">
+      <div className="flex flex-col flex-1 overflow-hidden relative z-0">
         {/* Main Content Area */}
         <main className="flex-1 flex flex-col overflow-y-auto overflow-x-hidden relative min-w-0 @container">
           <PageTransition>
@@ -85,30 +85,21 @@ export function ClientShell({ children }: ClientShellProps) {
           </PageTransition>
         </main>
         
-        {/* IDE-style Split View Chat Panel */}
+        {/* IDE-style Bottom Panel (Terminal) */}
         <div 
           className={`
-            absolute inset-y-0 right-0 z-50 lg:relative lg:inset-auto bg-dark-bg flex flex-col lg:z-20 shadow-xl overflow-hidden
-            transition-all duration-700 ease-in-out border-l border-dark-border
+            w-full bg-[#0d1117] flex flex-col z-20 shadow-2xl overflow-hidden
+            transition-all duration-500 ease-in-out border-t border-dark-border shrink-0
             ${isChatOpen 
-              ? 'w-full lg:w-1/2 opacity-100 translate-x-0 pointer-events-auto' 
-              : 'w-full lg:w-0 opacity-0 translate-x-full lg:translate-x-0 pointer-events-none border-l-0 lg:border-l-0'
+              ? 'h-[50vh] lg:h-[35vh] opacity-100 translate-y-0 pointer-events-auto' 
+              : 'h-0 opacity-0 translate-y-8 pointer-events-none border-t-0'
             }
           `}
         >
-          {/* Inner container to prevent content squish during animation */}
-          <div className="w-full lg:w-[50vw] h-full flex flex-col min-w-[320px]">
-            {/* Close button on mobile */}
-            <div className="lg:hidden flex justify-end p-2 border-b border-dark-border">
-              <button 
-                onClick={() => setIsChatOpen(false)}
-                className="p-2 text-text-secondary hover:text-white"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
+          {/* Inner container */}
+          <div className="w-full h-full flex flex-col">
+            {/* Close button for mobile is no longer needed since it's a bottom panel that doesn't cover everything, 
+                but we can keep a drag handle or just rely on the toggle button in Footer */}
             <ChatBox />
           </div>
         </div>

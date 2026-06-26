@@ -14,232 +14,160 @@ interface FileItem {
 
 const fileTree: FileItem[] = [
   {
-    name: 'honghai',
+    name: 'personal-info',
     type: 'folder',
     children: [
       {
-        name: 'experience.ts',
+        name: 'bio.json',
         type: 'file',
-        icon: '/images/icon-markdown.svg',
-        content: `/**
- * WORK EXPERIENCE
- *
- * ══════════════════════════════════════════════
- *  Hoang Phuc Thanh Immigration & Trade Co., Ltd
- * ══════════════════════════════════════════════
- *
- * [1] Full-stack Developer          Sep 2025 – Present
- *     Project : Real-time Medical Device Management System
- *     Team    : 4 members
- *
- *     A system for hospitals to monitor medical device
- *     status and lifecycles in real-time.
- *
- *     • Architected core backend with Node.js (Express.js)
- *       — device data, lifecycle tracking, maintenance scheduling.
- *     • Implemented real-time alerting via Socket.io for
- *       instant notifications on device failures.
- *     • Built interactive dashboard with React.js and
- *       dynamic charts for device performance visualization.
- *     • Optimized PostgreSQL queries → ~40% faster response
- *       time under large-dataset conditions.
- *     • Managed Ubuntu servers, Nginx reverse proxy,
- *       Docker Compose and self-managed CI/CD pipelines.
- *     • Deployed MinIO S3 for centralized asset management.
- *
- * ──────────────────────────────────────────────
- * [2] Intern Front-end Developer    Jun 2025 – Sep 2025
- *     Project : CRM System
- *     Team    : 3 members
- *
- *     Internal tool to manage customer relationships
- *     and streamline communication workflows.
- *
- *     • Built responsive UI with React.js & Tailwind CSS.
- *     • Integrated RESTful APIs → improved data entry
- *       efficiency by 20%.
- *     • Worked under Agile/Scrum methodology.
- */`
+        content: `{
+  "name": "Hong Hai",
+  "role": "Full-stack Developer",
+  "location": "Ho Chi Minh City, Vietnam",
+  "bio": "I build things for the web — and sometimes for the fun of it.",
+  "motivation": "I started coding because I wanted to understand how things work under the hood. That curiosity turned into a career.",
+  "contact": "nguyenhai@haismile.dev"
+}`
       },
       {
-        name: 'tech-stack.js',
+        name: 'experience.json',
         type: 'file',
-        icon: '/images/icon-hobbies.svg',
-        content: `/**
- * TECHNICAL SKILLS
- *
- * Languages:
- *   JavaScript  TypeScript  HTML5  CSS3
- *
- * Frameworks & Platforms:
- *   NodeJS  Express.js  NestJS
- *   ReactJS  Vite  Next.js
- *
- * Database & ORM:
- *   MS SQL Server  MySQL  PostgreSQL
- *   Redis  Prisma
- *
- * API Design & Tools:
- *   RESTful API  Swagger  Postman
- *   Docker  Git
- *
- * DevOps & Infrastructure:
- *   Docker Compose  CI/CD
- *   Linux (Ubuntu)  Windows Server
- *   MinIO S3  Nginx
- *
- * Concepts:
- *   OOP  Design Patterns (Singleton, Factory)
- *   Microservices  Real-time (Socket.io)
- */`
-      },
-      {
-        name: 'education.md',
-        type: 'file',
-        icon: '/images/icon-markdown.svg',
-        content: `/**
- * EDUCATION
- *
- * Van Lang Sai Gon College          2023 – 2025
- * Major : Information Technology
- * GPA   : 3.17 / 4.0
- *
- * ─────────────────────────
- * Honors & Awards
- * ─────────────────────────
- *
- * 🥉 3rd Prize
- *    Altair Engineering Challenge 2025
- *    Excellence in solving complex engineering
- *    optimization problems.
- *
- * ⭐ Outstanding Student Award (2023 – 2024)
- *    Awarded for exceptional academic performance
- *    and active professional contributions.
- */`
-      },
+        content: `[
+  {
+    "company": "Hoang Phuc Thanh Immigration & Trade Co., Ltd",
+    "role": "Full-stack Developer",
+    "period": "Sep 2025 – Present",
+    "project": "Real-time Medical Device Management System",
+    "responsibilities": [
+      "Architected core backend with Node.js (Express.js)",
+      "Implemented real-time alerting via Socket.io",
+      "Built interactive dashboard with React.js",
+      "Optimized PostgreSQL queries → ~40% faster response time",
+      "Managed Ubuntu servers, Nginx, Docker Compose"
     ]
   },
   {
-    name: 'smile',
+    "company": "Hoang Phuc Thanh Immigration & Trade Co., Ltd",
+    "role": "Intern Front-end Developer",
+    "period": "Jun 2025 – Sep 2025",
+    "project": "CRM System",
+    "responsibilities": [
+      "Built responsive UI with React.js & Tailwind CSS",
+      "Integrated RESTful APIs → improved efficiency by 20%"
+    ]
+  }
+]`
+      },
+      {
+        name: 'education.json',
+        type: 'file',
+        content: `{
+  "institution": "Van Lang Sai Gon College",
+  "period": "2023 – 2025",
+  "major": "Information Technology",
+  "gpa": "3.17 / 4.0",
+  "awards": [
+    "🥉 3rd Prize - Altair Engineering Challenge 2025",
+    "⭐ Outstanding Student Award (2023 – 2024)"
+  ]
+}`
+      },
+      {
+        name: 'interests.json',
+        type: 'file',
+        content: `{
+  "sports": ["Gym 💪", "Football ⚽"],
+  "music": ["Playing Guitar 🎸", "Rap Music 🎧"],
+  "philosophy": "Build things that matter. Keep it simple. Smile while doing it. 😊"
+}`
+      }
+    ]
+  },
+  {
+    name: 'tech-stack',
     type: 'folder',
     children: [
       {
-        name: 'bio.txt',
+        name: 'frontend.json',
         type: 'file',
-        icon: '/images/icon-markdown.svg',
-        content: `/**
- * HI THERE 👋 I'M HAI
- *
- * I'm a Full-stack Developer based in Ho Chi Minh City,
- * Vietnam. I build things for the web — and sometimes
- * for the fun of it.
- *
- * I started coding because I wanted to understand how
- * things work under the hood. That curiosity turned into
- * a career, and I haven't looked back since.
- *
- * My stack leans backend-heavy (Node.js, NestJS, PostgreSQL)
- * but I genuinely enjoy crafting smooth frontend experiences
- * too. I believe good software is both powerful and pleasant
- * to use.
- *
- * When I'm not writing code, I'm probably:
- *   → Playing strategy games 🎮
- *   → Exploring a new framework or tool
- *   → Listening to lo-fi while debugging at midnight 🎵
- *
- * ──────────────────────────────────────────────
- * A bit about the name "haismile9":
- *
- *   hai   = my name (Hong Hai)
- *   smile = the vibe I try to bring to everything I build
- *   9     = just a number, but it stuck 😄
- * ──────────────────────────────────────────────
- *
- * I'm always open to interesting conversations,
- * collaboration, or just saying hello.
- *
- * 📬 nguyenhai@haismile.dev
- */`
+        content: `{
+  "title": "Frontend Technologies",
+  "languages": [
+    "JavaScript",
+    "TypeScript",
+    "HTML5",
+    "CSS3"
+  ],
+  "frameworks": [
+    "React.js",
+    "Next.js",
+    "Vite"
+  ],
+  "styling": [
+    "Tailwind CSS",
+    "Framer Motion"
+  ]
+}`
       },
       {
-        name: 'interests.md',
+        name: 'backend.json',
         type: 'file',
-        icon: '/images/icon-hobbies.svg',
-        content: `/**
- * WHAT I'M INTO
- *
- * 💻 Technology
- *   I love staying on top of what's happening in the
- *   backend and DevOps world. Recently exploring:
- *   → Event-driven architecture
- *   → Edge computing & serverless
- *   → Rust (because everyone says it's hard 😄)
- *
- * 🎮 Gaming
- *   Strategy games are my comfort zone.
- *   I like games that make you think 2 steps ahead.
- *   Current obsession: anything with base-building mechanics.
- *
- * 🎵 Music
- *   Lo-fi hip hop and ambient music when coding.
- *   Occasionally something with more energy for debugging
- *   sessions that go past midnight.
- *
- * 🧩 Problem Solving
- *   There's something deeply satisfying about breaking
- *   a complex problem into small, solvable pieces.
- *   It's basically what I do all day — and I love it.
- *
- * 📖 Learning
- *   I read tech blogs, watch conference talks, and
- *   occasionally fall down Wikipedia rabbit holes.
- *   Knowledge compounds — I believe in learning daily.
- */`
+        content: `{
+  "title": "Backend Technologies",
+  "languages": [
+    "Node.js"
+  ],
+  "frameworks": [
+    "Express.js",
+    "NestJS"
+  ],
+  "databases": [
+    "PostgreSQL",
+    "MySQL",
+    "MS SQL Server",
+    "Redis"
+  ],
+  "orm": [
+    "Prisma"
+  ]
+}`
       },
       {
-        name: 'fun-facts.js',
+        name: 'others.json',
         type: 'file',
-        icon: '/images/icon-hobbies.svg',
-        content: `/**
- * FUN FACTS ABOUT ME
- *
- * const hai = {
- *
- *   currentCity    : "Ho Chi Minh City, Vietnam 🇻🇳",
- *
- *   languages      : ["Vietnamese 🇻🇳", "English 🇬🇧"],
- *
- *   coffeeOrTea    : "Coffee ☕ (always)",
- *
- *   codeEditor     : "VS Code (dark theme, obviously)",
- *
- *   typingSpeed    : "fast enough to keep up with my thoughts",
- *
- *   debuggingStyle : "console.log() first, ask questions later",
- *
- *   superpower     : "Turning caffeine into backend services",
- *
- *   lifePhilosophy : "Build things that matter. Keep it simple.
- *                     Smile while doing it. 😊",
- *
- *   funFact        : "The name 'haismile9' was supposed to be
- *                     temporary. That was years ago.",
- *
- *   currentlyLearning: "Always something new.",
- *
- * };
- */`
+        content: `{
+  "title": "DevOps & Tools",
+  "api": [
+    "RESTful API",
+    "Swagger",
+    "Postman",
+    "Socket.io"
+  ],
+  "devops": [
+    "Docker",
+    "Docker Compose",
+    "CI/CD",
+    "Nginx"
+  ],
+  "infrastructure": [
+    "Linux (Ubuntu)",
+    "Windows Server",
+    "MinIO S3"
+  ],
+  "versionControl": [
+    "Git",
+    "GitHub"
+  ]
+}`
       }
     ]
   }
 ];
 
 export default function AboutPage() {
-  const [openTabs, setOpenTabs] = useState<string[]>(['bio.txt', 'experience.ts']);
-  const [selectedFile, setSelectedFile] = useState<string>('bio.txt');
-  const [expandedFolders, setExpandedFolders] = useState<string[]>(['honghai', 'smile']);
+  const [openTabs, setOpenTabs] = useState<string[]>(['bio.json', 'others.json']);
+  const [selectedFile, setSelectedFile] = useState<string>('others.json');
+  const [expandedFolders, setExpandedFolders] = useState<string[]>(['personal-info', 'tech-stack']);
 
   const toggleFolder = (folderName: string) => {
     setExpandedFolders(prev =>
@@ -279,13 +207,30 @@ export default function AboutPage() {
   };
 
   const getIconForFile = (name: string) => {
-    if (name.endsWith('.ts') || name.endsWith('.js') || name.endsWith('.json')) return '/images/icon-hobbies.svg';
-    return '/images/icon-markdown.svg';
+    switch (name) {
+      case 'bio.json':
+        return '/images/icon-personal-info.svg';
+      case 'experience.json':
+        return '/images/icon-professional-info.svg';
+      case 'education.json':
+        return '/images/icon-markdown.svg';
+      case 'interests.json':
+        return '/images/icon-hobbies.svg';
+      case 'frontend.json':
+        return '/images/icon-react.svg';
+      case 'backend.json':
+        return '/images/icon-markdown.svg'; // Or another icon if available
+      case 'others.json':
+        return '/images/icon-markdown.svg';
+      default:
+        if (name.endsWith('.ts') || name.endsWith('.js') || name.endsWith('.json')) return '/images/icon-hobbies.svg';
+        return '/images/icon-markdown.svg';
+    }
   };
 
   const getFolderColor = (name: string) => {
-    if (name === 'honghai') return 'text-accent-primary';
-    if (name === 'smile') return 'text-accent-orange';
+    if (name === 'personal-info') return 'text-accent-primary';
+    if (name === 'tech-stack') return 'text-accent-orange';
     return 'text-accent-orange';
   };
 
@@ -453,12 +398,7 @@ export default function AboutPage() {
               {/* Mobile: clean content */}
               <div className="flex lg:hidden h-full overflow-y-auto p-4">
                 <div className="text-text-secondary font-mono text-sm leading-6 whitespace-pre-wrap flex-1 min-w-0">
-                  {content
-                    .replace(/^\/\*\*\s*\n/, '')
-                    .replace(/\n\s*\*\/\s*$/, '')
-                    .split('\n')
-                    .map(l => l.replace(/^\s*\*\s?/, ''))
-                    .join('\n')}
+                  {content}
                 </div>
               </div>
             </div>
