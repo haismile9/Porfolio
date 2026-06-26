@@ -176,13 +176,13 @@ export default function AboutPage() {
 `
     },
     {
-      name: '0334204526',
+      name: 'zalo-me',
       type: 'file',
       icon: '/images/icon-phone.svg', 
       content: `/**
  * Liên hệ qua điện thoại
  * 
- * Số điện thoại: 0334204526
+ * Zalo: https://zalo.me/0334204526
  * Thời gian liên hệ: Thứ 2 - Thứ 6, từ 9h sáng đến 6h chiều
  * 
  * Phù hợp nhất cho:
@@ -261,6 +261,24 @@ export default function AboutPage() {
       .join('\n');
   };
 
+  const ContactList = () => (
+    <>
+      {contactFiles.map((item) => (
+        <div key={item.name} className="ml-4 mb-2">
+          <div 
+            className={`flex items-center gap-2 text-sm py-1 cursor-pointer hover:text-white ${
+              selectedFile === item.name ? 'text-white bg-dark-border/20' : 'text-text-secondary'
+            }`}
+            onClick={() => selectFile(item.name, item.content)}
+          >
+            {item.icon && <Image src={item.icon} alt={item.name} width={16} height={16} className="w-4 h-4" />}
+            <span>{item.name}</span>
+          </div>
+        </div>
+      ))}
+    </>
+  );
+
   const renderFileTree = (files: FileItem[], title: string) => {
     return (
       <motion.div 
@@ -303,12 +321,12 @@ export default function AboutPage() {
                 >
                   ▶
                 </motion.span>
-                <motion.img 
-                  src="/images/icon-folder.svg" 
-                  alt="folder" 
-                  className="w-4 h-4"
+                <motion.div
                   whileHover={{ scale: 1.1 }}
-                />
+                  className="w-4 h-4 flex items-center justify-center"
+                >
+                  <Image src="/images/icon-folder.svg" alt="folder" width={16} height={16} />
+                </motion.div>
               </>
             )}
             <span>{item.name}</span>
@@ -337,12 +355,12 @@ export default function AboutPage() {
                     whileTap={{ scale: 0.98 }}
                   >
                     {child.icon && (
-                      <motion.img 
-                        src={child.icon} 
-                        alt={child.name} 
-                        className="w-4 h-4"
+                      <motion.div
                         whileHover={{ rotate: 5 }}
-                      />
+                        className="w-4 h-4 flex items-center justify-center"
+                      >
+                        <Image src={child.icon} alt={child.name} width={16} height={16} />
+                      </motion.div>
                     )}
                     <span>{child.name}</span>
                   </motion.div>
@@ -367,13 +385,13 @@ export default function AboutPage() {
               onClick={() => setActiveTab('personal-info')}
               className={`w-6 h-6 ${activeTab === 'personal-info' ? 'opacity-100' : 'opacity-50'}`}
             >
-              <Image src="/images/icon-professional-info.svg" alt="Personal Info" width={24} height={24} />
+              <Image src="/images/icon-personal-info.svg" alt="Personal Info" width={24} height={24} />
             </button>
             <button
               onClick={() => setActiveTab('professional-info')}
               className={`w-6 h-6 ${activeTab === 'professional-info' ? 'opacity-100' : 'opacity-50'}`}
             >
-              <Image src="/images/icon-personal-info.svg" alt="Professional Info" width={24} height={24} />
+              <Image src="/images/icon-professional-info.svg" alt="Professional Info" width={24} height={24} />
             </button>
             <button
               onClick={() => setActiveTab('hobbies')}
@@ -394,19 +412,7 @@ export default function AboutPage() {
                       <span>▼</span>
                       <span>contacts</span>
                     </div>
-                    {contactFiles.map((item) => (
-                      <div key={item.name} className="ml-4 mb-2">
-                        <div 
-                          className={`flex items-center gap-2 text-sm py-1 cursor-pointer hover:text-white ${
-                            selectedFile === item.name ? 'text-white bg-dark-border/20' : 'text-text-secondary'
-                          }`}
-                          onClick={() => selectFile(item.name, item.content)}
-                        >
-                          {item.icon && <Image src={item.icon} alt={item.name} width={16} height={16} className="w-4 h-4" />}
-                          <span>{item.name}</span>
-                        </div>
-                      </div>
-                    ))}
+                    <ContactList />
                   </div>
                 </>
               )}
@@ -508,19 +514,7 @@ export default function AboutPage() {
                   exit={{ height: 0, opacity: 0 }}
                   className="overflow-hidden bg-dark-bg p-3"
                 >
-                  {contactFiles.map((item) => (
-                    <div key={item.name} className="ml-4 mb-2">
-                      <div 
-                        className={`flex items-center gap-2 text-sm py-1 cursor-pointer hover:text-white ${
-                          selectedFile === item.name ? 'text-white bg-dark-border/20' : 'text-text-secondary'
-                        }`}
-                        onClick={() => selectFile(item.name, item.content)}
-                      >
-                        {item.icon && <Image src={item.icon} alt={item.name} width={16} height={16} className="w-4 h-4" />}
-                        <span>{item.name}</span>
-                      </div>
-                    </div>
-                  ))}
+                  <ContactList />
                 </motion.div>
               )}
             </AnimatePresence>
@@ -557,34 +551,40 @@ export default function AboutPage() {
 
           {/* Content Split */}
           <div className="flex flex-1 min-w-0">
-            {/* Code Area */}
-            <div className="flex-1 bg-dark-primary p-4 lg:p-6 relative min-w-0">
-              {/* Desktop View: Line Numbers and Raw Content */}
-              <div className="hidden lg:flex gap-10 h-full overflow-y-auto overflow-x-hidden">
-                {/* Line Numbers */}
-                <div className="text-text-secondary text-right select-none text-lg leading-relaxed shrink-0">
-                  {Array.from({length: Math.max(1, getCurrentContent().split('\n').length)}, (_, i) => (
-                    <div key={i} className="leading-relaxed">{i + 1}</div>
-                  ))}
+            {openTabs.length === 0 ? (
+              <div className="flex-1 flex flex-col items-center justify-center bg-dark-primary p-6 relative min-w-0">
+                <Image src="/images/smile_logo.png" alt="Logo" width={120} height={120} className="opacity-20 mb-6" />
+                <h2 className="text-2xl font-fira text-text-secondary mb-2">No file is open</h2>
+                <p className="text-text-secondary opacity-50">Select a file from the explorer to view its contents.</p>
+              </div>
+            ) : (
+              <div className="flex-1 bg-dark-primary p-4 lg:p-6 relative min-w-0">
+                {/* Desktop View: Line Numbers and Raw Content */}
+                <div className="hidden lg:flex gap-10 h-full overflow-y-auto overflow-x-hidden">
+                  {/* Line Numbers */}
+                  <div className="text-text-secondary text-right select-none text-lg leading-relaxed shrink-0">
+                    {Array.from({length: Math.max(1, getCurrentContent().split('\n').length)}, (_, i) => (
+                      <div key={i} className="leading-relaxed">{i + 1}</div>
+                    ))}
+                  </div>
+                  
+                  {/* Code Content */}
+                  <div className="text-text-secondary font-mono leading-relaxed whitespace-pre-wrap text-lg flex-1 min-w-0 break-words">
+                    {getCurrentContent()}
+                  </div>
+                </div>
+
+                {/* Mobile View: Clean Content without Line Numbers */}
+                <div className="flex lg:hidden h-full overflow-y-auto overflow-x-hidden">
+                  <div className="text-text-secondary font-mono leading-relaxed whitespace-pre-wrap text-[15px] flex-1 min-w-0 break-words">
+                    {getCleanContent(getCurrentContent())}
+                  </div>
                 </div>
                 
-                {/* Code Content */}
-                <div className="text-text-secondary font-mono leading-relaxed whitespace-pre-wrap text-lg flex-1 min-w-0 break-words">
-                  {getCurrentContent()}
-                </div>
+                {/* Scroll indicator */}
+                <div className="absolute right-2 top-1/2 transform -translate-y-1/2 w-1 h-16 bg-text-secondary rounded"></div>
               </div>
-
-              {/* Mobile View: Clean Content without Line Numbers */}
-              <div className="flex lg:hidden h-full overflow-y-auto overflow-x-hidden">
-                <div className="text-text-secondary font-mono leading-relaxed whitespace-pre-wrap text-[15px] flex-1 min-w-0 break-words">
-                  {getCleanContent(getCurrentContent())}
-                </div>
-              </div>
-
-              
-              {/* Scroll indicator */}
-              <div className="absolute right-2 top-1/2 transform -translate-y-1/2 w-1 h-16 bg-text-secondary rounded"></div>
-            </div>
+            )}
           </div>
         </div>
       </main>
