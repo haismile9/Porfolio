@@ -33,13 +33,10 @@ export function Header({ activeTab = '_hello' }: HeaderProps) {
           <Image 
             src="/images/smile_logo/OIP-Photoroom.png" 
             alt="hai-smile logo" 
-            width={24} 
-            height={24}
-            className="w-6 h-6 object-contain"
+            width={32} 
+            height={32}
+            className="w-8 h-8 object-contain"
           />
-          <span className="text-base font-fira text-text-secondary">
-            hai-smile
-          </span>
         </div>
         
         {/* Hamburger Menu Toggle (Mobile Only) */}
