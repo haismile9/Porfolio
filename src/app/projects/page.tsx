@@ -62,7 +62,8 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1
+      delayChildren: 0.6,
+      staggerChildren: 0.2
     }
   }
 };
@@ -127,7 +128,7 @@ export default function ProjectsPage() {
           className="w-full lg:w-80 bg-dark-secondary lg:border-r border-b lg:border-b-0 border-dark-border flex flex-col shrink-0 max-h-[40vh] lg:max-h-none overflow-y-auto lg:overflow-visible"
           initial={{ x: -300, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
         >
           {/* Projects Section */}
           <div className="p-4 lg:p-6">
@@ -228,7 +229,7 @@ export default function ProjectsPage() {
             className="flex border-b border-dark-border bg-dark-secondary"
             initial={{ y: -50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.3, duration: 0.5 }}
+            transition={{ delay: 0.4, duration: 0.5 }}
           >
             <motion.div 
               className="flex items-center gap-3 px-6 py-3 border-r border-dark-border bg-dark-primary"
@@ -361,7 +362,7 @@ export default function ProjectsPage() {
               className="w-10 flex flex-col items-center py-3 gap-2 border-l border-dark-border"
               initial={{ opacity: 0, x: 10 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.8 }}
+              transition={{ delay: 1.0 }}
             >
               <motion.div 
                 className="w-1.5 h-6 bg-accent-blue rounded-full"

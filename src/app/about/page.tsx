@@ -361,7 +361,12 @@ export default function AboutPage() {
     <div className="flex-1 flex flex-col overflow-hidden relative bg-dark-primary min-w-0">
       <main className="flex-1 flex flex-col lg:flex-row overflow-y-auto lg:overflow-hidden min-w-0">
         {/* Desktop Sidebars */}
-        <div className="hidden lg:flex w-80 bg-dark-secondary border-r border-dark-border shrink-0 h-full min-w-0">
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="hidden lg:flex w-80 bg-dark-secondary border-r border-dark-border shrink-0 h-full min-w-0"
+        >
           {/* Leftmost Sidebar - Tab Icons */}
           <div className="w-16 flex flex-col justify-start items-center py-4 gap-8 border-r border-dark-border">
             <button
@@ -385,7 +390,12 @@ export default function AboutPage() {
           </div>
 
           {/* Second Sidebar - File Tree Content */}
-          <div className="flex-1 flex flex-col overflow-hidden min-w-0">
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="flex-1 flex flex-col overflow-hidden min-w-0"
+          >
             <div className="flex-1 overflow-y-auto">
               {activeTab === 'personal-info' && (
                 <>
@@ -402,11 +412,16 @@ export default function AboutPage() {
               {activeTab === 'professional-info' && renderFileTree(professionalInfoFiles, 'professional-info')}
               {activeTab === 'hobbies' && renderFileTree(hobbiesFiles, 'hobbies')}
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
         {/* Mobile Accordion Sidebar */}
-        <div className="lg:hidden flex flex-col w-full bg-dark-bg shrink-0 min-w-0">
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="lg:hidden flex flex-col w-full bg-dark-bg shrink-0 min-w-0"
+        >
           <div className="text-text-secondary px-4 py-3 border-b border-dark-border font-fira text-sm">
             _about-me
           </div>
@@ -502,10 +517,15 @@ export default function AboutPage() {
               )}
             </AnimatePresence>
           </div>
-        </div>
+        </motion.div>
 
         {/* Main Content Area */}
-        <div className="flex-1 flex flex-col min-w-0">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+          className="flex-1 flex flex-col min-w-0"
+        >
           {/* File Tabs */}
           {openTabs.length > 0 && (
             <div className="flex border-b border-dark-border bg-dark-secondary">
@@ -569,7 +589,7 @@ export default function AboutPage() {
               </div>
             )}
           </div>
-        </div>
+        </motion.div>
       </main>
     </div>
   );

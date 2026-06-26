@@ -122,7 +122,7 @@ button.addEventListener('click', () => {
         <motion.div 
           initial={{ x: -50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
           className="w-full lg:w-[311px] lg:border-r border-b lg:border-b-0 border-border-primary shrink-0 max-h-[40vh] lg:max-h-none overflow-y-auto lg:overflow-visible"
         >
           {/* Mobile Title */}
@@ -234,7 +234,7 @@ button.addEventListener('click', () => {
           <motion.div 
             initial={{ y: 50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
             className="w-full lg:w-[632px] lg:border-r border-dark-border flex flex-col items-center justify-center p-6 lg:p-10 shrink-0"
           >
             <AnimatePresence mode="wait">
@@ -417,7 +417,7 @@ button.addEventListener('click', () => {
           <motion.div 
             initial={{ x: 50, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
             className="hidden lg:block flex-1 border-border-primary p-10"
           >
             <div className="bg-dark-secondary rounded-lg border border-border-primary h-full overflow-hidden">
