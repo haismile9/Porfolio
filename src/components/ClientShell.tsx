@@ -24,7 +24,7 @@ export function ClientShell({ children }: ClientShellProps) {
   else if (pathname === '/contact') activeTab = '_contact-me'
 
   return (
-    <div className="flex flex-col h-screen w-screen overflow-hidden bg-dark-bg">
+    <div className="flex flex-col h-[100dvh] w-screen overflow-hidden bg-dark-bg">
       {pathname === '/' && (
         <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
           {/* Blue blur - positioned in top-right area */}
