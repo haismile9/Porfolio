@@ -12,10 +12,28 @@ interface Message {
   createdAt: number;
 }
 
+const BAD_WORDS = [
+  'địt', 'dit', 'dkm', 'đkm', 'vcl', 'đcm', 'dcm', 'vl', 'đm', 'dm', 
+  'cặc', 'cac', 'lồn', 'lon', 'cứt', 'cut', 'đĩ', 'di', 'đụ', 'du', 'đụ mẹ', 'dmẹ', 'đmẹ', 'dmm', 'đmm', 'đm mày', 'dm mày', 
+  'fuck', 'fuk', 'fck', 'shit', 'bitch', 'asshole', 'dick', 'pussy', 'sex', 'porn', 'nude', 'slut'
+];
+
+const filterBadWords = (text: string) => {
+  let filtered = text;
+  BAD_WORDS.forEach(word => {
+    // case-insensitive replacement
+    const regex = new RegExp(word, 'gi');
+    filtered = filtered.replace(regex, '***');
+  });
+  return filtered;
+};
+
 export function ChatBox() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
   const [username, setUsername] = useState('Anonymous');
+  const [lastMessageTime, setLastMessageTime] = useState<number>(0);
+  const [countdown, setCountdown] = useState<number>(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Load or generate username
@@ -61,6 +79,17 @@ export function ChatBox() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  // Handle countdown
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (countdown > 0) {
+      timer = setInterval(() => {
+        setCountdown((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [countdown]);
+
   const handleSendMessage = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (!inputText.trim()) return;
@@ -76,15 +105,21 @@ export function ChatBox() {
       }
     }
 
+    // Check cooldown
+    if (countdown > 0) return;
+
     // Send message to Firebase
     try {
+      const filteredText = filterBadWords(inputText);
       const messagesRef = ref(db, 'messages');
       push(messagesRef, {
         username,
-        text: inputText,
+        text: filteredText,
         createdAt: serverTimestamp(),
       });
       setInputText('');
+      setLastMessageTime(Date.now());
+      setCountdown(5);
     } catch (error) {
       console.error('Error sending message:', error);
       alert('Error connecting to chat. Make sure Firebase is configured in .env.local');
@@ -165,14 +200,16 @@ export function ChatBox() {
           />
           <button
             onClick={() => handleSendMessage()}
-            disabled={!inputText.trim()}
+            disabled={!inputText.trim() || countdown > 0}
             className="bg-dark-border text-text-primary px-4 py-2 rounded-lg font-medium hover:bg-opacity-80 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
           >
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="22" y1="2" x2="11" y2="13"></line>
-              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-            </svg>
-            Send
+            {countdown <= 0 && (
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              </svg>
+            )}
+            {countdown > 0 ? `Wait ${countdown}s` : 'Send'}
           </button>
         </div>
       </div>
