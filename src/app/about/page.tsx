@@ -16,8 +16,6 @@ interface FileItem {
 }
 
 export default function AboutPage() {
-  const [activeTab, setActiveTab] = useState<TabType>('personal-info');
-  const [activeMobileTab, setActiveMobileTab] = useState<TabType | 'contacts' | ''>('');
   const [openTabs, setOpenTabs] = useState<string[]>(['summary.txt']);
   const [selectedFile, setSelectedFile] = useState<string>('summary.txt');
   const [expandedFolders, setExpandedFolders] = useState<string[]>(['bio', 'education', 'experience', 'skills', 'interests']);
@@ -360,162 +358,51 @@ export default function AboutPage() {
   return (
     <div className="flex-1 flex flex-col overflow-hidden relative bg-dark-primary min-w-0">
       <main className="flex-1 flex flex-col lg:flex-row overflow-y-auto lg:overflow-hidden min-w-0">
-        {/* Desktop Sidebars */}
+        {/* Desktop Sidebar */}
         <motion.div 
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="hidden lg:flex w-80 bg-dark-secondary border-r border-dark-border shrink-0 h-full min-w-0"
+          className="hidden lg:flex w-64 bg-dark-secondary border-r border-dark-border shrink-0 h-full min-w-0 flex-col"
         >
-          {/* Leftmost Sidebar - Tab Icons */}
-          <div className="w-16 flex flex-col justify-start items-center py-4 gap-8 border-r border-dark-border">
-            <button
-              onClick={() => setActiveTab('personal-info')}
-              className={`w-6 h-6 ${activeTab === 'personal-info' ? 'opacity-100' : 'opacity-50'}`}
-            >
-              <Image src="/images/icon-personal-info.svg" alt="Personal Info" width={24} height={24} />
-            </button>
-            <button
-              onClick={() => setActiveTab('professional-info')}
-              className={`w-6 h-6 ${activeTab === 'professional-info' ? 'opacity-100' : 'opacity-50'}`}
-            >
-              <Image src="/images/icon-professional-info.svg" alt="Professional Info" width={24} height={24} />
-            </button>
-            <button
-              onClick={() => setActiveTab('hobbies')}
-              className={`w-6 h-6 ${activeTab === 'hobbies' ? 'opacity-100' : 'opacity-50'}`}
-            >
-              <Image src="/images/icon-hobbies.svg" alt="Hobbies" width={24} height={24} />
-            </button>
-          </div>
 
-          {/* Second Sidebar - File Tree Content */}
-          <motion.div 
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="flex-1 flex flex-col overflow-hidden min-w-0"
-          >
-            <div className="flex-1 overflow-y-auto">
-              {activeTab === 'personal-info' && (
-                <>
-                  {renderFileTree(personalInfoFiles, 'personal-info')}
-                  <div className="p-3 mt-4 border-t border-dark-border">
-                    <div className="text-accent-orange text-sm mb-4 flex items-center gap-2">
-                      <span>▼</span>
-                      <span>contacts</span>
-                    </div>
-                    <ContactList />
-                  </div>
-                </>
-              )}
-              {activeTab === 'professional-info' && renderFileTree(professionalInfoFiles, 'professional-info')}
-              {activeTab === 'hobbies' && renderFileTree(hobbiesFiles, 'hobbies')}
+          
+          <div className="flex-1 overflow-y-auto">
+            {renderFileTree(personalInfoFiles, 'personal-info')}
+            {renderFileTree(professionalInfoFiles, 'professional-info')}
+            {renderFileTree(hobbiesFiles, 'hobbies')}
+            
+            <div className="p-3 mt-4 border-t border-dark-border">
+              <div className="text-text-secondary text-sm mb-4 flex items-center gap-2">
+                <span>▼</span>
+                <span>contacts</span>
+              </div>
+              <ContactList />
             </div>
-          </motion.div>
+          </div>
         </motion.div>
 
-        {/* Mobile Accordion Sidebar */}
+        {/* Mobile Sidebar */}
         <motion.div 
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
           className="lg:hidden flex flex-col w-full bg-dark-bg shrink-0 min-w-0"
         >
-          <div className="text-text-secondary px-4 py-3 border-b border-dark-border font-fira text-sm">
-            _about-me
-          </div>
+
           
-          {/* personal-info */}
-          <div className="flex flex-col border-b border-dark-border">
-            <button 
-              onClick={() => setActiveMobileTab(activeMobileTab === 'personal-info' ? '' : 'personal-info')} 
-              className="px-4 py-3 bg-dark-secondary flex items-center gap-2 text-white font-fira text-sm"
-            >
-              <span className={`transform transition-transform text-text-secondary ${activeMobileTab === 'personal-info' ? 'rotate-90' : ''}`}>▶</span>
-              <span>personal-info</span>
-            </button>
-            <AnimatePresence>
-              {activeMobileTab === 'personal-info' && (
-                <motion.div 
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  className="overflow-hidden bg-dark-bg"
-                >
-                  {renderFileTree(personalInfoFiles, 'personal-info')}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          {/* professional-info */}
-          <div className="flex flex-col border-b border-dark-border">
-            <button 
-              onClick={() => setActiveMobileTab(activeMobileTab === 'professional-info' ? '' : 'professional-info')} 
-              className="px-4 py-3 bg-dark-secondary flex items-center gap-2 text-white font-fira text-sm"
-            >
-              <span className={`transform transition-transform text-text-secondary ${activeMobileTab === 'professional-info' ? 'rotate-90' : ''}`}>▶</span>
-              <span>professional-info</span>
-            </button>
-            <AnimatePresence>
-              {activeMobileTab === 'professional-info' && (
-                <motion.div 
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  className="overflow-hidden bg-dark-bg"
-                >
-                  {renderFileTree(professionalInfoFiles, 'professional-info')}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          {/* hobbies */}
-          <div className="flex flex-col border-b border-dark-border">
-            <button 
-              onClick={() => setActiveMobileTab(activeMobileTab === 'hobbies' ? '' : 'hobbies')} 
-              className="px-4 py-3 bg-dark-secondary flex items-center gap-2 text-white font-fira text-sm"
-            >
-              <span className={`transform transition-transform text-text-secondary ${activeMobileTab === 'hobbies' ? 'rotate-90' : ''}`}>▶</span>
-              <span>hobbies</span>
-            </button>
-            <AnimatePresence>
-              {activeMobileTab === 'hobbies' && (
-                <motion.div 
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  className="overflow-hidden bg-dark-bg"
-                >
-                  {renderFileTree(hobbiesFiles, 'hobbies')}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          {/* contacts */}
-          <div className="flex flex-col border-b border-dark-border">
-            <button 
-              onClick={() => setActiveMobileTab(activeMobileTab === 'contacts' ? '' : 'contacts')} 
-              className="px-4 py-3 bg-dark-secondary flex items-center gap-2 text-white font-fira text-sm"
-            >
-              <span className={`transform transition-transform text-text-secondary ${activeMobileTab === 'contacts' ? 'rotate-90' : ''}`}>▶</span>
-              <span>contacts</span>
-            </button>
-            <AnimatePresence>
-              {activeMobileTab === 'contacts' && (
-                <motion.div 
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  className="overflow-hidden bg-dark-bg p-3"
-                >
-                  <ContactList />
-                </motion.div>
-              )}
-            </AnimatePresence>
+          <div className="bg-dark-secondary">
+            {renderFileTree(personalInfoFiles, 'personal-info')}
+            {renderFileTree(professionalInfoFiles, 'professional-info')}
+            {renderFileTree(hobbiesFiles, 'hobbies')}
+            
+            <div className="p-3 mt-4 border-t border-dark-border">
+              <div className="text-text-secondary text-sm mb-4 flex items-center gap-2">
+                <span>▼</span>
+                <span>contacts</span>
+              </div>
+              <ContactList />
+            </div>
           </div>
         </motion.div>
 
