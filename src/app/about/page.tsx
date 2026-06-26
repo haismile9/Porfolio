@@ -175,23 +175,6 @@ export default function AboutPage() {
  */
 `
     },
-    {
-      name: 'zalo-me',
-      type: 'file',
-      icon: '/images/icon-phone.svg', 
-      content: `/**
- * Liên hệ qua điện thoại
- * 
- * Zalo: https://zalo.me/0334204526
- * Thời gian liên hệ: Thứ 2 - Thứ 6, từ 9h sáng đến 6h chiều
- * 
- * Phù hợp nhất cho:
- * - Các vấn đề dự án khẩn cấp
- * - Tư vấn kỹ thuật
- * - Sắp xếp lịch phỏng vấn
- */
-`
-    }
   ];
 
   const defaultContent = `/**
