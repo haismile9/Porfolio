@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
-import { GitHubHeatmap } from '@/components/GitHubHeatmap';
 
 interface FileItem {
   name: string;
@@ -81,11 +80,6 @@ const fileTree: FileItem[] = [
   "music": ["Playing Guitar 🎸", "Rap Music 🎧"],
   "philosophy": "Build things that matter. Keep it simple. Smile while doing it. 😊"
 }`
-      },
-      {
-        name: 'github-activity.svg',
-        type: 'file',
-        content: ''
       }
     ]
   },
@@ -228,8 +222,6 @@ export default function AboutPage() {
         return '/images/icon-markdown.svg'; // Or another icon if available
       case 'others.json':
         return '/images/icon-markdown.svg';
-      case 'github-activity.svg':
-        return '/images/github-icon.svg';
       default:
         if (name.endsWith('.ts') || name.endsWith('.js') || name.endsWith('.json')) return '/images/icon-hobbies.svg';
         return '/images/icon-markdown.svg';
@@ -388,10 +380,6 @@ export default function AboutPage() {
               <p className="text-text-secondary opacity-50 text-sm text-center">
                 Select a file from the explorer to view its contents.
               </p>
-            </div>
-          ) : selectedFile === 'github-activity.svg' ? (
-            <div className="flex-1 bg-dark-primary overflow-hidden">
-              <GitHubHeatmap />
             </div>
           ) : (
             <div className="flex-1 bg-dark-primary overflow-hidden">
