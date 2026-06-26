@@ -563,7 +563,7 @@ export default function AboutPage() {
               <div className="hidden lg:flex gap-10 h-full overflow-y-auto overflow-x-hidden">
                 {/* Line Numbers */}
                 <div className="text-text-secondary text-right select-none text-lg leading-relaxed shrink-0">
-                  {Array.from({length: 16}, (_, i) => (
+                  {Array.from({length: Math.max(1, getCurrentContent().split('\n').length)}, (_, i) => (
                     <div key={i} className="leading-relaxed">{i + 1}</div>
                   ))}
                 </div>
