@@ -22,14 +22,13 @@ const fileTree: FileItem[] = [
         type: 'file',
         icon: '/images/icon-markdown.svg',
         content: `/**
- * EXPERIENCE & PROJECTS
+ * WORK EXPERIENCE
  *
  * ══════════════════════════════════════════════
- *  WORK EXPERIENCE
+ *  Hoang Phuc Thanh Immigration & Trade Co., Ltd
  * ══════════════════════════════════════════════
  *
  * [1] Full-stack Developer          Sep 2025 – Present
- *     Hoang Phuc Thanh Immigration & Trade Co., Ltd
  *     Project : Real-time Medical Device Management System
  *     Team    : 4 members
  *
@@ -50,7 +49,6 @@ const fileTree: FileItem[] = [
  *
  * ──────────────────────────────────────────────
  * [2] Intern Front-end Developer    Jun 2025 – Sep 2025
- *     Hoang Phuc Thanh Immigration & Trade Co., Ltd
  *     Project : CRM System
  *     Team    : 3 members
  *
@@ -61,31 +59,6 @@ const fileTree: FileItem[] = [
  *     • Integrated RESTful APIs → improved data entry
  *       efficiency by 20%.
  *     • Worked under Agile/Scrum methodology.
- *
- * ══════════════════════════════════════════════
- *  PERSONAL PROJECT
- * ══════════════════════════════════════════════
- *
- * [3] E-commerce Platform           Nov 2025 – Present
- *     Stack   : Express.js, Next.js, React.js,
- *               PostgreSQL, MinIO S3
- *     Website : lumieyewear.com
- *     GitHub  : haismile9/LUMIweb
- *
- *     Built independently to go beyond internship scope
- *     and apply full-stack skills end-to-end.
- *
- *     🛍  E-commerce Ecosystem
- *         High-performance storefront + admin dashboard
- *         using Next.js (SSR) and React.js.
- *
- *     🔐 Backend & Security
- *         Centralized backend with Express.js, JWT auth
- *         and RBAC for role-based access control.
- *
- *     💳 Storage & Payment
- *         MinIO S3 for assets + MoMo/VNPay payment
- *         gateways for secure transactions.
  */`
       },
       {
