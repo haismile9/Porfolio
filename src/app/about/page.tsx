@@ -354,6 +354,13 @@ export default function AboutPage() {
                 >
                   ▶
                 </motion.span>
+                <Image
+                  src="/images/icon-folder.svg"
+                  alt="folder"
+                  width={16}
+                  height={16}
+                  className="shrink-0"
+                />
                 <span className={`font-fira font-medium ${getFolderColor(item.name)}`}>
                   {item.name}
                 </span>
