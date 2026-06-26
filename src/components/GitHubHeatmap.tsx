@@ -122,7 +122,7 @@ export function GitHubHeatmap() {
     <div className="flex-1 overflow-y-auto p-6 font-mono text-sm relative">
       {/* Header */}
       <div className="mb-6">
-        <div className="text-text-secondary/50 text-xs mb-1">// github.com/haismile9</div>
+        <div className="text-text-secondary/50 text-xs mb-1">{`// github.com/haismile9`}</div>
         <div className="text-text-secondary text-xs">
           <span className="text-[#58a6ff]">const</span>{' '}
           <span className="text-[#79c0ff]">activity</span>{' '}
@@ -235,7 +235,7 @@ export function GitHubHeatmap() {
 
       {/* Repos */}
       <div className="mt-6">
-        <div className="text-text-secondary/50 text-xs mb-3">// recent repositories</div>
+        <div className="text-text-secondary/50 text-xs mb-3">{`// recent repositories`}</div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {data.repositories.nodes.map(repo => (
             <a

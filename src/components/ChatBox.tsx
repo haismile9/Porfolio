@@ -73,6 +73,7 @@ export function ChatBox({ onClose }: { onClose?: () => void }) {
     
     // Welcome message
     addLocalMessage('Welcome to haismile.dev terminal!\nType "/help" to see available commands or just chat globally.', true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Fetch messages from Firebase
