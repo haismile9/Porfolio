@@ -29,7 +29,7 @@ export function Header({ activeTab = '_hello' }: HeaderProps) {
       {/* Mobile Top Bar */}
       <div className="flex justify-between items-center w-full lg:w-auto">
         {/* Logo */}
-        <div className="flex items-center justify-center gap-2.5 px-4 lg:px-6 py-4 border-b lg:border-b-0 lg:border-r border-dark-border lg:border-dark-border flex-1 lg:flex-none justify-start">
+        <div className="flex items-center justify-center px-4 lg:px-6 py-3 border-b lg:border-b-0 lg:border-r border-dark-border lg:border-dark-border flex-1 lg:flex-none justify-start">
           <Image 
             src="/images/smile_logo/OIP-Photoroom.png" 
             alt="hai-smile logo" 
