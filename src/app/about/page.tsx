@@ -347,10 +347,10 @@ export default function AboutPage() {
 };
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden relative bg-dark-primary">
+    <div className="flex-1 flex flex-col overflow-hidden relative bg-dark-primary min-w-0">
       <main className="flex-1 flex flex-col lg:flex-row overflow-y-auto lg:overflow-hidden min-w-0">
         {/* Desktop Sidebars */}
-        <div className="hidden lg:flex w-80 bg-dark-secondary border-r border-dark-border shrink-0 h-full">
+        <div className="hidden lg:flex w-80 bg-dark-secondary border-r border-dark-border shrink-0 h-full min-w-0">
           {/* Leftmost Sidebar - Tab Icons */}
           <div className="w-16 flex flex-col justify-start items-center py-4 gap-8 border-r border-dark-border">
             <button
@@ -374,7 +374,7 @@ export default function AboutPage() {
           </div>
 
           {/* Second Sidebar - File Tree Content */}
-          <div className="flex-1 flex flex-col overflow-hidden">
+          <div className="flex-1 flex flex-col overflow-hidden min-w-0">
             <div className="flex-1 overflow-y-auto">
               {activeTab === 'personal-info' && (
                 <>
@@ -407,7 +407,7 @@ export default function AboutPage() {
         </div>
 
         {/* Mobile Accordion Sidebar */}
-        <div className="lg:hidden flex flex-col w-full bg-dark-bg shrink-0">
+        <div className="lg:hidden flex flex-col w-full bg-dark-bg shrink-0 min-w-0">
           <div className="text-text-secondary px-4 py-3 border-b border-dark-border font-fira text-sm">
             _about-me
           </div>
@@ -518,7 +518,7 @@ export default function AboutPage() {
         </div>
 
         {/* Main Content Area */}
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col min-w-0">
           {/* File Tabs */}
           {openTabs.length > 0 && (
             <div className="flex border-b border-dark-border bg-dark-secondary">
@@ -546,10 +546,10 @@ export default function AboutPage() {
           )}
 
           {/* Content Split */}
-          <div className="flex flex-1">
+          <div className="flex flex-1 min-w-0">
             {/* Code Area */}
-            <div className="flex-1 bg-dark-primary p-6 relative">
-              <div className="flex gap-4 lg:gap-10 h-full overflow-auto">
+            <div className="flex-1 bg-dark-primary p-4 lg:p-6 relative min-w-0">
+              <div className="flex gap-4 lg:gap-10 h-full overflow-y-auto overflow-x-hidden">
                 {/* Line Numbers */}
                 <div className="text-text-secondary text-right select-none text-lg leading-relaxed shrink-0">
                   {Array.from({length: 16}, (_, i) => (
