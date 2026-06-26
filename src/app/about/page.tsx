@@ -549,16 +549,16 @@ export default function AboutPage() {
           <div className="flex flex-1">
             {/* Code Area */}
             <div className="flex-1 bg-dark-primary p-6 relative">
-              <div className="flex gap-10 h-full overflow-auto">
+              <div className="flex gap-4 lg:gap-10 h-full overflow-auto">
                 {/* Line Numbers */}
-                <div className="text-text-secondary text-right select-none text-lg leading-relaxed">
+                <div className="text-text-secondary text-right select-none text-lg leading-relaxed shrink-0">
                   {Array.from({length: 16}, (_, i) => (
                     <div key={i} className="leading-relaxed">{i + 1}</div>
                   ))}
                 </div>
                 
                 {/* Code Content */}
-                <div className="text-text-secondary font-mono leading-relaxed whitespace-pre-wrap text-lg">
+                <div className="text-text-secondary font-mono leading-relaxed whitespace-pre-wrap text-lg flex-1 min-w-0 break-words">
                   {getCurrentContent()}
                 </div>
               </div>
