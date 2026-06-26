@@ -50,7 +50,7 @@ const stringToColor = (str: string) => {
   return colors[Math.abs(hash) % colors.length];
 };
 
-export function ChatBox() {
+export function ChatBox({ onClose }: { onClose?: () => void }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [localMessages, setLocalMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
@@ -211,10 +211,20 @@ export function ChatBox() {
         <div className="flex items-center gap-2">
           <span className="text-text-secondary text-xs">TERMINAL</span>
         </div>
-        <div className="flex gap-1.5">
-          <div className="w-3 h-3 rounded-full bg-[#ff5f56]"></div>
-          <div className="w-3 h-3 rounded-full bg-[#ffbd2e]"></div>
-          <div className="w-3 h-3 rounded-full bg-[#27c93f]"></div>
+        <div className="flex gap-1.5 group/dots">
+          <button
+            onClick={onClose}
+            className="w-3 h-3 rounded-full bg-[#ff5f56] hover:opacity-90 transition-opacity cursor-pointer flex items-center justify-center"
+            title="Close Terminal"
+          >
+            <span className="hidden group-hover/dots:block text-[#820005] leading-none" style={{ fontSize: '9px', fontWeight: 900 }}>×</span>
+          </button>
+          <div className="w-3 h-3 rounded-full bg-[#ffbd2e] flex items-center justify-center">
+            <span className="hidden group-hover/dots:block text-[#805300] leading-none" style={{ fontSize: '9px', fontWeight: 900 }}>−</span>
+          </div>
+          <div className="w-3 h-3 rounded-full bg-[#27c93f] flex items-center justify-center">
+            <span className="hidden group-hover/dots:block text-[#006400] leading-none" style={{ fontSize: '8px', fontWeight: 900 }}>+</span>
+          </div>
         </div>
       </div>
 

@@ -100,7 +100,7 @@ export function ClientShell({ children }: ClientShellProps) {
           <div className="w-full h-full flex flex-col">
             {/* Close button for mobile is no longer needed since it's a bottom panel that doesn't cover everything, 
                 but we can keep a drag handle or just rely on the toggle button in Footer */}
-            <ChatBox />
+            <ChatBox onClose={() => setIsChatOpen(false)} />
           </div>
         </div>
       </div>
