@@ -67,7 +67,7 @@ export default function HomePage() {
                   transition={{ duration: 0.3, delay: 1.6 }}
                   className="hidden lg:block text-base font-fira text-text-secondary leading-[1.5]"
                 >
-                  // complete the game to continue
+                  {'//'} complete the game to continue
                 </motion.p>
                 <motion.p 
                   initial={{ opacity: 0 }}
@@ -75,7 +75,7 @@ export default function HomePage() {
                   transition={{ duration: 0.3, delay: 1.8 }}
                   className="text-sm lg:text-base font-fira text-text-secondary leading-[1.5]"
                 >
-                  // find my profile on Github:
+                  {'//'} find my profile on Github:
                 </motion.p>
                 <motion.p 
                   initial={{ opacity: 0 }}

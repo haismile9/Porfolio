@@ -43,23 +43,23 @@ export default function NotFound() {
             {/* Code Content */}
             <div className="flex flex-col">
               <div>
-                <span className="text-accent-purple">const</span> <span className="text-white">page</span> <span className="text-text-secondary">=</span> <span className="text-accent-orange">findPage</span><span className="text-white">(</span><span className="text-accent-green">'you-were-looking-for'</span><span className="text-white">);</span>
+                <span className="text-accent-purple">const</span> <span className="text-white">page</span> <span className="text-text-secondary">=</span> <span className="text-accent-orange">findPage</span><span className="text-white">(</span><span className="text-accent-green">&apos;you-were-looking-for&apos;</span><span className="text-white">);</span>
               </div>
               <br />
               <div>
                 <span className="text-accent-purple">if</span> <span className="text-white">(!page) {'{'}</span>
               </div>
               <div className="pl-4">
-                <span className="text-accent-orange">console</span><span className="text-white">.</span><span className="text-accent-orange">log</span><span className="text-white">(</span><span className="text-accent-green">"Oops! Looks like you took a wrong turn in the codebase."</span><span className="text-white">);</span>
+                <span className="text-accent-orange">console</span><span className="text-white">.</span><span className="text-accent-orange">log</span><span className="text-white">(</span><span className="text-accent-green">&quot;Oops! Looks like you took a wrong turn in the codebase.&quot;</span><span className="text-white">);</span>
               </div>
               <div className="pl-4">
-                <span className="text-accent-orange">console</span><span className="text-white">.</span><span className="text-accent-orange">log</span><span className="text-white">(</span><span className="text-accent-green">"But hey, since you're here ..."</span><span className="text-white">);</span>
+                <span className="text-accent-orange">console</span><span className="text-white">.</span><span className="text-accent-orange">log</span><span className="text-white">(</span><span className="text-accent-green">&quot;But hey, since you&apos;re here ...&quot;</span><span className="text-white">);</span>
               </div>
               <div className="pl-4">
-                <span className="text-accent-orange">console</span><span className="text-white">.</span><span className="text-accent-orange">log</span><span className="text-white">(</span><span className="text-accent-green">"🔍 Go back to the homepage and explore more cool stuff!"</span><span className="text-white">);</span>
+                <span className="text-accent-orange">console</span><span className="text-white">.</span><span className="text-accent-orange">log</span><span className="text-white">(</span><span className="text-accent-green">&quot;🔍 Go back to the homepage and explore more cool stuff!&quot;</span><span className="text-white">);</span>
               </div>
               <div className="pl-4">
-                <span className="text-accent-purple">throw</span> <span className="text-accent-purple">new</span> <span className="text-accent-orange">Error</span><span className="text-white">(</span><span className="text-accent-green">"404: PageNotFoundError 😵"</span><span className="text-white">);</span>
+                <span className="text-accent-purple">throw</span> <span className="text-accent-purple">new</span> <span className="text-accent-orange">Error</span><span className="text-white">(</span><span className="text-accent-green">&quot;404: PageNotFoundError 😵&quot;</span><span className="text-white">);</span>
               </div>
               <div>
                 <span className="text-white">{'}'}</span>
@@ -82,7 +82,7 @@ export default function NotFound() {
               </div>
               <br />
               <div>
-                <span className="text-accent-orange">redirect</span><span className="text-white">(</span><span className="text-accent-green">'home'</span><span className="text-white">);</span>
+                <span className="text-accent-orange">redirect</span><span className="text-white">(</span><span className="text-accent-green">&apos;home&apos;</span><span className="text-white">);</span>
               </div>
             </div>
           </motion.div>
