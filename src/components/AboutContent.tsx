@@ -42,28 +42,50 @@ export default function AboutContent({ selectedContent, selectedItem }: AboutCon
               icon: '/images/icon-personal-info.svg',
               path: 'Portfolio/personal-info/bio.txt',
               content: `/**
- * About me
- * I have 5 years of experience in web
- * development lorem ipsum dolor sit amet,
- * consectetur adipiscing elit, sed do eiusmod
- * tempor incididunt ut labore et dolore magna
- * aliqua. Ut enim ad minim veniam, quis nostrud
- * exercitation ullamco laboris nisi ut aliquip ex
- * ea commodo consequat.
+ * SUMMARY
+ * I am a Full-stack Developer with 1 year of experience specializing in Node.js, NestJS, and React.js.
+ * I have a proven track record in building real time IoT medical device management systems
+ * and optimizing complex backend logic.
+ * I am dedicated to building scalable architecture and high-quality code to deliver impactful
+ * backend solutions and enhance system performance.
  */`
             },
             {
-              name: 'interests.js',
+              name: 'skills.js',
               type: 'file',
               icon: '/images/icon-hobbies.svg',
-              path: 'Portfolio/personal-info/interests.js',
+              path: 'Portfolio/personal-info/skills.js',
               content: `/**
- * My interests include:
- * - Building scalable web applications
- * - Open source contributions
- * - Learning new technologies
- * - Game development
- * - Mobile app development
+ * TECHNICAL SKILLS
+ * 
+ * - Programming Languages: JavaScript, TypeScript, HTML5, CSS3
+ * - Frameworks/Platforms: NodeJS, Express.js, NestJS, ReactJS, Vite, Next.js
+ * - Database & ORM: MS SQL Server, MySQL, PostgreSQL, Redis, Prisma
+ * - API Design & Tools: RESTful API, Swagger, Postman, Docker, Git
+ * - DevOps & Infrastructure: Docker (Compose), CI/CD, Linux (Ubuntu), Windows Server, MinIO S3
+ * - Other: Strong knowledge of OOP and Design Patterns (Singleton, Factory)
+ */`
+            },
+            {
+              name: 'experience.ts',
+              type: 'file',
+              icon: '/images/icon-personal-info.svg',
+              path: 'Portfolio/personal-info/experience.ts',
+              content: `/**
+ * PROFESSIONAL EXPERIENCE
+ * 
+ * Hoang Phuc Thanh Immigration & Trade Co., Ltd
+ * Full-stack Developer (Sep 2025 - Present)
+ * Project: Real-time Medical Device Management System
+ * 
+ * Intern Front-end Developer (Jun 2025 - Sep 2025)
+ * Project: CRM System
+ * 
+ * PERSONAL PROJECT
+ * 
+ * E-commerce (Nov 2025 - Present)
+ * Tech stack: Express.js, Next.js, React.js, PostgreSQL, MinIO S3
+ * Website: lumieyewear.com | GitHub: haismile9/LUMIweb
  */`
             },
             {
@@ -72,15 +94,15 @@ export default function AboutContent({ selectedContent, selectedItem }: AboutCon
               icon: '/images/icon-markdown.svg',
               path: 'Portfolio/personal-info/education.html',
               content: `/**
- * Education:
+ * EDUCATION
  * 
- * 2018-2022
- * Bachelor of Computer Science
- * University of Technology
+ * Van Lang Sai Gon College
+ * Major: Information Technology - GPA: 3.17/4.0
+ * 2023 - 2025
  * 
- * 2022-2024
- * Master of Software Engineering
- * Institute of Advanced Technology
+ * Honors & Awards:
+ * - 3rd Prize - Altair Engineering Challenge 2025
+ * - Outstanding Student Award (2023 - 2024)
  */`
             }
           ]
@@ -91,18 +113,19 @@ export default function AboutContent({ selectedContent, selectedItem }: AboutCon
           path: 'Portfolio/contacts',
           children: [
             {
-              name: 'email.py',
+              name: 'contact.py',
               type: 'file',
               icon: '/images/icon-message.svg',
-              path: 'Portfolio/contacts/email.py',
+              path: 'Portfolio/contacts/contact.py',
               content: `/**
  * Contact Information
  * 
- * Email: john.doe@example.com
- * Phone: +1 (555) 123-4567
- * Location: San Francisco, CA
- * LinkedIn: linkedin.com/in/johndoe
- * GitHub: github.com/johndoe
+ * Name: Nguyen Hong Hai
+ * Phone: 0334204526
+ * Email: nguyenhai@haismile.dev
+ * Website: haismile.dev
+ * Location: Ung Van Khiem, Ward 25, Binh Thanh, HCM City
+ * GitHub: haismile9
  */`
             }
           ]

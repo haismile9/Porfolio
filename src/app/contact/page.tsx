@@ -1,10 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useForm } from 'react-hook-form';
-import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
 
 interface FormData {
   name: string;
@@ -13,9 +11,18 @@ interface FormData {
 }
 
 export default function ContactPage() {
-  const [isContactExpanded, setIsContactExpanded] = useState(true);
-  const [isFindMeExpanded, setIsFindMeExpanded] = useState(true);
+  const [isContactExpanded, setIsContactExpanded] = useState(false);
+  const [isFindMeExpanded, setIsFindMeExpanded] = useState(false);
+
+  useEffect(() => {
+    if (window.innerWidth >= 1024) {
+      setIsContactExpanded(true);
+      setIsFindMeExpanded(true);
+    }
+  }, []);
+
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitAttempted, setSubmitAttempted] = useState(false);
   
   const { register, handleSubmit, watch, reset, formState: { errors, isValid, touchedFields } } = useForm<FormData>({
@@ -53,7 +60,7 @@ button.addEventListener('click', () => {
     return `const button = document.querySelector('#sendBtn');
 
 const message = {
-\tname: "${watchedValues.name || 'Jonathan Davis'}",
+\tname: "${watchedValues.name || 'Nguyễn Văn Mười'}",
 \temail: "${watchedValues.email || ''}",
 \tmessage: "${watchedValues.message || ''}",
 \tdate: "${currentDate}"
@@ -64,11 +71,28 @@ button.addEventListener('click', () => {
 })`;
   };
 
-  const onSubmit = (data: FormData) => {
-    console.log('Form submitted:', data);
-    setIsSubmitted(true);
-    setSubmitAttempted(false);
-    // Handle form submission
+  const onSubmit = async (data: FormData) => {
+    setIsSubmitting(true);
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        setIsSubmitted(true);
+        setSubmitAttempted(false);
+      } else {
+        console.error('Failed to send message');
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleNewMessage = () => {
@@ -92,17 +116,20 @@ button.addEventListener('click', () => {
   };
 
   return (
-    <div className="min-h-screen bg-dark-primary flex flex-col">
-      <Header activeTab="_contact-me" />
-      
-      <main className="flex-1 flex">
+    <div className="flex-1 flex flex-col overflow-hidden bg-dark-primary">
+      <main className="flex-1 flex flex-col lg:flex-row overflow-hidden min-w-0">
         {/* Sidebar */}
         <motion.div 
           initial={{ x: -50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.6 }}
-          className="w-[311px] border-r border-border-primary"
+          className="w-full lg:w-[311px] lg:border-r border-b lg:border-b-0 border-border-primary shrink-0 max-h-[40vh] lg:max-h-none overflow-y-auto lg:overflow-visible"
         >
+          {/* Mobile Title */}
+          <div className="lg:hidden text-white px-6 py-4 border-b border-border-primary font-fira text-sm">
+            _contact-me
+          </div>
+
           {/* Contacts Section */}
           <div className="border-b border-border-primary">
             <button
@@ -135,13 +162,13 @@ button.addEventListener('click', () => {
                         <path d="M2.5 3A1.5 1.5 0 0 0 1 4.5v.793c.026.009.051.02.076.032L7.674 8.51c.206.1.446.1.652 0l6.598-3.185A.755.755 0 0 1 15 5.293V4.5A1.5 1.5 0 0 0 13.5 3h-11Z"/>
                         <path d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z"/>
                       </svg>
-                      <span>nguyenhonghaimwg2005@gmail.com</span>
+                      <span>nguyenhai@haismile.dev</span>
                     </div>
                     <div className="flex items-center gap-2 text-text-secondary">
                       <svg className="w-4 h-4" viewBox="0 0 16 16" fill="currentColor">
                         <path d="M3.654 1.328a.678.678 0 0 0-1.015-.063L1.605 2.3c-.483.484-.661 1.169-.45 1.77a17.568 17.568 0 0 0 4.168 6.608 17.569 17.569 0 0 0 6.608 4.168c.601.211 1.286.033 1.77-.45l1.034-1.034a.678.678 0 0 0-.063-1.015l-2.307-1.794a.678.678 0 0 0-.58-.122L9.98 10.97a6.056 6.056 0 0 1-3.95-3.95l.538-1.804a.678.678 0 0 0-.122-.58L3.654 1.328z"/>
                       </svg>
-                      <span>+33420426</span>
+                      <span>0334204526</span>
                     </div>
                   </div>
                 </motion.div>
@@ -177,18 +204,22 @@ button.addEventListener('click', () => {
                 >
                   <div className="px-6 py-2 space-y-2">
                     {[
-                      { name: 'YouTube', color: 'text-accent-primary' },
-                      { name: 'dev.to', color: 'text-text-secondary' },
-                      { name: 'Instagram', color: 'text-text-secondary' },
-                      { name: 'Twitch', color: 'text-text-secondary' }
+                      { name: 'dev.to', color: 'text-text-secondary', href: 'https://dev.to/nguyn_hi_e2ccd6e16c6b77' },
+                      { name: 'Instagram', color: 'text-text-secondary', href: 'https://www.instagram.com/smile.tsx/' }
                     ].map((link) => (
-                      <div key={link.name} className={`flex items-center gap-2 ${link.color}`}>
+                      <a 
+                        key={link.name} 
+                        href={link.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`flex items-center gap-2 ${link.color} hover:text-white transition-colors`}
+                      >
                         <svg className="w-4 h-4" viewBox="0 0 16 16" fill="currentColor">
                           <path d="M6.879 9.934a.5.5 0 0 1-.707 0L3 6.76a.5.5 0 1 1 .707-.708L6.879 9.226a.5.5 0 0 1 0 .708z"/>
                           <path d="M8.5 2a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11zm0 1a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9z"/>
                         </svg>
                         <span>{link.name}</span>
-                      </div>
+                      </a>
                     ))}
                   </div>
                 </motion.div>
@@ -198,13 +229,13 @@ button.addEventListener('click', () => {
         </motion.div>
 
         {/* Main Content */}
-        <div className="flex-1 flex">
+        <div className="flex-1 flex flex-col lg:flex-row min-w-0 overflow-y-auto lg:overflow-hidden">
           {/* Contact Form */}
           <motion.div 
             initial={{ y: 50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="w-[632px] border-r border-border-primary flex flex-col items-center justify-center p-10"
+            className="w-full lg:w-[632px] lg:border-r border-dark-border flex flex-col items-center justify-center p-6 lg:p-10 shrink-0"
           >
             <AnimatePresence mode="wait">
               {!isSubmitted ? (
@@ -215,7 +246,7 @@ button.addEventListener('click', () => {
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.3 }}
                   onSubmit={handleFormSubmit} 
-                  className="w-[372px] space-y-6"
+                  className="w-full max-w-[372px] space-y-6"
                 >
                   {/* Name Input */}
                   <div className="space-y-2">
@@ -229,7 +260,7 @@ button.addEventListener('click', () => {
                         {...register('name', { required: 'Name is required' })}
                         type="text"
                         className="w-full px-3 py-2 bg-transparent text-white placeholder-text-secondary outline-none pr-10"
-                        placeholder="Jonathan Davis"
+                        placeholder="Nguyễn Văn Mười here..."
                       />
                       {getFieldError('name') && (
                         <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
@@ -325,17 +356,17 @@ button.addEventListener('click', () => {
 
                   {/* Submit Button */}
                   <motion.button
-                    whileHover={{ scale: isValid ? 1.02 : 1 }}
-                    whileTap={{ scale: isValid ? 0.98 : 1 }}
+                    whileHover={{ scale: (isValid && !isSubmitting) ? 1.02 : 1 }}
+                    whileTap={{ scale: (isValid && !isSubmitting) ? 0.98 : 1 }}
                     type="submit"
-                    disabled={!isValid}
-                    className={`px-4 py-2 rounded-lg transition-colors ${
-                      isValid 
-                        ? 'bg-accent-primary text-dark-primary hover:bg-accent-secondary' 
-                        : 'bg-border-primary text-text-secondary cursor-not-allowed'
+                    disabled={!isValid || isSubmitting}
+                    className={`px-4 py-2 rounded-lg transition-colors inline-block font-fira text-sm lg:text-base ${
+                      (isValid && !isSubmitting)
+                        ? 'bg-dark-border text-white hover:bg-text-secondary' 
+                        : 'bg-[#1C2B3A] text-text-muted cursor-not-allowed'
                     }`}
                   >
-                    submit-message
+                    {isSubmitting ? 'sending...' : 'submit-message'}
                   </motion.button>
                 </motion.form>
               ) : (
@@ -345,7 +376,7 @@ button.addEventListener('click', () => {
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, y: -20 }}
                   transition={{ duration: 0.4 }}
-                  className="w-[372px] text-center space-y-8"
+                  className="w-full max-w-[372px] text-center space-y-8"
                 >
                   <div className="space-y-2">
                     <motion.h2
@@ -387,7 +418,7 @@ button.addEventListener('click', () => {
             initial={{ x: 50, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="flex-1 border-border-primary p-10"
+            className="hidden lg:block flex-1 border-border-primary p-10"
           >
             <div className="bg-dark-secondary rounded-lg border border-border-primary h-full overflow-hidden">
               <div className="flex h-full">
@@ -423,8 +454,6 @@ button.addEventListener('click', () => {
           </motion.div>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }

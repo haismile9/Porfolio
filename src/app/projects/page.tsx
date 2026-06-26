@@ -3,8 +3,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
-import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 
 // Technology types
@@ -34,44 +32,28 @@ const technologies: { name: Technology; icon: string; color: string }[] = [
 const projects: Project[] = [
   {
     id: 1,
-    title: 'Project 1 // _ui-animations',
-    description: 'Duis aute irure dolor in velit esse cillum dolore.',
+    title: 'Medical Device Management System',
+    description: 'A comprehensive system for hospitals to monitor medical device status and lifecycles in real-time.',
     image: '/images/project-1-ui-animations-6da66d.png',
     technologies: ['React'],
     primaryTech: 'React'
   },
   {
     id: 2,
-    title: 'Project 2 // _tetris-game',
-    description: 'Duis aute irure dolor in velit esse cillum dolore.',
+    title: 'LUMIweb E-commerce',
+    description: 'High-performance storefront and admin dashboard with centralized backend, secure payments, and asset management.',
     image: '/images/project-2-tetris-game.png',
     technologies: ['React'],
     primaryTech: 'React'
   },
   {
     id: 3,
-    title: 'Project 3 // _glassy-ui',
-    description: 'Duis aute irure dolor in velit esse cillum dolore.',
+    title: 'CRM System',
+    description: 'Internal tool to manage customer relationships and streamline communication workflows.',
     image: '/images/project-3-glassy-ui-1d9512.png',
-    technologies: ['CSS'],
-    primaryTech: 'CSS'
-  },
-  {
-    id: 4,
-    title: 'Project 4 // _nimbus',
-    description: 'Duis aute irure dolor in velit esse cillum dolore.',
-    image: '/images/project-4-nimbus-7618dd.png',
-    technologies: ['Vue'],
-    primaryTech: 'Vue'
-  },
-  {
-    id: 5,
-    title: 'Project 5 // _emberize-ui',
-    description: 'Duis aute irure dolor in velit esse cillum dolore.',
-    image: '/images/project-5-emberize-ui-697087.png',
-    technologies: ['Vue'],
-    primaryTech: 'Vue'
-  },
+    technologies: ['React'],
+    primaryTech: 'React'
+  }
 ];
 
 // Animation variants
@@ -138,19 +120,17 @@ export default function ProjectsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-dark-primary flex flex-col">
-      <Header activeTab="_duan" />
-      
-      <main className="flex-1 flex overflow-hidden">
+    <div className="flex-1 flex flex-col overflow-hidden bg-dark-primary">
+      <main className="flex-1 flex flex-col lg:flex-row overflow-hidden min-w-0">
         {/* Left Sidebar - Technology Filter */}
         <motion.div 
-          className="w-80 bg-dark-secondary border-r border-dark-border flex flex-col"
+          className="w-full lg:w-80 bg-dark-secondary lg:border-r border-b lg:border-b-0 border-dark-border flex flex-col shrink-0 max-h-[40vh] lg:max-h-none overflow-y-auto lg:overflow-visible"
           initial={{ x: -300, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.5 }}
         >
           {/* Projects Section */}
-          <div className="p-6">
+          <div className="p-4 lg:p-6">
             <motion.div 
               className="flex items-center gap-3 text-accent-orange text-sm mb-4 cursor-pointer"
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -171,7 +151,7 @@ export default function ProjectsPage() {
             <AnimatePresence>
               {isDropdownOpen && (
                 <motion.div 
-                  className="ml-4 space-y-2"
+                  className="ml-0 lg:ml-4 flex flex-row flex-wrap lg:flex-col gap-2 lg:gap-0 lg:space-y-2"
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
@@ -242,7 +222,7 @@ export default function ProjectsPage() {
         </motion.div>
 
         {/* Main Content Area */}
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col min-w-0">
           {/* Filter Tabs */}
           <motion.div 
             className="flex border-b border-dark-border bg-dark-secondary"
@@ -285,7 +265,7 @@ export default function ProjectsPage() {
               <AnimatePresence mode="wait">
                 <motion.div 
                   key={selectedTechs.join('-')}
-                  className="grid grid-cols-1 lg:grid-cols-3 gap-10 max-w-[1200px]"
+                  className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-10 max-w-[1200px]"
                   variants={containerVariants}
                   initial="hidden"
                   animate="visible"
@@ -399,8 +379,6 @@ export default function ProjectsPage() {
           </div>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }

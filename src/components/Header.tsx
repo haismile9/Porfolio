@@ -1,13 +1,13 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/lib/utils'
 
 const menuItems = [
-  { name: '_xinchao', href: '/', active: false },
-  { name: '_gioi-thieu', href: '/about', active: false },
-  { name: '_duan', href: '/projects', active: false },
-  { name: '_games', href: '/games', active: false},
+  { name: '_hello', href: '/', active: false },
+  { name: '_about-me', href: '/about', active: false },
+  { name: '_projects', href: '/projects', active: false },
   { name: '_contact-me', href: '/contact', active: false },
 ]
 
@@ -15,7 +15,9 @@ interface HeaderProps {
   activeTab?: string
 }
 
-export function Header({ activeTab = '_xinchao' }: HeaderProps) {
+export function Header({ activeTab = '_hello' }: HeaderProps) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+
   return (
     <motion.header
       initial={{ opacity: 0, y: -20 }}
@@ -23,21 +25,47 @@ export function Header({ activeTab = '_xinchao' }: HeaderProps) {
       transition={{ duration: 0.6 }}
       className="flex flex-col lg:flex-row lg:justify-between lg:items-center border-b border-dark-border"
     >
-      {/* Logo Container */}
-      <div className="flex flex-col lg:flex-row lg:items-center lg:gap-32">
+      {/* Mobile Top Bar */}
+      <div className="flex justify-between items-center w-full lg:w-auto">
         {/* Logo */}
-        <div className="flex items-center justify-center gap-2.5 px-4 lg:px-6 py-4 border-b lg:border-b-0 lg:border-r border-dark-border lg:border-dark-border">
+        <div className="flex items-center justify-center gap-2.5 px-4 lg:px-6 py-4 border-b lg:border-b-0 lg:border-r border-dark-border lg:border-dark-border flex-1 lg:flex-none justify-start">
           <span className="text-base font-fira text-text-secondary">
             hai-smile
           </span>
         </div>
+        
+        {/* Hamburger Menu Toggle (Mobile Only) */}
+        <button 
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          className="lg:hidden px-4 py-4 text-text-secondary hover:text-white border-b border-l border-dark-border"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            {isMenuOpen ? (
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            ) : (
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            )}
+          </svg>
+        </button>
+      </div>
 
-        {/* Menu Container */}
+      {/* Navigation Menu */}
+      <div className={cn(
+        "lg:flex lg:flex-row lg:items-center lg:w-auto lg:justify-between flex-1",
+        isMenuOpen ? "absolute top-full left-0 w-full bg-dark-bg z-50 flex flex-col h-[calc(100vh-105px)]" : "hidden"
+      )}>
+        {/* Mobile menu label */}
+        <div className="lg:hidden px-4 py-4 border-b border-dark-border text-text-secondary font-fira text-sm">
+          # navigate:
+        </div>
+
+        {/* Main Links */}
         <nav className="flex flex-col lg:flex-row lg:items-center">
-          {menuItems.slice(0, 4).map((item, index) => (
+          {menuItems.slice(0, 3).map((item, index) => (
             <motion.a
               key={item.name}
               href={item.href}
+              onClick={() => setIsMenuOpen(false)}
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: index * 0.1 }}
@@ -47,9 +75,9 @@ export function Header({ activeTab = '_xinchao' }: HeaderProps) {
               )}
             >
               <div className={cn(
-                "flex items-center justify-center gap-2.5 px-4 lg:px-8 py-4 transition-colors",
+                "flex items-center justify-start lg:justify-center gap-2.5 px-4 lg:px-8 py-4 transition-colors",
                 item.name === activeTab
-                  ? "text-text-primary lg:border-b-[3px] border-accent-orange bg-dark-border/20 lg:bg-transparent" 
+                  ? "text-text-primary lg:border-b-[3px] border-accent-orange bg-dark-border/10 lg:bg-transparent" 
                   : "text-text-secondary hover:text-text-primary hover:bg-dark-border/10 lg:hover:bg-transparent"
               )}>
                 <span className="text-base font-fira">{item.name}</span>
@@ -57,25 +85,26 @@ export function Header({ activeTab = '_xinchao' }: HeaderProps) {
             </motion.a>
           ))}
         </nav>
-      </div>
 
-      {/* Contact Menu Item */}
-      <motion.a
-        href={menuItems[4].href}
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.4 }}
-        className="flex flex-col lg:border-l border-dark-border"
-      >
-        <div className={cn(
-          "flex items-center justify-center gap-2.5 px-4 lg:px-8 py-4 transition-colors",
-          menuItems[4].name === activeTab
-            ? "text-text-primary lg:border-b-[3px] border-accent-orange bg-dark-border/20 lg:bg-transparent" 
-            : "text-text-secondary hover:text-text-primary hover:bg-dark-border/10 lg:hover:bg-transparent"
-        )}>
-          <span className="text-base font-fira">{menuItems[4].name}</span>
-        </div>
-      </motion.a>
+        {/* Contact Menu Item */}
+        <motion.a
+          href={menuItems[3].href}
+          onClick={() => setIsMenuOpen(false)}
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.4 }}
+          className="flex flex-col lg:border-l border-dark-border mt-auto lg:mt-0"
+        >
+          <div className={cn(
+            "flex items-center justify-start lg:justify-center gap-2.5 px-4 lg:px-8 py-4 transition-colors",
+            menuItems[3].name === activeTab
+              ? "text-text-primary lg:border-b-[3px] border-accent-orange bg-dark-border/10 lg:bg-transparent" 
+              : "text-text-secondary hover:text-text-primary hover:bg-dark-border/10 lg:hover:bg-transparent"
+          )}>
+            <span className="text-base font-fira">{menuItems[3].name}</span>
+          </div>
+        </motion.a>
+      </div>
     </motion.header>
   )
 }

@@ -44,7 +44,7 @@ export function PageTransition({ children }: PageTransitionProps) {
         exit="out"
         variants={pageVariants}
         transition={pageTransition}
-        className="w-full"
+        className="w-full flex-1 flex flex-col"
       >
         {children}
       </motion.div>
