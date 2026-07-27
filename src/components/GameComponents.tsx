@@ -1,5 +1,5 @@
-// Sudoku game types and utilities
-
+// Game Components
+import { BreakoutGame } from './breakout/BreakoutGame';
 export type SudokuBoard = (number | null)[][];
 export type SudokuCell = {
   row: number;
@@ -97,27 +97,7 @@ export function PongGameComponent({ className = '' }: GameComponentProps) {
 }
 
 export function BreakoutGameComponent({ className = '' }: GameComponentProps) {
-  return (
-    <div className={`flex flex-col items-center space-y-4 ${className}`}>
-      <div className="text-center">
-        <div className="text-lg font-bold text-white mb-2">Breakout</div>
-        <div className="w-80 h-96 border border-border-primary rounded-lg bg-dark-secondary flex items-center justify-center">
-          <div className="text-text-secondary">Coming Soon!</div>
-        </div>
-      </div>
-      <div className="text-center space-y-2">
-        <button
-          disabled
-          className="px-4 py-2 bg-gray-500 text-white rounded opacity-50 cursor-not-allowed"
-        >
-          Not Available Yet
-        </button>
-        <div className="text-xs text-text-secondary max-w-xs">
-          Break the bricks! - In development
-        </div>
-      </div>
-    </div>
-  );
+  return <BreakoutGame className={className} />;
 }
 
 export function SpaceInvadersGameComponent({ className = '' }: GameComponentProps) {

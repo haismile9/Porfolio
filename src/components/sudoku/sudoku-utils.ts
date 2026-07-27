@@ -244,33 +244,63 @@ export class SudokuGenerator {
 
   public static getBoardErrors(board: SudokuBoard): boolean[][] {
     const errors = Array(9).fill(null).map(() => Array(9).fill(false));
-    const numBoard = board.map(r => r.map(c => c === null ? 0 : c));
-
-    // Check each cell for conflicts
+    
+    // Check rows
     for (let row = 0; row < 9; row++) {
+      const counts = new Map<number, number[]>();
       for (let col = 0; col < 9; col++) {
-        const value = numBoard[row][col];
-        if (value === 0) continue;
-
-        // Temporarily remove the value to check for conflicts
-        numBoard[row][col] = 0;
-        
-        // Check if placing the value would be valid
-        if (!isRowValid([...numBoard.map(r => [...r])].map((r, i) => 
-          i === row ? r.map((c, j) => j === col ? value : c) : r
-        ), row) ||
-        !isColumnValid([...numBoard.map(r => [...r])].map(r => 
-          r.map((c, j) => j === col ? (numBoard.findIndex(row => row === r) === row ? value : c) : c)
-        ), col) ||
-        !isSubgridValid([...numBoard.map(r => [...r])].map((r, i) => 
-          r.map((c, j) => (i === row && j === col) ? value : c)
-        ), Math.floor(row / 3) * 3 + Math.floor(col / 3))) {
-          errors[row][col] = true;
+        const val = board[row][col];
+        if (val !== null) {
+          if (!counts.has(val)) counts.set(val, []);
+          counts.get(val)!.push(col);
         }
-
-        // Restore the value
-        numBoard[row][col] = value;
       }
+      counts.forEach(cols => {
+        if (cols.length > 1) {
+          cols.forEach(col => errors[row][col] = true);
+        }
+      });
+    }
+
+    // Check columns
+    for (let col = 0; col < 9; col++) {
+      const counts = new Map<number, number[]>();
+      for (let row = 0; row < 9; row++) {
+        const val = board[row][col];
+        if (val !== null) {
+          if (!counts.has(val)) counts.set(val, []);
+          counts.get(val)!.push(row);
+        }
+      }
+      counts.forEach(rows => {
+        if (rows.length > 1) {
+          rows.forEach(row => errors[row][col] = true);
+        }
+      });
+    }
+
+    // Check subgrids
+    for (let subgrid = 0; subgrid < 9; subgrid++) {
+      const counts = new Map<number, {row: number, col: number}[]>();
+      for (let i = 0; i < 9; i++) {
+        const startx = subgrid % 3;
+        const starty = Math.floor(subgrid / 3);
+        const cellx = i % 3;
+        const celly = Math.floor(i / 3);
+        const col = startx * 3 + cellx;
+        const row = starty * 3 + celly;
+        
+        const val = board[row][col];
+        if (val !== null) {
+          if (!counts.has(val)) counts.set(val, []);
+          counts.get(val)!.push({row, col});
+        }
+      }
+      counts.forEach(cells => {
+        if (cells.length > 1) {
+          cells.forEach(({row, col}) => errors[row][col] = true);
+        }
+      });
     }
 
     return errors;

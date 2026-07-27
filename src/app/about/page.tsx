@@ -80,6 +80,17 @@ const fileTree: FileItem[] = [
   "music": ["Playing Guitar 🎸", "Rap Music 🎧"],
   "philosophy": "Build things that matter. Keep it simple. Smile while doing it. 😊"
 }`
+      },
+      {
+        name: 'resume.json',
+        type: 'file',
+        content: `{
+  "title": "Nguyen Hong Hai - Resume / CV",
+  "download": "Click the [Download CV (.pdf)] button on the top right of this editor tab bar or use /cv in Terminal",
+  "file": "/CV/Nguyen-Hong-Hai-TopCV.vn-050426.145519 (1).pdf",
+  "format": "PDF Document",
+  "status": "Ready for download 📥"
+}`
       }
     ]
   },
@@ -209,6 +220,8 @@ export default function AboutPage() {
   const getIconForFile = (name: string) => {
     switch (name) {
       case 'bio.json':
+        return '/images/icon-personal-info.svg';
+      case 'resume.json':
         return '/images/icon-personal-info.svg';
       case 'experience.json':
         return '/images/icon-professional-info.svg';
@@ -348,27 +361,44 @@ export default function AboutPage() {
         >
           {/* Tabs */}
           {openTabs.length > 0 && (
-            <div className="flex border-b border-dark-border bg-dark-secondary overflow-x-auto shrink-0">
-              {openTabs.map(tab => (
-                <div
-                  key={tab}
-                  className={`flex items-center gap-2 px-4 py-2 border-r border-dark-border cursor-pointer shrink-0 transition-colors ${
-                    selectedFile === tab
-                      ? 'bg-dark-primary text-white'
-                      : 'text-text-secondary hover:text-white'
-                  }`}
-                  onClick={() => setSelectedFile(tab)}
-                >
-                  <Image src={getIconForFile(tab)} alt={tab} width={14} height={14} />
-                  <span className="text-sm font-fira">{tab}</span>
-                  <button
-                    className="text-text-secondary hover:text-white ml-1 leading-none text-base"
-                    onClick={(e) => closeTab(tab, e)}
+            <div className="flex items-center justify-between border-b border-dark-border bg-dark-secondary overflow-x-auto shrink-0">
+              <div className="flex items-center">
+                {openTabs.map(tab => (
+                  <div
+                    key={tab}
+                    className={`flex items-center gap-2 px-4 py-2 border-r border-dark-border cursor-pointer shrink-0 transition-colors ${
+                      selectedFile === tab
+                        ? 'bg-dark-primary text-white'
+                        : 'text-text-secondary hover:text-white'
+                    }`}
+                    onClick={() => setSelectedFile(tab)}
                   >
-                    ×
-                  </button>
-                </div>
-              ))}
+                    <Image src={getIconForFile(tab)} alt={tab} width={14} height={14} />
+                    <span className="text-sm font-fira">{tab}</span>
+                    <button
+                      className="text-text-secondary hover:text-white ml-1 leading-none text-base"
+                      onClick={(e) => closeTab(tab, e)}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+              {selectedFile === 'resume.json' && (
+                <a
+                  href="/CV/Nguyen-Hong-Hai-TopCV.vn-050426.145519%20(1).pdf"
+                  download="Nguyen-Hong-Hai-CV.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 px-4 py-2 bg-accent-orange/10 hover:bg-accent-orange/20 border-l border-dark-border text-accent-orange text-xs font-fira transition-colors shrink-0 cursor-pointer"
+                >
+                  <svg className="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  </svg>
+                  <span className="hidden sm:inline">Download CV (.pdf)</span>
+                  <span className="sm:hidden">CV</span>
+                </a>
+              )}
             </div>
           )}
 

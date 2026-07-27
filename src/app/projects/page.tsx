@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 
 // Technology types
-type Technology = 'React' | 'HTML' | 'CSS' | 'Vue' | 'Angular' | 'Gatsby' | 'Flutter';
+type Technology = 'Next.js' | 'React' | 'NestJS' | 'PostgreSQL' | 'MinIO' | 'Redis' | 'Firebase' | 'HTML' | 'CSS' | 'Flutter' | 'Laravel' | 'MySQL' | 'Java' | 'PHP';
 
 interface Project {
   id: number;
@@ -15,44 +15,73 @@ interface Project {
   image: string;
   technologies: Technology[];
   primaryTech: Technology;
+  link?: string;
 }
 
 // Technology configuration
 const technologies: { name: Technology; icon: string; color: string }[] = [
+  { name: 'Next.js', icon: '/images/icon-react.svg', color: '#FFFFFF' },
   { name: 'React', icon: '/images/icon-react.svg', color: '#A3B3FF' },
+  { name: 'NestJS', icon: '/images/icon-markdown.svg', color: '#E0234E' },
+  { name: 'PostgreSQL', icon: '/images/icon-markdown.svg', color: '#336791' },
+  { name: 'MinIO', icon: '/images/icon-markdown.svg', color: '#C62828' },
+  { name: 'Redis', icon: '/images/icon-markdown.svg', color: '#D82C20' },
+  { name: 'Firebase', icon: '/images/icon-markdown.svg', color: '#FFCA28' },
   { name: 'HTML', icon: '/images/icon-html.svg', color: '#A3B3FF' },
   { name: 'CSS', icon: '/images/icon-css.svg', color: '#A3B3FF' },
-  { name: 'Vue', icon: '/images/icon-vue.svg', color: '#46ECD5' },
-  { name: 'Angular', icon: '/images/icon-angular.svg', color: '#A3B3FF' },
-  { name: 'Gatsby', icon: '/images/icon-gatsby.svg', color: '#A3B3FF' },
   { name: 'Flutter', icon: '/images/icon-flutter.svg', color: '#A3B3FF' },
+  { name: 'Laravel', icon: '/images/icon-markdown.svg', color: '#FF2D20' },
+  { name: 'MySQL', icon: '/images/icon-markdown.svg', color: '#4479A1' },
+  { name: 'Java', icon: '/images/icon-html.svg', color: '#5382A1' },
+  { name: 'PHP', icon: '/images/icon-css.svg', color: '#777BB4' },
 ];
 
 // Sample projects data
 const projects: Project[] = [
   {
-    id: 1,
-    title: 'Medical Device Management System',
-    description: 'A comprehensive system for hospitals to monitor medical device status and lifecycles in real-time.',
-    image: '/images/project-1-ui-animations-6da66d.png',
-    technologies: ['React'],
-    primaryTech: 'React'
+    id: 7,
+    title: 'Portfolio',
+    description: 'This website you\'re looking at.',
+    image: '/images/Porfolio.png',
+    technologies: ['Next.js', 'React', 'Firebase'],
+    primaryTech: 'Next.js',
+    link: 'https://haismile.dev/'
   },
   {
     id: 2,
     title: 'LUMIweb E-commerce',
-    description: 'High-performance storefront and admin dashboard with centralized backend, secure payments, and asset management.',
-    image: '/images/project-2-tetris-game.png',
-    technologies: ['React'],
-    primaryTech: 'React'
+    description: 'E-commerce web app with admin dashboard.',
+    image: '/images/Lumi.png',
+    technologies: ['Next.js', 'React', 'NestJS', 'PostgreSQL', 'MinIO', 'Redis'],
+    primaryTech: 'Next.js',
+    link: 'https://lumieyewear.haismile.dev/'
   },
   {
-    id: 3,
-    title: 'CRM System',
-    description: 'Internal tool to manage customer relationships and streamline communication workflows.',
-    image: '/images/project-3-glassy-ui-1d9512.png',
-    technologies: ['React'],
-    primaryTech: 'React'
+    id: 4,
+    title: 'H-Task',
+    description: 'Kanban task management web app to organize workflows.',
+    image: '/images/H-task.png',
+    technologies: ['React', 'Laravel', 'MySQL'],
+    primaryTech: 'React',
+    link: 'https://github.com/haismile9/Web_H-task'
+  },
+  {
+    id: 5,
+    title: 'Social Media App',
+    description: 'Real-time social media app with chat and posts.',
+    image: '/images/Social_media_app.png',
+    technologies: ['Flutter', 'Firebase'],
+    primaryTech: 'Flutter',
+    link: 'https://github.com/haismile9/social_media_app'
+  },
+  {
+    id: 6,
+    title: 'Cellphones App',
+    description: 'Mobile e-commerce app for Android with PHP & MySQL backend.',
+    image: '/images/Cellphone.png',
+    technologies: ['Java', 'PHP', 'MySQL'],
+    primaryTech: 'Java',
+    link: 'https://github.com/haismile9/Cellphones_app'
   }
 ];
 
@@ -91,7 +120,7 @@ const itemVariants = {
 };
 
 export default function ProjectsPage() {
-  const [selectedTechs, setSelectedTechs] = useState<Technology[]>(['React']);
+  const [selectedTechs, setSelectedTechs] = useState<Technology[]>([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(true);
 
   const toggleTechnology = (tech: Technology) => {
@@ -102,9 +131,11 @@ export default function ProjectsPage() {
     );
   };
 
-  const filteredProjects = projects.filter(project => 
-    selectedTechs.some(tech => project.technologies.includes(tech))
-  );
+  const filteredProjects = selectedTechs.length === 0 
+    ? projects 
+    : projects.filter(project => 
+        selectedTechs.some(tech => project.technologies.includes(tech))
+      );
 
   const getTechIcon = (techName: Technology) => {
     return technologies.find(t => t.name === techName)?.icon;
@@ -275,7 +306,7 @@ export default function ProjectsPage() {
                   {filteredProjects.map((project, index) => (
                     <motion.div 
                       key={project.id} 
-                      className="space-y-4 max-w-[407px]"
+                      className="flex flex-col gap-4 max-w-[407px] h-full"
                       variants={itemVariants}
                       layout
                     >
@@ -291,33 +322,34 @@ export default function ProjectsPage() {
                       
                       {/* Project Card */}
                       <motion.div 
-                        className="bg-dark-secondary border border-dark-border rounded-2xl overflow-hidden relative group cursor-pointer"
+                        className="bg-dark-secondary border border-dark-border rounded-2xl overflow-hidden relative group cursor-pointer flex flex-col flex-1 h-full"
                         whileHover={{ 
                           scale: 1.02,
                           boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
                           transition: { duration: 0.2 }
                         }}
                         whileTap={{ scale: 0.98 }}
+                        onClick={() => project.link && window.open(project.link, '_blank')}
                       >
-                        {/* Technology Badge */}
+                        {/* View Project Floating Badge in Top Right Corner of Image */}
                         <motion.div 
-                          className="absolute top-5 right-5 z-10 p-1 rounded"
-                          style={{ backgroundColor: getTechColor(project.primaryTech) }}
-                          initial={{ opacity: 0, scale: 0 }}
+                          className="absolute top-3.5 right-3.5 z-10"
+                          initial={{ opacity: 0, scale: 0.8 }}
                           animate={{ opacity: 1, scale: 1 }}
                           transition={{ delay: 0.3 + index * 0.1 }}
                         >
-                          <Image 
-                            src={getTechIcon(project.primaryTech) || '/images/icon-react.svg'} 
-                            alt={project.primaryTech}
-                            width={20}
-                            height={20}
-                            className="w-5 h-5"
-                          />
+                          <div 
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-dark-bg/90 border border-dark-border group-hover:border-accent-blue/80 text-text-secondary group-hover:text-accent-blue text-xs font-fira backdrop-blur-md transition-all duration-200 shadow-lg group-hover:scale-105"
+                          >
+                            <span>view-project</span>
+                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                            </svg>
+                          </div>
                         </motion.div>
                         
                         {/* Project Image */}
-                        <div className="h-[145px] bg-dark-border border-b border-dark-border overflow-hidden">
+                        <div className="h-[155px] bg-dark-border border-b border-dark-border overflow-hidden shrink-0 relative">
                           <motion.img 
                             src={project.image} 
                             alt={project.title}
@@ -328,9 +360,9 @@ export default function ProjectsPage() {
                         </div>
                         
                         {/* Project Content */}
-                        <div className="p-8 space-y-5 h-[179px] flex flex-col justify-between">
+                        <div className="p-6 flex flex-col flex-1 justify-between gap-4">
                           <motion.p 
-                            className="text-text-secondary text-lg leading-relaxed"
+                            className="text-text-secondary text-sm lg:text-base leading-relaxed line-clamp-2 min-h-[44px]"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.2 + index * 0.1 }}
@@ -338,16 +370,21 @@ export default function ProjectsPage() {
                             {project.description}
                           </motion.p>
                           
+                          {/* Tech Stack Pills */}
                           <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.4 + index * 0.1 }}
+                            className="flex flex-wrap items-center gap-1.5 mt-auto pt-1"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.3 + index * 0.1 }}
                           >
-                            <Button 
-                              className="bg-dark-border hover:bg-dark-border/80 text-white text-sm px-3 py-2 transition-all duration-200 hover:scale-105"
-                            >
-                              view-project
-                            </Button>
+                            {project.technologies.map((tech) => (
+                              <span 
+                                key={tech} 
+                                className="px-2.5 py-1 rounded-full text-xs font-fira bg-dark-primary border border-dark-border text-text-secondary group-hover:border-accent-blue/40 group-hover:text-accent-blue transition-colors"
+                              >
+                                {tech}
+                              </span>
+                            ))}
                           </motion.div>
                         </div>
                       </motion.div>

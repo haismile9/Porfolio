@@ -2,8 +2,6 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
 import { SnakeGame } from '@/components/SnakeGame';
 import { SudokuGame } from '@/components/sudoku';
 import { 
@@ -113,8 +111,6 @@ export default function GamesPage() {
 
   return (
     <div className="min-h-screen bg-dark-primary flex flex-col">
-      <Header activeTab="_games" />
-      
       <main className="flex-1 flex">
         {/* Sidebar */}
         <motion.div 
@@ -329,8 +325,6 @@ export default function GamesPage() {
           </AnimatePresence>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }

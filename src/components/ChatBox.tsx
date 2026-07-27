@@ -72,7 +72,7 @@ export function ChatBox({ onClose }: { onClose?: () => void }) {
     }
     
     // Welcome message
-    addLocalMessage('Welcome to haismile.dev terminal!\nType "/help" to see available commands or just chat globally.', true);
+    addLocalMessage('Welcome to haismile.dev terminal!\nType "/cv" to download my Resume/CV, "/help" for commands, or chat globally.', true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -141,7 +141,7 @@ export function ChatBox({ onClose }: { onClose?: () => void }) {
     setInputText('');
 
     // Check if it's a known command
-    const cmdList = ['/help', '/whoami', '/contact', '/clear', '/sudo rm -rf /'];
+    const cmdList = ['/help', '/whoami', '/contact', '/clear', '/sudo rm -rf /', '/cv', '/resume', '/cat resume.md', '/download cv'];
     const isCommand = cmdList.includes(input.toLowerCase()) || input.toLowerCase().startsWith('/name');
 
     if (isCommand) {
@@ -153,7 +153,16 @@ export function ChatBox({ onClose }: { onClose?: () => void }) {
         setClearTimestamp(Date.now());
         setLocalMessages([]);
       } else if (cmd === '/help') {
-        addLocalMessage(`Available commands:\n  /help       - Show this help message\n  /whoami     - Print current user information\n  /contact    - Show contact information\n  /clear      - Clear the terminal screen\n  /name <username> - Change your username`, true);
+        addLocalMessage(`Available commands:\n  /help       - Show this help message\n  /cv         - Download Resume/CV (PDF)\n  /whoami     - Print current user information\n  /contact    - Show contact information\n  /clear      - Clear the terminal screen\n  /name <username> - Change your username`, true);
+      } else if (cmd === '/cv' || cmd === '/resume' || cmd === '/cat resume.md' || cmd === '/download cv') {
+        addLocalMessage(`Downloading Nguyen Hong Hai's CV (.pdf)...\nFile path: /CV/Nguyen-Hong-Hai-TopCV.vn-050426.145519 (1).pdf`, true);
+        const link = document.createElement('a');
+        link.href = '/CV/Nguyen-Hong-Hai-TopCV.vn-050426.145519%20(1).pdf';
+        link.download = 'Nguyen-Hong-Hai-CV.pdf';
+        link.target = '_blank';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
       } else if (cmd === '/whoami') {
         addLocalMessage(`You are logged in as: ${username}\nYou are a special guest exploring my portfolio!`, true);
       } else if (cmd === '/contact') {

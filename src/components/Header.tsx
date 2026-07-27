@@ -10,6 +10,7 @@ const menuItems = [
   { name: '_hello', href: '/', active: false },
   { name: '_about-me', href: '/about', active: false },
   { name: '_projects', href: '/projects', active: false },
+  { name: '_game', href: '/games', active: false },
   { name: '_contact-me', href: '/contact', active: false },
 ]
 
@@ -67,7 +68,7 @@ export function Header({ activeTab = '_hello' }: HeaderProps) {
 
         {/* Main Links */}
         <nav className="flex flex-col lg:flex-row lg:items-center">
-          {menuItems.slice(0, 3).map((item, index) => (
+          {menuItems.slice(0, 4).map((item, index) => (
             <Link key={item.name} href={item.href} passHref legacyBehavior>
               <motion.a
                 onClick={() => setIsMenuOpen(false)}
@@ -93,21 +94,21 @@ export function Header({ activeTab = '_hello' }: HeaderProps) {
         </nav>
 
         {/* Contact Menu Item */}
-        <Link href={menuItems[3].href} passHref legacyBehavior>
+        <Link href={menuItems[4].href} passHref legacyBehavior>
           <motion.a
             onClick={() => setIsMenuOpen(false)}
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.4 }}
+            transition={{ duration: 0.4, delay: 0.5 }}
             className="flex flex-col lg:border-l border-dark-border mt-auto lg:mt-0"
           >
             <div className={cn(
               "flex items-center justify-start lg:justify-center gap-2.5 px-4 lg:px-8 py-4 transition-colors",
-              menuItems[3].name === activeTab
+              menuItems[4].name === activeTab
                 ? "text-text-primary lg:border-b-[3px] border-accent-orange bg-dark-border/10 lg:bg-transparent" 
                 : "text-text-secondary hover:text-text-primary hover:bg-dark-border/10 lg:hover:bg-transparent"
             )}>
-              <span className="text-base font-fira">{menuItems[3].name}</span>
+              <span className="text-base font-fira">{menuItems[4].name}</span>
             </div>
           </motion.a>
         </Link>
