@@ -10,6 +10,7 @@ const menuItems = [
   { name: '_hello', href: '/', active: false },
   { name: '_about-me', href: '/about', active: false },
   { name: '_projects', href: '/projects', active: false },
+  { name: '_blog', href: '/blog', active: false },
   { name: '_game', href: '/games', active: false },
   { name: '_contact-me', href: '/contact', active: false },
 ]
@@ -68,7 +69,7 @@ export function Header({ activeTab = '_hello' }: HeaderProps) {
 
         {/* Main Links */}
         <nav className="flex flex-col lg:flex-row lg:items-center">
-          {menuItems.slice(0, 4).map((item, index) => (
+          {menuItems.slice(0, 5).map((item, index) => (
             <Link key={item.name} href={item.href} passHref legacyBehavior>
               <motion.a
                 onClick={() => setIsMenuOpen(false)}
@@ -94,7 +95,7 @@ export function Header({ activeTab = '_hello' }: HeaderProps) {
         </nav>
 
         {/* Contact Menu Item */}
-        <Link href={menuItems[4].href} passHref legacyBehavior>
+        <Link href={menuItems[5].href} passHref legacyBehavior>
           <motion.a
             onClick={() => setIsMenuOpen(false)}
             initial={{ opacity: 0, y: -10 }}
@@ -104,11 +105,11 @@ export function Header({ activeTab = '_hello' }: HeaderProps) {
           >
             <div className={cn(
               "flex items-center justify-start lg:justify-center gap-2.5 px-4 lg:px-8 py-4 transition-colors",
-              menuItems[4].name === activeTab
+              menuItems[5].name === activeTab
                 ? "text-text-primary lg:border-b-[3px] border-accent-orange bg-dark-border/10 lg:bg-transparent" 
                 : "text-text-secondary hover:text-text-primary hover:bg-dark-border/10 lg:hover:bg-transparent"
             )}>
-              <span className="text-base font-fira">{menuItems[4].name}</span>
+              <span className="text-base font-fira">{menuItems[5].name}</span>
             </div>
           </motion.a>
         </Link>

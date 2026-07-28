@@ -1,0 +1,87 @@
+---
+id: "2"
+title: "Xây dựng hệ thống Microservices chịu tải cao với NestJS, Redis & PostgreSQL"
+date: "2026-07-20"
+readTime: "8 min read"
+category: "backend"
+tags:
+  - "NestJS"
+  - "Redis"
+  - "PostgreSQL"
+  - "Microservices"
+  - "Backend"
+image: "/images/project-3-1d9512.png"
+summary: "Thiết kế kiến trúc Event-Driven Microservices với NestJS, sử dụng Redis Pub/Sub để giao tiếp giữa các services và tối ưu database connection."
+---
+
+> [!TIP]
+> **Key Takeaways / Tóm tắt nhanh cho Dev:**
+> 1. Kiến trúc **Event-Driven Microservices** giúp tách biệt hoàn toàn logic giữa các service (Orders, Users, Notifications).
+> 2. **Redis Pub/Sub** đóng vai trò là Message Broker siêu nhanh với độ trễ chỉ vài millisecond.
+> 3. Sử dụng **Connection Pooling** với Prisma/TypeORM trên PostgreSQL để tránh lỗi quá tải connection khi traffic tăng đột biến.
+
+## 1. Bài toán Monolithic vs Microservices
+
+Khi ứng dụng phát triển lớn (chẳng hạn hệ thống E-commerce với hàng chục ngàn đơn hàng/ngày), kiến trúc Monolithic truyền thống bắt đầu bộc lộ nhược điểm:
+- Một module lỗi (ví dụ service gửi Email/SMS) có thể kéo sập toàn bộ hệ thống Thanh toán.
+- Khó scale riêng lẻ từng phần có traffic cao.
+
+### Giải pháp: Event-Driven Architecture với NestJS
+Với **NestJS Microservices**, chúng ta dễ dàng chuyển đổi từ HTTP REST đồng bộ sang giao tiếp bất đồng bộ qua **Redis** hoặc **RabbitMQ**.
+
+---
+
+## 2. Setup Redis Microservice trong NestJS
+
+Cấu hình Service chính (API Gateway) gửi event tới Order Service:
+
+```typescript
+// src/order/order.controller.ts
+import { Controller, Post, Body, Inject } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
+
+@Controller('orders')
+export class OrderController {
+  constructor(
+    @Inject('ORDER_SERVICE') private readonly client: ClientProxy,
+  ) {}
+
+  @Post()
+  async createOrder(@Body() createOrderDto: any) {
+    // Emit event bất đồng bộ, không block HTTP response
+    this.client.emit('order_created', createOrderDto);
+    
+    return { 
+      status: 'success', 
+      message: 'Order received and being processed' 
+    };
+  }
+}
+```
+
+Ở phía **Order Processor Service**, lắng nghe event `order_created` qua Redis:
+
+```typescript
+// src/order/order.processor.ts
+import { Controller } from '@nestjs/common';
+import { EventPattern, Payload } from '@nestjs/microservices';
+
+@Controller()
+export class OrderProcessor {
+  @EventPattern('order_created')
+  async handleOrderCreated(@Payload() data: any) {
+    console.log('Processing order:', data.id);
+    // 1. Lưu vào PostgreSQL
+    // 2. Trừ tồn kho trong MinIO/Database
+    // 3. Emit tiếp event 'order_confirmed'
+  }
+}
+```
+
+---
+
+## 3. Tối ưu hóa Database Pool với PostgreSQL
+
+Khi chạy nhiều instance microservice, mỗi instance đều mở các kết nối tới PostgreSQL. Để tối ưu:
+- Đặt tham số `connection_limit` phù hợp trong connection string: `postgresql://user:password@localhost:5432/mydb?connection_limit=10`
+- Sử dụng **PgBouncer** ở tầng trước PostgreSQL nếu số lượng kết nối đồng thời vượt quá 200.

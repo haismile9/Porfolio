@@ -72,7 +72,7 @@ export function ChatBox({ onClose }: { onClose?: () => void }) {
     }
     
     // Welcome message
-    addLocalMessage('Welcome to haismile.dev terminal!\nType "/cv" to download my Resume/CV, "/help" for commands, or chat globally.', true);
+    addLocalMessage('Welcome to haismile.dev terminal!\nType "/cv" to download my Resume/CV, "/blog" to read technical articles, "/help" for commands, or chat globally.', true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -141,7 +141,7 @@ export function ChatBox({ onClose }: { onClose?: () => void }) {
     setInputText('');
 
     // Check if it's a known command
-    const cmdList = ['/help', '/whoami', '/contact', '/clear', '/sudo rm -rf /', '/cv', '/resume', '/cat resume.md', '/download cv'];
+    const cmdList = ['/help', '/whoami', '/contact', '/clear', '/sudo rm -rf /', '/cv', '/resume', '/cat resume.md', '/download cv', '/blog', '/articles'];
     const isCommand = cmdList.includes(input.toLowerCase()) || input.toLowerCase().startsWith('/name');
 
     if (isCommand) {
@@ -153,7 +153,10 @@ export function ChatBox({ onClose }: { onClose?: () => void }) {
         setClearTimestamp(Date.now());
         setLocalMessages([]);
       } else if (cmd === '/help') {
-        addLocalMessage(`Available commands:\n  /help       - Show this help message\n  /cv         - Download Resume/CV (PDF)\n  /whoami     - Print current user information\n  /contact    - Show contact information\n  /clear      - Clear the terminal screen\n  /name <username> - Change your username`, true);
+        addLocalMessage(`Available commands:\n  /help       - Show this help message\n  /cv         - Download Resume/CV (PDF)\n  /blog       - Explore technical & curated blog articles\n  /whoami     - Print current user information\n  /contact    - Show contact information\n  /clear      - Clear the terminal screen\n  /name <username> - Change your username`, true);
+      } else if (cmd === '/blog' || cmd === '/articles') {
+        addLocalMessage(`Technical Blog Articles:\n  1. [Next.js] Kiến trúc Next.js 14 App Router & Tối ưu Caching\n  2. [Backend] Xây dựng hệ thống Microservices với NestJS, Redis & PostgreSQL\n  3. [Database] Tối ưu hóa chỉ mục (Indexing) PostgreSQL cho E-commerce\n  4. [Architecture] Các mô hình Event-Driven Architecture cho hệ thống phân tán\n\nOpening _blog tab...`, true);
+        window.location.href = '/blog';
       } else if (cmd === '/cv' || cmd === '/resume' || cmd === '/cat resume.md' || cmd === '/download cv') {
         addLocalMessage(`Downloading Nguyen Hong Hai's CV (.pdf)...\nFile path: /CV/Nguyen-Hong-Hai-TopCV.vn-050426.145519 (1).pdf`, true);
         const link = document.createElement('a');
