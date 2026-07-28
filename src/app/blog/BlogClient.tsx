@@ -123,9 +123,58 @@ export default function BlogClient({ blogs }: BlogClientProps) {
     setTimeout(() => setCopiedCodeIndex(null), 2000)
   }
 
-  // Robust Markdown parser that never splits inside code blocks
+  const parseInlineMarkdown = (text: string): React.ReactNode[] => {
+    const regex = /(\*\*.*?\*\*|`.*?`|\*.*?\*|\[.*?\]\(.*?\))/g
+    const parts = text.split(regex)
+
+    return parts.map((part, index) => {
+      if (!part) return null
+      if (part.startsWith('**') && part.endsWith('**') && part.length >= 4) {
+        return (
+          <strong key={index} className="text-white font-semibold">
+            {part.slice(2, -2)}
+          </strong>
+        )
+      }
+      if (part.startsWith('`') && part.endsWith('`') && part.length >= 2) {
+        return (
+          <code
+            key={index}
+            className="px-1.5 py-0.5 mx-0.5 bg-dark-secondary/80 text-accent-blue rounded text-xs font-fira border border-dark-border"
+          >
+            {part.slice(1, -1)}
+          </code>
+        )
+      }
+      if (part.startsWith('*') && part.endsWith('*') && part.length >= 2) {
+        return (
+          <em key={index} className="italic text-text-primary">
+            {part.slice(1, -1)}
+          </em>
+        )
+      }
+      const linkMatch = part.match(/^\[(.*?)\]\((.*?)\)$/)
+      if (linkMatch) {
+        return (
+          <a
+            key={index}
+            href={linkMatch[2]}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-accent-blue underline hover:text-white transition-colors"
+          >
+            {linkMatch[1]}
+          </a>
+        )
+      }
+      return part
+    })
+  }
+
+  // Robust Markdown parser that never splits inside code blocks and supports advanced MDX features
   const renderMarkdownContent = (content: string) => {
-    const parts = content.split(/(```[\s\S]*?```)/g)
+    const normalizedContent = content.replace(/\r\n/g, '\n').replace(/\r/g, '')
+    const parts = normalizedContent.split(/(```[\s\S]*?```)/g)
     let codeBlockCounter = 0
 
     return parts.map((part, pIdx) => {
@@ -136,8 +185,8 @@ export default function BlogClient({ blogs }: BlogClientProps) {
         const currentCodeIdx = codeBlockCounter++
 
         return (
-          <div key={pIdx} className="my-6 rounded-xl overflow-hidden border border-dark-border bg-dark-primary shadow-xl">
-            <div className="flex items-center justify-between px-4 py-2 bg-dark-secondary border-b border-dark-border text-xs font-fira text-text-secondary">
+          <div key={pIdx} className="my-4 rounded-lg overflow-hidden border border-dark-border bg-dark-primary shadow">
+            <div className="flex items-center justify-between px-3 py-1.5 bg-dark-secondary border-b border-dark-border text-xs font-fira text-text-secondary">
               <span className="text-accent-orange uppercase font-bold tracking-wider">{lang}</span>
               <button
                 onClick={() => handleCopyCode(codeText, currentCodeIdx)}
@@ -160,54 +209,130 @@ export default function BlogClient({ blogs }: BlogClientProps) {
                 )}
               </button>
             </div>
-            <pre className="p-4 overflow-x-auto text-xs sm:text-sm font-fira leading-relaxed text-text-primary">
+            <pre className="p-3.5 overflow-x-auto text-xs sm:text-sm font-fira leading-relaxed text-text-primary">
               <code>{codeText}</code>
             </pre>
           </div>
         )
       }
 
-      const sections = part.split('\n\n').filter((s) => s.trim().length > 0)
+      const normalizedSection = part.replace(/^(#{1,4}\s+.*)$/gm, '\n$1\n\n')
+      const sections = normalizedSection.split(/\n{2,}/).filter((s) => s.trim().length > 0)
       return sections.map((section, idx) => {
         const key = `${pIdx}-${idx}`
         const trimmed = section.trim()
 
-        // Key Takeaways callout (> [!TIP])
-        if (trimmed.startsWith('> [!TIP]')) {
+        // GitHub Callout Alerts (> [!TIP], > [!WARNING], > [!NOTE], etc.)
+        const calloutMatch = trimmed.match(/^>\s*\[!(TIP|WARNING|NOTE|IMPORTANT|CAUTION)\]/i)
+        if (calloutMatch) {
+          const type = calloutMatch[1].toUpperCase()
           const lines = trimmed
             .split('\n')
-            .filter((line) => !line.includes('[!TIP]'))
-            .map((line) => line.replace(/^>\s?/, ''))
+            .filter((line) => !line.match(/^>\s*\[!/i))
+            .map((line) => line.replace(/^>\s?/, '').trim())
+
+          let bgClass = 'bg-accent-blue/10 border-accent-blue/40'
+          let textClass = 'text-accent-blue'
+          let label = 'KEY TAKEAWAYS / TÓM TẮT NHANH CHO DEV'
+          let icon = (
+            <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          )
+
+          if (type === 'WARNING' || type === 'CAUTION') {
+            bgClass = 'bg-accent-orange/10 border-accent-orange/40'
+            textClass = 'text-accent-orange'
+            label = 'LƯU Ý / CẢNH BÁO QUAN TRỌNG'
+            icon = (
+              <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            )
+          } else if (type === 'IMPORTANT' || type === 'NOTE') {
+            bgClass = 'bg-purple-500/10 border-purple-500/40'
+            textClass = 'text-purple-400'
+            label = 'THÔNG TIN QUAN TRỌNG'
+          }
 
           return (
-            <div key={key} className="my-6 p-5 rounded-xl bg-accent-blue/10 border border-accent-blue/40 text-text-primary">
-              <div className="flex items-center gap-2 text-accent-blue font-fira font-semibold mb-3 text-sm">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span>KEY TAKEAWAYS / TÓM TẮT NHANH CHO DEV</span>
+            <div key={key} className={`my-4 p-4 rounded-lg border ${bgClass} text-text-primary`}>
+              <div className={`flex items-center gap-2 ${textClass} font-fira font-semibold mb-2 text-xs sm:text-sm`}>
+                {icon}
+                <span>{label}</span>
               </div>
-              <div className="space-y-2 text-sm leading-relaxed font-inter text-text-secondary">
+              <div className="space-y-1.5 text-xs sm:text-sm leading-relaxed font-inter text-text-secondary">
                 {lines.map((line, lIdx) => (
-                  <p key={lIdx}>{line}</p>
+                  <p key={lIdx}>{parseInlineMarkdown(line)}</p>
                 ))}
               </div>
             </div>
           )
         }
 
+        // Markdown Tables (| Header 1 | Header 2 |)
+        if (trimmed.startsWith('|') || (trimmed.includes('\n|') && trimmed.split('\n').some((l) => l.trim().startsWith('|')))) {
+          const lines = trimmed.split('\n').filter((line) => line.trim().startsWith('|'))
+          if (lines.length >= 2) {
+            const parseRow = (rowStr: string) =>
+              rowStr
+                .split('|')
+                .slice(1, -1)
+                .map((cell) => cell.trim())
+
+            const headers = parseRow(lines[0])
+            const dataRows = lines.slice(2).map(parseRow)
+
+            return (
+              <div key={key} className="my-4 overflow-x-auto rounded-lg border border-dark-border shadow">
+                <table className="w-full border-collapse text-left text-xs sm:text-sm font-inter">
+                  <thead>
+                    <tr className="bg-dark-secondary/80 border-b border-dark-border text-text-primary font-fira">
+                      {headers.map((h, hIdx) => (
+                        <th key={hIdx} className="p-2.5 sm:p-3 font-semibold text-white whitespace-nowrap">
+                          {parseInlineMarkdown(h)}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-dark-border/40 bg-dark-primary/40 text-text-secondary">
+                    {dataRows.map((row, rIdx) => (
+                      <tr key={rIdx} className="hover:bg-dark-secondary/30 transition-colors">
+                        {row.map((cell, cIdx) => (
+                          <td key={cIdx} className="p-2.5 sm:p-3 leading-normal">
+                            {parseInlineMarkdown(cell)}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )
+          }
+        }
+
         // Horizontal rule (---)
-        if (trimmed === '---') {
-          return <hr key={key} className="my-8 border-dark-border" />
+        if (trimmed === '---' || trimmed === '***' || trimmed === '___') {
+          return <hr key={key} className="my-5 border-dark-border" />
+        }
+
+        // Headers H1 (# )
+        if (trimmed.startsWith('# ')) {
+          const headerText = trimmed.replace(/^#\s+/, '')
+          return (
+            <h1 key={key} className="text-xl sm:text-2xl font-fira font-bold text-white mt-6 mb-3 border-b border-dark-border/80 pb-2">
+              {parseInlineMarkdown(headerText)}
+            </h1>
+          )
         }
 
         // Headers H2 (## )
         if (trimmed.startsWith('## ')) {
           const headerText = trimmed.replace(/^##\s+/, '')
           return (
-            <h2 key={key} className="text-lg sm:text-xl lg:text-2xl font-fira font-bold text-white mt-8 mb-4 flex items-center gap-2 border-b border-dark-border/60 pb-2">
-              <span className="text-accent-orange">#</span>
-              <span>{headerText}</span>
+            <h2 key={key} className="text-lg sm:text-xl font-fira font-bold text-white mt-5 mb-2 border-b border-dark-border/40 pb-1.5">
+              {parseInlineMarkdown(headerText)}
             </h2>
           )
         }
@@ -216,32 +341,116 @@ export default function BlogClient({ blogs }: BlogClientProps) {
         if (trimmed.startsWith('### ')) {
           const headerText = trimmed.replace(/^###\s+/, '')
           return (
-            <h3 key={key} className="text-base sm:text-lg font-fira font-semibold text-accent-blue mt-6 mb-3 flex items-center gap-2">
-              <span className="text-text-secondary">##</span>
-              <span>{headerText}</span>
+            <h3 key={key} className="text-base sm:text-lg font-fira font-semibold text-accent-blue mt-4 mb-1.5">
+              {parseInlineMarkdown(headerText)}
             </h3>
           )
         }
 
-        // Lists (-)
-        if (trimmed.includes('\n- ') || trimmed.startsWith('- ')) {
-          const listItems = trimmed.split('\n').filter((item) => item.trim().startsWith('- '))
+        // Headers H4 (#### )
+        if (trimmed.startsWith('#### ')) {
+          const headerText = trimmed.replace(/^####\s+/, '')
           return (
-            <ul key={key} className="my-4 space-y-2 pl-4">
-              {listItems.map((item, iIdx) => (
-                <li key={iIdx} className="flex items-start gap-2.5 text-text-secondary text-sm sm:text-base leading-relaxed">
-                  <span className="text-accent-orange mt-1.5">•</span>
-                  <span>{item.replace(/^- /, '')}</span>
-                </li>
+            <h4 key={key} className="text-sm sm:text-base font-fira font-semibold text-white mt-3 mb-1">
+              {parseInlineMarkdown(headerText)}
+            </h4>
+          )
+        }
+
+        // Numbered / Ordered Lists (1. , 2. )
+        if (trimmed.split('\n').some((line) => /^\d+\.\s+/.test(line.trim()))) {
+          const lines = trimmed.split('\n')
+          const listItems: { num: string; text: string }[] = []
+          const introText: string[] = []
+
+          lines.forEach((line) => {
+            const match = line.trim().match(/^(\d+)\.\s+(.*)/)
+            if (match) {
+              listItems.push({ num: match[1], text: match[2] })
+            } else if (listItems.length === 0) {
+              if (line.trim().length > 0) introText.push(line.trim())
+            } else {
+              if (line.trim().length > 0) {
+                listItems[listItems.length - 1].text += ' ' + line.trim()
+              }
+            }
+          })
+
+          return (
+            <div key={key} className="my-2.5 space-y-2">
+              {introText.length > 0 && (
+                <p className="text-text-secondary text-sm sm:text-base leading-normal font-inter mb-2">
+                  {parseInlineMarkdown(introText.join(' '))}
+                </p>
+              )}
+              <ol className="space-y-1.5 pl-1">
+                {listItems.map((item, iIdx) => (
+                  <li key={iIdx} className="flex items-start gap-2 text-text-secondary text-sm sm:text-base leading-normal">
+                    <span className="flex-shrink-0 font-fira text-accent-blue font-bold w-5 text-right mt-0.5">
+                      {item.num}.
+                    </span>
+                    <span className="flex-1 font-inter">{parseInlineMarkdown(item.text)}</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )
+        }
+
+        // Bullet Lists (- or *)
+        if (trimmed.split('\n').some((line) => /^[-*]\s+/.test(line.trim()))) {
+          const lines = trimmed.split('\n')
+          const listItems: string[] = []
+          const introText: string[] = []
+
+          lines.forEach((line) => {
+            const match = line.trim().match(/^[-*]\s+(.*)/)
+            if (match) {
+              listItems.push(match[1])
+            } else if (listItems.length === 0) {
+              if (line.trim().length > 0) introText.push(line.trim())
+            } else {
+              if (line.trim().length > 0) {
+                listItems[listItems.length - 1] += ' ' + line.trim()
+              }
+            }
+          })
+
+          return (
+            <div key={key} className="my-2.5 space-y-2">
+              {introText.length > 0 && (
+                <p className="text-text-secondary text-sm sm:text-base leading-normal font-inter mb-2">
+                  {parseInlineMarkdown(introText.join(' '))}
+                </p>
+              )}
+              <ul className="space-y-1.5 pl-2">
+                {listItems.map((item, iIdx) => (
+                  <li key={iIdx} className="flex items-start gap-2 text-text-secondary text-sm sm:text-base leading-normal">
+                    <span className="text-accent-orange font-bold mt-0.5">•</span>
+                    <span className="flex-1 font-inter">{parseInlineMarkdown(item)}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+
+        // Blockquotes (> )
+        if (trimmed.startsWith('>')) {
+          const lines = trimmed.split('\n').map((l) => l.replace(/^>\s?/, '').trim())
+          return (
+            <blockquote key={key} className="my-3 border-l-3 border-accent-blue/60 pl-3 py-1.5 italic text-text-secondary bg-dark-secondary/15 rounded-r font-inter text-sm sm:text-base">
+              {lines.map((l, lIdx) => (
+                <p key={lIdx} className="my-1">{parseInlineMarkdown(l)}</p>
               ))}
-            </ul>
+            </blockquote>
           )
         }
 
         // Paragraphs
         return (
-          <p key={key} className="my-4 text-text-secondary text-sm sm:text-base leading-relaxed font-inter">
-            {trimmed}
+          <p key={key} className="my-2.5 text-text-secondary text-sm sm:text-base leading-normal font-inter">
+            {parseInlineMarkdown(trimmed)}
           </p>
         )
       })
@@ -255,7 +464,9 @@ export default function BlogClient({ blogs }: BlogClientProps) {
         initial={{ x: -50, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ duration: 0.8, delay: 0.2 }}
-        className="w-full lg:w-72 bg-dark-secondary/60 border-b lg:border-b-0 lg:border-r border-dark-border flex flex-col shrink-0"
+        className={`w-full lg:w-72 bg-dark-secondary/60 border-b lg:border-b-0 lg:border-r border-dark-border flex-col shrink-0 ${
+          activeBlog ? 'hidden lg:flex' : 'flex'
+        }`}
       >
         {/* Explorer Title */}
         <div className="px-4 py-3 border-b border-dark-border flex items-center justify-between">
@@ -594,14 +805,14 @@ export default function BlogClient({ blogs }: BlogClientProps) {
                 initial={{ y: -50, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="flex items-center justify-between bg-dark-secondary border-b border-dark-border px-6 py-2.5 text-xs font-fira shrink-0"
+                className="flex flex-wrap items-center justify-between gap-2 bg-dark-secondary border-b border-dark-border px-3 sm:px-6 py-2 sm:py-2.5 text-xs font-fira shrink-0"
               >
                 <button
                   onClick={() => setActiveBlogId(null)}
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-dark-primary border border-dark-border text-text-secondary hover:text-white hover:border-accent-blue transition-colors font-medium"
+                  className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-lg bg-dark-primary border border-dark-border text-text-secondary hover:text-white hover:border-accent-blue transition-colors font-medium"
                 >
                   <span>←</span>
-                  <span>Back to All Articles</span>
+                  <span className="sm:inline">Back to All Articles</span>
                 </button>
                 <div className="flex items-center gap-3 text-text-secondary text-xs">
                   <span className="flex items-center gap-1.5 text-accent-orange font-semibold">
@@ -620,11 +831,13 @@ export default function BlogClient({ blogs }: BlogClientProps) {
               </motion.div>
 
               {/* Article Viewer Content with Staggered Component Transitions */}
-              <div className="flex-1 overflow-y-auto flex">
+              <div id="article-scroll-container" className="flex-1 overflow-y-auto flex">
                 {/* Left Line Numbers Margin */}
-                <div className="w-12 py-8 bg-dark-secondary/30 border-r border-dark-border/40 text-right pr-3 font-fira text-xs text-text-secondary/40 select-none hidden sm:block shrink-0 space-y-4">
-                  {Array.from({ length: 32 }).map((_, i) => (
-                    <div key={i} className="h-6">
+                <div className="w-12 py-8 bg-dark-secondary/30 border-r border-dark-border/40 text-right pr-3 font-fira text-xs text-text-secondary/40 select-none hidden sm:block shrink-0 overflow-hidden space-y-3">
+                  {Array.from({
+                    length: Math.max(12, Math.min(Math.ceil(activeBlog.content.length / 450), 22)),
+                  }).map((_, i) => (
+                    <div key={i} className="h-5">
                       {i + 1}
                     </div>
                   ))}
@@ -637,8 +850,11 @@ export default function BlogClient({ blogs }: BlogClientProps) {
                   initial="hidden"
                   animate="visible"
                   exit="hidden"
-                  className="flex-1 p-6 sm:p-10 lg:p-12 max-w-4xl mx-auto overflow-x-hidden"
+                  className="flex-1 p-4 sm:p-8 lg:p-10 w-full overflow-x-hidden"
                 >
+                  {/* Anchor for Top of file button */}
+                  <div id="article-top-anchor" className="h-0 w-0" />
+
                   {/* Topic & Metadata Header */}
                   <motion.div
                     variants={itemVariants}
@@ -725,7 +941,13 @@ export default function BlogClient({ blogs }: BlogClientProps) {
                         ← Back to All Articles
                       </button>
                       <button
-                        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                        onClick={() => {
+                          const anchor = document.getElementById('article-top-anchor')
+                          if (anchor) anchor.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                          const container = document.getElementById('article-scroll-container')
+                          if (container) container.scrollTo({ top: 0, behavior: 'smooth' })
+                          window.scrollTo({ top: 0, behavior: 'smooth' })
+                        }}
                         className="px-3 py-1.5 rounded-lg bg-dark-secondary border border-dark-border hover:border-accent-blue hover:text-white transition-colors"
                       >
                         ↑ Top of file

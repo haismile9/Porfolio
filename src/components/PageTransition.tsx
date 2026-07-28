@@ -42,7 +42,7 @@ export function PageTransition({ children }: PageTransitionProps) {
       animate="in"
       variants={pageVariants}
       transition={pageTransition}
-      className="w-full flex-1 flex flex-col h-full"
+      className="w-full flex-1 flex flex-col h-full min-h-0 overflow-hidden"
     >
       {children}
     </motion.div>
