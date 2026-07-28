@@ -353,15 +353,15 @@ export default function AboutPage() {
         </motion.div>
 
         {/* Main Content */}
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          className="flex-1 flex flex-col min-w-0"
-        >
-          {/* Tabs */}
+        <div className="flex-1 flex flex-col min-w-0 min-h-0 overflow-hidden">
+          {/* Tabs - Slides down from top matching _projects and _blog header bar */}
           {openTabs.length > 0 && (
-            <div className="flex items-center justify-between border-b border-dark-border bg-dark-secondary overflow-x-auto shrink-0">
+            <motion.div
+              initial={{ y: -50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.4, duration: 0.8 }}
+              className="flex items-center justify-between border-b border-dark-border bg-dark-secondary overflow-x-auto shrink-0"
+            >
               <div className="flex items-center">
                 {openTabs.map(tab => (
                   <div
@@ -399,41 +399,49 @@ export default function AboutPage() {
                   <span className="sm:hidden">CV</span>
                 </a>
               )}
-            </div>
+            </motion.div>
           )}
 
-          {/* Content */}
-          {openTabs.length === 0 ? (
-            <div className="flex-1 flex flex-col items-center justify-center bg-dark-primary p-6 gap-4">
-              <Image src="/images/smile_logo/OIP-Photoroom.png" alt="Logo" width={100} height={100} className="opacity-10" />
-              <h2 className="text-xl font-fira text-text-secondary">No file is open</h2>
-              <p className="text-text-secondary opacity-50 text-sm text-center">
-                Select a file from the explorer to view its contents.
-              </p>
-            </div>
-          ) : (
-            <div className="flex-1 bg-dark-primary overflow-hidden">
-              {/* Desktop: with line numbers */}
-              <div className="hidden lg:flex h-full overflow-y-auto overflow-x-hidden">
-                <div className="text-text-secondary text-right select-none text-sm leading-7 px-4 py-6 shrink-0 min-w-[3rem] border-r border-dark-border/40 font-mono">
-                  {lines.map((_, i) => (
-                    <div key={i}>{i + 1}</div>
-                  ))}
-                </div>
-                <div className="text-text-secondary font-mono text-sm leading-7 px-6 py-6 whitespace-pre-wrap flex-1 min-w-0 break-words">
-                  {content}
-                </div>
+          {/* Content - Smooth slide up matching _projects and _blog cards */}
+          <motion.div
+            key={selectedFile || 'no-file'}
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.6, ease: 'easeOut' }}
+            className="flex-1 flex flex-col min-w-0 min-h-0 overflow-hidden"
+          >
+            {openTabs.length === 0 ? (
+              <div className="flex-1 flex flex-col items-center justify-center bg-dark-primary p-6 gap-4">
+                <Image src="/images/smile_logo/OIP-Photoroom.png" alt="Logo" width={100} height={100} className="opacity-10" />
+                <h2 className="text-xl font-fira text-text-secondary">No file is open</h2>
+                <p className="text-text-secondary opacity-50 text-sm text-center">
+                  Select a file from the explorer to view its contents.
+                </p>
               </div>
+            ) : (
+              <div className="flex-1 bg-dark-primary overflow-hidden">
+                {/* Desktop: with line numbers */}
+                <div className="hidden lg:flex h-full overflow-y-auto overflow-x-hidden">
+                  <div className="text-text-secondary text-right select-none text-sm leading-7 px-4 py-6 shrink-0 min-w-[3rem] border-r border-dark-border/40 font-mono">
+                    {lines.map((_, i) => (
+                      <div key={i}>{i + 1}</div>
+                    ))}
+                  </div>
+                  <div className="text-text-secondary font-mono text-sm leading-7 px-6 py-6 whitespace-pre-wrap flex-1 min-w-0 break-words">
+                    {content}
+                  </div>
+                </div>
 
-              {/* Mobile: clean content */}
-              <div className="flex lg:hidden h-full overflow-y-auto p-4">
-                <div className="text-text-secondary font-mono text-sm leading-6 whitespace-pre-wrap flex-1 min-w-0">
-                  {content}
+                {/* Mobile: clean content */}
+                <div className="flex lg:hidden h-full overflow-y-auto p-4">
+                  <div className="text-text-secondary font-mono text-sm leading-6 whitespace-pre-wrap flex-1 min-w-0">
+                    {content}
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
-        </motion.div>
+            )}
+          </motion.div>
+        </div>
       </main>
     </div>
   );

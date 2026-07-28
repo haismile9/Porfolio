@@ -116,7 +116,7 @@ export default function GamesPage() {
         <motion.div 
           initial={{ x: -50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
           className="w-[311px] border-r border-border-primary"
         >
           {/* Games Section */}
@@ -217,16 +217,17 @@ export default function GamesPage() {
                 </div>
               </motion.div>
             ) : (
-              <motion.div
+              <div
                 key="game-gallery"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3 }}
-                className="h-full flex flex-col"
+                className="h-full flex flex-col overflow-hidden"
               >
-                {/* Filter Tabs */}
-                <div className="border-b border-border-primary">
+                {/* Filter Tabs - Slides down from top matching _projects and _blog */}
+                <motion.div
+                  initial={{ y: -50, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.4, duration: 0.8 }}
+                  className="border-b border-border-primary shrink-0"
+                >
                   <div className="flex">
                     <motion.button
                       onClick={() => setSelectedTag('all')}
@@ -254,12 +255,12 @@ export default function GamesPage() {
                       </motion.button>
                     ))}
                   </div>
-                </div>
+                </motion.div>
 
-                {/* Games Grid */}
-                <div className="flex-1 p-8">
+                {/* Games Grid - Staggered slide up matching _projects and _blog cards */}
+                <div className="flex-1 overflow-y-auto p-6 sm:p-8">
                   <motion.div 
-                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto"
                     layout
                   >
                     <AnimatePresence>
@@ -269,7 +270,7 @@ export default function GamesPage() {
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: -20 }}
-                          transition={{ duration: 0.3, delay: index * 0.1 }}
+                          transition={{ duration: 0.5, delay: 0.6 + index * 0.15, ease: 'easeOut' }}
                           layout
                           className="bg-dark-secondary rounded-lg border border-border-primary overflow-hidden hover:border-accent-primary transition-colors group cursor-pointer"
                           onClick={() => handlePlayGame(game)}
@@ -320,7 +321,7 @@ export default function GamesPage() {
                     </AnimatePresence>
                   </motion.div>
                 </div>
-              </motion.div>
+              </div>
             )}
           </AnimatePresence>
         </div>
