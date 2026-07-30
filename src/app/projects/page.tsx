@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 
 // Technology types
-type Technology = 'Next.js' | 'React' | 'NestJS' | 'PostgreSQL' | 'MinIO' | 'Redis' | 'Firebase' | 'HTML' | 'CSS' | 'Flutter' | 'Laravel' | 'MySQL' | 'Java' | 'PHP';
+type Technology = 'Next.js' | 'React' | 'NestJS' | 'PostgreSQL' | 'MinIO' | 'Redis' | 'Firebase' | 'HTML' | 'CSS' | 'Flutter' | 'Laravel' | 'MySQL' | 'Java' | 'PHP' | 'JavaScript' | 'JS';
 
 interface Project {
   id: number;
@@ -27,6 +27,9 @@ const technologies: { name: Technology; icon: string; color: string }[] = [
   { name: 'Laravel', icon: '/images/icon-markdown.svg', color: '#FF2D20' },
   { name: 'Java', icon: '/images/icon-html.svg', color: '#5382A1' },
   { name: 'PHP', icon: '/images/icon-css.svg', color: '#777BB4' },
+  { name: 'HTML', icon: '/images/icon-html.svg', color: '#E34F26' },
+  { name: 'CSS', icon: '/images/icon-css.svg', color: '#1572B6' },
+  { name: 'JavaScript', icon: '/images/icon-vue.svg', color: '#F7DF1E' },
 ];
 
 // Sample projects data
@@ -48,6 +51,15 @@ const projects: Project[] = [
     technologies: ['Next.js', 'React', 'NestJS', 'PostgreSQL', 'MinIO', 'Redis'],
     primaryTech: 'Next.js',
     link: 'https://lumieyewear.haismile.dev/'
+  },
+  {
+    id: 3,
+    title: 'Clicon - eCommerce Store',
+    description: 'Online e-commerce store for electronics and technology devices.',
+    image: '/images/ecommerce.png',
+    technologies: ['HTML', 'CSS', 'JavaScript'],
+    primaryTech: 'JavaScript',
+    link: 'https://ecommerce.haismile.dev/'
   },
   {
     id: 4,
