@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image'
+import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
@@ -20,7 +21,7 @@ export default function HomePage() {
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.6 }}
-              className="flex flex-col justify-center gap-16 lg:gap-[75px] w-full lg:w-[504px]"
+              className="flex flex-col justify-center gap-12 lg:gap-[75px] w-full lg:w-[504px]"
             >
               {/* Introduction container */}
               <div className="flex flex-col gap-1">
@@ -88,6 +89,27 @@ export default function HomePage() {
                   <span className="text-text-secondary">=</span>{' '}
                   <span className="text-accent-green">&quot;https://github.com/haismile9&quot;</span>
                 </motion.p>
+              </motion.div>
+
+              {/* Quick links - shown where the snake game is hidden */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 2.2 }}
+                className="@5xl:hidden flex flex-wrap gap-3 -mt-8"
+              >
+                <Link
+                  href="/projects"
+                  className="px-4 py-2.5 rounded-lg bg-accent-orange text-dark-bg font-fira text-sm font-medium active:scale-95 transition-transform"
+                >
+                  view-projects
+                </Link>
+                <Link
+                  href="/contact"
+                  className="px-4 py-2.5 rounded-lg border border-dark-border bg-dark-border/30 text-text-primary font-fira text-sm active:scale-95 transition-transform"
+                >
+                  contact-me
+                </Link>
               </motion.div>
             </motion.div>
 

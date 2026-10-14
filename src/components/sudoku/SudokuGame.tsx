@@ -142,12 +142,12 @@ export function SudokuGame({ className = '' }: SudokuGameProps) {
     const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
     
     return (
-      <div className="grid grid-cols-3 gap-2 max-w-[120px]">
+      <div className="grid grid-cols-9 gap-1.5 w-full lg:grid-cols-3 lg:gap-2 lg:w-auto lg:max-w-[120px]">
         {numbers.map((num) => (
           <motion.button
             key={num}
             onClick={() => handleNumberInput(num)}
-            className="w-8 h-8 bg-blue-500 hover:bg-blue-600 text-white rounded font-medium transition-colors"
+            className="w-full h-11 text-lg lg:w-8 lg:h-8 lg:text-base bg-blue-500 hover:bg-blue-600 text-white rounded font-medium transition-colors"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             disabled={gameState !== 'playing'}
@@ -227,7 +227,7 @@ export function SudokuGame({ className = '' }: SudokuGameProps) {
             </div>
 
             {/* Game Grid */}
-            <div className="flex flex-col lg:flex-row gap-6 items-start">
+            <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 items-stretch lg:items-start">
               <SudokuGrid
                 board={board}
                 initialBoard={initialBoard}
@@ -237,16 +237,16 @@ export function SudokuGame({ className = '' }: SudokuGameProps) {
               />
               
               {/* Controls */}
-              <div className="space-y-4">
+              <div className="space-y-3 lg:space-y-4">
                 <div>
-                  <h3 className="text-sm font-medium text-white mb-3">Numbers</h3>
+                  <h3 className="hidden lg:block text-sm font-medium text-white mb-3">Numbers</h3>
                   {renderNumberPad()}
                 </div>
                 
-                <div className="space-y-2">
+                <div className="grid grid-cols-3 gap-2 lg:flex lg:flex-col">
                   <motion.button
                     onClick={() => handleNumberInput(0)}
-                    className="w-full py-2 px-4 bg-gray-500 hover:bg-gray-600 text-white rounded font-medium transition-colors"
+                    className="w-full py-2.5 lg:py-2 px-2 lg:px-4 text-sm lg:text-base whitespace-nowrap bg-gray-500 hover:bg-gray-600 text-white rounded font-medium transition-colors"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
@@ -256,7 +256,7 @@ export function SudokuGame({ className = '' }: SudokuGameProps) {
                   <motion.button
                     onClick={useHint}
                     disabled={hints <= 0 || !selectedCell}
-                    className="w-full py-2 px-4 bg-yellow-500 hover:bg-yellow-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white rounded font-medium transition-colors"
+                    className="w-full py-2.5 lg:py-2 px-2 lg:px-4 text-sm lg:text-base whitespace-nowrap bg-yellow-500 hover:bg-yellow-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white rounded font-medium transition-colors"
                     whileHover={{ scale: hints > 0 && selectedCell ? 1.02 : 1 }}
                     whileTap={{ scale: hints > 0 && selectedCell ? 0.98 : 1 }}
                   >
@@ -265,7 +265,7 @@ export function SudokuGame({ className = '' }: SudokuGameProps) {
                   
                   <motion.button
                     onClick={() => setGameState('menu')}
-                    className="w-full py-2 px-4 bg-red-500 hover:bg-red-600 text-white rounded font-medium transition-colors"
+                    className="w-full py-2.5 lg:py-2 px-2 lg:px-4 text-sm lg:text-base whitespace-nowrap bg-red-500 hover:bg-red-600 text-white rounded font-medium transition-colors"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >

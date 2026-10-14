@@ -51,20 +51,16 @@ export function SudokuCell({
     let textClasses = '';
     let borderClasses = 'border-gray-400';
     
-    if (hasError) {
-      bgClasses = 'bg-red-100 hover:bg-red-200';
-      textClasses = 'text-red-600 font-bold animate-pulse';
-      borderClasses = 'border-red-500 border-2';
-    } else if (isSelected) {
+    if (isSelected) {
       bgClasses = 'bg-blue-100';
-      textClasses = isInitial ? 'text-gray-800 font-bold' : 'text-blue-600 font-semibold';
+      textClasses = hasError ? 'text-red-600 font-bold' : isInitial ? 'text-gray-800 font-bold' : 'text-blue-600 font-semibold';
       borderClasses = 'border-blue-500 border-2';
     } else if (isHighlighted) {
       bgClasses = 'bg-blue-50 hover:bg-blue-100';
-      textClasses = isInitial ? 'text-gray-800 font-bold' : 'text-blue-500';
+      textClasses = hasError ? 'text-red-600 font-bold' : isInitial ? 'text-gray-800 font-bold' : 'text-blue-500';
     } else {
       bgClasses = 'bg-white hover:bg-gray-50';
-      textClasses = isInitial ? 'text-gray-800 font-bold' : 'text-blue-600';
+      textClasses = hasError ? 'text-red-600 font-bold' : isInitial ? 'text-gray-800 font-bold' : 'text-blue-600';
     }
     
     return `${baseClasses} ${bgClasses} ${textClasses} ${borderClasses} ${getBorderClasses()}`;
@@ -77,22 +73,14 @@ export function SudokuCell({
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
       initial={{ opacity: 0, scale: 0.8 }}
-      animate={{ 
-        opacity: 1, 
-        scale: 1,
-        x: hasError ? [0, -2, 2, -2, 2, 0] : 0 
-      }}
-      transition={{ 
-        delay: (row * 9 + col) * 0.01,
-        x: { duration: 0.3, ease: "easeInOut" }
-      }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ delay: (row * 9 + col) * 0.01 }}
     >
       {value && (
         <motion.span
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          className={hasError ? 'animate-pulse' : ''}
         >
           {value}
         </motion.span>
@@ -107,14 +95,6 @@ export function SudokuCell({
         />
       )}
       
-      {hasError && (
-        <motion.div
-          className="absolute inset-0 bg-red-500 opacity-20 rounded-sm pointer-events-none"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.2 }}
-          transition={{ duration: 0.2 }}
-        />
-      )}
     </motion.button>
   );
 }

@@ -158,9 +158,9 @@ export function ChatBox({ onClose }: { onClose?: () => void }) {
         addLocalMessage(`Technical Blog Articles:\n  1. [Next.js] Kiến trúc Next.js 14 App Router & Tối ưu Caching\n  2. [Backend] Xây dựng hệ thống Microservices với NestJS, Redis & PostgreSQL\n  3. [Database] Tối ưu hóa chỉ mục (Indexing) PostgreSQL cho E-commerce\n  4. [Architecture] Các mô hình Event-Driven Architecture cho hệ thống phân tán\n\nOpening _blog tab...`, true);
         window.location.href = '/blog';
       } else if (cmd === '/cv' || cmd === '/resume' || cmd === '/cat resume.md' || cmd === '/download cv') {
-        addLocalMessage(`Downloading Nguyen Hong Hai's CV (.pdf)...\nFile path: /CV/Nguyen-Hong-Hai-TopCV.vn-050426.145519 (1).pdf`, true);
+        addLocalMessage(`Downloading Nguyen Hong Hai's CV (.pdf)...\nFile path: /CV/FullStack.pdf`, true);
         const link = document.createElement('a');
-        link.href = '/CV/Nguyen-Hong-Hai-TopCV.vn-050426.145519%20(1).pdf';
+        link.href = '/CV/FullStack.pdf';
         link.download = 'Nguyen-Hong-Hai-CV.pdf';
         link.target = '_blank';
         document.body.appendChild(link);
@@ -169,7 +169,7 @@ export function ChatBox({ onClose }: { onClose?: () => void }) {
       } else if (cmd === '/whoami') {
         addLocalMessage(`You are logged in as: ${username}\nYou are a special guest exploring my portfolio!`, true);
       } else if (cmd === '/contact') {
-        addLocalMessage(`Contact Information:\n  Email    : nguyenhai@haismile.dev\n  GitHub   : @haismile9\n  LinkedIn : /in/haismile9`, true);
+        addLocalMessage(`Contact Information:\n  Email    : smilenotdev@gmail.com\n  GitHub   : @haismile9\n  LinkedIn : /in/haismile9`, true);
       } else if (cmd === '/sudo rm -rf /') {
         addLocalMessage("Nice try! But I don't give sudo privileges to strangers. 😉", true);
       } else if (cmd.startsWith('/name ')) {

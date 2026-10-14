@@ -110,14 +110,14 @@ export default function GamesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-dark-primary flex flex-col">
-      <main className="flex-1 flex">
+    <div className="flex-1 flex flex-col overflow-hidden bg-dark-primary min-w-0">
+      <main className="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0 min-w-0">
         {/* Sidebar */}
         <motion.div 
           initial={{ x: -50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="w-[311px] border-r border-border-primary"
+          className="hidden lg:block w-[311px] shrink-0 border-r border-border-primary overflow-y-auto"
         >
           {/* Games Section */}
           <div className="border-b border-border-primary">
@@ -167,7 +167,7 @@ export default function GamesPage() {
         </motion.div>
 
         {/* Main Content */}
-        <div className="flex-1">
+        <div className="flex-1 flex flex-col min-w-0 min-h-0 overflow-hidden">
           <AnimatePresence mode="wait">
             {selectedGame ? (
               <motion.div
@@ -176,18 +176,18 @@ export default function GamesPage() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.3 }}
-                className="h-full flex flex-col"
+                className="flex-1 flex flex-col min-h-0 overflow-hidden"
               >
                 {/* Game Header */}
-                <div className="border-b border-border-primary p-6 flex items-center justify-between">
-                  <div>
-                    <h2 className="text-2xl font-bold text-white">{selectedGame.name}</h2>
-                    <p className="text-text-secondary mt-1">{selectedGame.description}</p>
-                    <div className="flex items-center gap-4 mt-2">
+                <div className="border-b border-border-primary p-4 lg:p-6 flex items-start justify-between gap-3 shrink-0">
+                  <div className="min-w-0">
+                    <h2 className="text-xl lg:text-2xl font-bold text-white">{selectedGame.name}</h2>
+                    <p className="text-text-secondary text-sm lg:text-base mt-1">{selectedGame.description}</p>
+                    <div className="flex flex-wrap items-center gap-2 lg:gap-4 mt-2">
                       <span className={`text-sm ${getDifficultyColor(selectedGame.difficulty)}`}>
                         {selectedGame.difficulty}
                       </span>
-                      <div className="flex gap-2">
+                      <div className="flex flex-wrap gap-2">
                         {selectedGame.tags.map((tag) => (
                           <span
                             key={tag}
@@ -201,7 +201,8 @@ export default function GamesPage() {
                   </div>
                   <button
                     onClick={handleCloseGame}
-                    className="p-2 hover:bg-dark-secondary rounded-lg transition-colors"
+                    aria-label="Close game"
+                    className="p-2 shrink-0 hover:bg-dark-secondary rounded-lg transition-colors"
                   >
                     <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
@@ -210,7 +211,7 @@ export default function GamesPage() {
                 </div>
 
                 {/* Game Content */}
-                <div className="flex-1 p-6 flex items-center justify-center bg-dark-secondary">
+                <div className="flex-1 overflow-y-auto p-3 sm:p-6 flex items-start lg:items-center justify-center bg-dark-secondary">
                   <div className="w-full max-w-2xl">
                     <selectedGame.component className="w-full" />
                   </div>
@@ -219,7 +220,7 @@ export default function GamesPage() {
             ) : (
               <div
                 key="game-gallery"
-                className="h-full flex flex-col overflow-hidden"
+                className="flex-1 flex flex-col min-h-0 overflow-hidden"
               >
                 {/* Filter Tabs - Slides down from top matching _projects and _blog */}
                 <motion.div
@@ -228,10 +229,10 @@ export default function GamesPage() {
                   transition={{ delay: 0.4, duration: 0.8 }}
                   className="border-b border-border-primary shrink-0"
                 >
-                  <div className="flex">
+                  <div className="flex overflow-x-auto scrollbar-none">
                     <motion.button
                       onClick={() => setSelectedTag('all')}
-                      className={`px-6 py-3 text-sm border-r border-border-primary transition-colors ${
+                      className={`shrink-0 whitespace-nowrap px-4 lg:px-6 py-3 text-sm border-r border-border-primary transition-colors ${
                         selectedTag === 'all'
                           ? 'bg-dark-secondary text-white'
                           : 'text-text-secondary hover:text-white'
@@ -244,7 +245,7 @@ export default function GamesPage() {
                       <motion.button
                         key={tag}
                         onClick={() => setSelectedTag(tag)}
-                        className={`px-6 py-3 text-sm border-r border-border-primary transition-colors ${
+                        className={`shrink-0 whitespace-nowrap px-4 lg:px-6 py-3 text-sm border-r border-border-primary transition-colors ${
                           selectedTag === tag
                             ? 'bg-dark-secondary text-white'
                             : 'text-text-secondary hover:text-white'
@@ -258,9 +259,9 @@ export default function GamesPage() {
                 </motion.div>
 
                 {/* Games Grid - Staggered slide up matching _projects and _blog cards */}
-                <div className="flex-1 overflow-y-auto p-6 sm:p-8">
+                <div className="flex-1 overflow-y-auto p-4 sm:p-8">
                   <motion.div 
-                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto"
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-7xl mx-auto"
                     layout
                   >
                     <AnimatePresence>
@@ -272,13 +273,13 @@ export default function GamesPage() {
                           exit={{ opacity: 0, y: -20 }}
                           transition={{ duration: 0.5, delay: 0.6 + index * 0.15, ease: 'easeOut' }}
                           layout
-                          className="bg-dark-secondary rounded-lg border border-border-primary overflow-hidden hover:border-accent-primary transition-colors group cursor-pointer"
+                          className="bg-dark-secondary rounded-lg border border-border-primary overflow-hidden hover:border-accent-teal transition-colors group cursor-pointer"
                           onClick={() => handlePlayGame(game)}
                           whileHover={{ y: -4 }}
                         >
                           {/* Game Image */}
-                          <div className="h-48 bg-dark-primary flex items-center justify-center">
-                            <svg className="w-16 h-16 text-accent-primary" viewBox="0 0 24 24" fill="currentColor">
+                          <div className="h-32 sm:h-48 bg-dark-primary flex items-center justify-center">
+                            <svg className="w-16 h-16 text-accent-teal" viewBox="0 0 24 24" fill="currentColor">
                               <path d="M8 3a5 5 0 0 0-5 5v6a5 5 0 0 0 5 5h8a5 5 0 0 0 5-5V8a5 5 0 0 0-5-5H8zM7 8a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V8z"/>
                               <circle cx="10" cy="10" r="1"/>
                               <circle cx="14" cy="10" r="1"/>
@@ -289,7 +290,7 @@ export default function GamesPage() {
 
                           <div className="p-4">
                             <div className="flex items-start justify-between mb-2">
-                              <h3 className="text-lg font-semibold text-white group-hover:text-accent-primary transition-colors">
+                              <h3 className="text-lg font-semibold text-white group-hover:text-accent-teal transition-colors">
                                 {game.name}
                               </h3>
                               <span className={`text-xs px-2 py-1 rounded ${getDifficultyColor(game.difficulty)} bg-opacity-20`}>
@@ -312,7 +313,7 @@ export default function GamesPage() {
                               ))}
                             </div>
 
-                            <button className="w-full py-2 bg-accent-primary text-dark-primary rounded hover:bg-accent-secondary transition-colors font-medium">
+                            <button className="w-full py-2.5 bg-accent-teal text-dark-bg rounded hover:opacity-90 transition-opacity font-medium">
                               Play Game
                             </button>
                           </div>

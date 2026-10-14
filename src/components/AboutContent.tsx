@@ -122,7 +122,7 @@ export default function AboutContent({ selectedContent, selectedItem }: AboutCon
  * 
  * Name: Nguyen Hong Hai
  * Phone: 0334204526
- * Email: nguyenhai@haismile.dev
+ * Email: smilenotdev@gmail.com
  * Website: haismile.dev
  * Location: Ung Van Khiem, Ward 25, Binh Thanh, HCM City
  * GitHub: haismile9

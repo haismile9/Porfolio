@@ -26,7 +26,7 @@ const fileTree: FileItem[] = [
   "location": "Ho Chi Minh City, Vietnam",
   "bio": "I build things for the web — and sometimes for the fun of it.",
   "motivation": "I started coding because I wanted to understand how things work under the hood. That curiosity turned into a career.",
-  "contact": "nguyenhai@haismile.dev"
+  "contact": "smilenotdev@gmail.com"
 }`
       },
       {
@@ -87,7 +87,7 @@ const fileTree: FileItem[] = [
         content: `{
   "title": "Nguyen Hong Hai - Resume / CV",
   "download": "Click the [Download CV (.pdf)] button on the top right of this editor tab bar or use /cv in Terminal",
-  "file": "/CV/Nguyen-Hong-Hai-TopCV.vn-050426.145519 (1).pdf",
+  "file": "/CV/FullStack.pdf",
   "format": "PDF Document",
   "status": "Ready for download 📥"
 }`
@@ -179,6 +179,7 @@ export default function AboutPage() {
   const [openTabs, setOpenTabs] = useState<string[]>(['bio.json', 'others.json']);
   const [selectedFile, setSelectedFile] = useState<string>('others.json');
   const [expandedFolders, setExpandedFolders] = useState<string[]>(['personal-info', 'tech-stack']);
+  const [isMobileExplorerOpen, setIsMobileExplorerOpen] = useState(false);
 
   const toggleFolder = (folderName: string) => {
     setExpandedFolders(prev =>
@@ -190,6 +191,7 @@ export default function AboutPage() {
 
   const selectFile = (fileName: string) => {
     setSelectedFile(fileName);
+    setIsMobileExplorerOpen(false);
     if (!openTabs.includes(fileName)) {
       setOpenTabs(prev => [...prev, fileName]);
     }
@@ -260,7 +262,7 @@ export default function AboutPage() {
             <>
               <button
                 onClick={() => toggleFolder(item.name)}
-                className="w-full flex items-center gap-2 py-1.5 text-sm hover:bg-white/5 transition-colors text-left"
+                className="w-full flex items-center gap-2 py-2.5 lg:py-1.5 text-sm hover:bg-white/5 transition-colors text-left"
                 style={{ paddingLeft: `${12 + depth * 16}px` }}
               >
                 <motion.span
@@ -299,7 +301,7 @@ export default function AboutPage() {
             <motion.button
               onClick={() => selectFile(item.name)}
               whileHover={{ x: 3 }}
-              className={`w-full flex items-center gap-2 py-1.5 text-sm transition-colors text-left ${
+              className={`w-full flex items-center gap-2 py-2.5 lg:py-1.5 text-sm transition-colors text-left ${
                 selectedFile === item.name
                   ? 'bg-white/10 text-white'
                   : 'text-text-secondary hover:text-white hover:bg-white/5'
@@ -326,7 +328,7 @@ export default function AboutPage() {
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden relative bg-dark-primary min-w-0">
-      <main className="flex-1 flex flex-col lg:flex-row overflow-y-auto lg:overflow-hidden min-w-0">
+      <main className="flex-1 flex flex-col lg:flex-row overflow-hidden min-w-0 min-h-0">
 
         {/* Desktop Sidebar */}
         <motion.div
@@ -340,16 +342,45 @@ export default function AboutPage() {
           </div>
         </motion.div>
 
-        {/* Mobile Sidebar */}
+        {/* Mobile Explorer - collapsed by default so the file content gets the screen */}
         <motion.div
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
           className="lg:hidden flex flex-col w-full bg-dark-secondary shrink-0 border-b border-dark-border"
         >
-          <div className="py-2">
-            {renderTree(fileTree)}
-          </div>
+          <button
+            onClick={() => setIsMobileExplorerOpen(prev => !prev)}
+            aria-expanded={isMobileExplorerOpen}
+            className="w-full flex items-center gap-2 px-4 py-3 text-sm font-fira text-left"
+          >
+            <motion.span
+              animate={{ rotate: isMobileExplorerOpen ? 90 : 0 }}
+              transition={{ duration: 0.2 }}
+              className="text-xs text-text-secondary"
+            >
+              ▶
+            </motion.span>
+            <span className="text-text-primary">explorer</span>
+            {selectedFile && (
+              <span className="ml-auto text-text-secondary truncate">{selectedFile}</span>
+            )}
+          </button>
+          <AnimatePresence initial={false}>
+            {isMobileExplorerOpen && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.25 }}
+                className="overflow-hidden border-t border-dark-border"
+              >
+                <div className="py-2 max-h-[50vh] overflow-y-auto">
+                  {renderTree(fileTree)}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
 
         {/* Main Content */}
@@ -360,13 +391,13 @@ export default function AboutPage() {
               initial={{ y: -50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.4, duration: 0.8 }}
-              className="flex items-center justify-between border-b border-dark-border bg-dark-secondary overflow-x-auto shrink-0"
+              className="flex items-center justify-between border-b border-dark-border bg-dark-secondary shrink-0 min-w-0"
             >
-              <div className="flex items-center">
+              <div className="flex items-center min-w-0 overflow-x-auto">
                 {openTabs.map(tab => (
                   <div
                     key={tab}
-                    className={`flex items-center gap-2 px-4 py-2 border-r border-dark-border cursor-pointer shrink-0 transition-colors ${
+                    className={`flex items-center gap-2 px-3 lg:px-4 py-2.5 lg:py-2 border-r border-dark-border cursor-pointer shrink-0 transition-colors ${
                       selectedFile === tab
                         ? 'bg-dark-primary text-white'
                         : 'text-text-secondary hover:text-white'
@@ -376,7 +407,8 @@ export default function AboutPage() {
                     <Image src={getIconForFile(tab)} alt={tab} width={14} height={14} />
                     <span className="text-sm font-fira">{tab}</span>
                     <button
-                      className="text-text-secondary hover:text-white ml-1 leading-none text-base"
+                      aria-label={`Close ${tab}`}
+                      className="text-text-secondary hover:text-white ml-1 px-1 leading-none text-base"
                       onClick={(e) => closeTab(tab, e)}
                     >
                       ×
@@ -386,7 +418,7 @@ export default function AboutPage() {
               </div>
               {selectedFile === 'resume.json' && (
                 <a
-                  href="/CV/Nguyen-Hong-Hai-TopCV.vn-050426.145519%20(1).pdf"
+                  href="/CV/FullStack.pdf"
                   download="Nguyen-Hong-Hai-CV.pdf"
                   target="_blank"
                   rel="noopener noreferrer"

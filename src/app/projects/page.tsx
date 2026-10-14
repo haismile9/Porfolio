@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
@@ -128,6 +128,11 @@ export default function ProjectsPage() {
   const [selectedTechs, setSelectedTechs] = useState<Technology[]>([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(true);
 
+  // Keep the filter collapsed on small screens so projects are visible first
+  useEffect(() => {
+    if (window.matchMedia('(max-width: 1023px)').matches) setIsDropdownOpen(false);
+  }, []);
+
   const toggleTechnology = (tech: Technology) => {
     setSelectedTechs(prev => 
       prev.includes(tech) 
@@ -161,15 +166,15 @@ export default function ProjectsPage() {
       <main className="flex-1 flex flex-col lg:flex-row overflow-hidden min-w-0">
         {/* Left Sidebar - Technology Filter */}
         <motion.div 
-          className="w-full lg:w-80 bg-dark-secondary lg:border-r border-b lg:border-b-0 border-dark-border flex flex-col shrink-0 max-h-[40vh] lg:max-h-none overflow-y-auto lg:overflow-visible"
+          className="w-full lg:w-80 bg-dark-secondary lg:border-r border-b lg:border-b-0 border-dark-border flex flex-col shrink-0 max-h-[45vh] lg:max-h-none overflow-y-auto lg:overflow-visible"
           initial={{ x: -50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
           {/* Projects Section */}
-          <div className="p-4 lg:p-6">
+          <div className="px-4 py-3 lg:p-6">
             <motion.div 
-              className="flex items-center gap-3 text-accent-orange text-sm mb-4 cursor-pointer"
+              className={`flex items-center gap-3 text-accent-orange text-sm cursor-pointer ${isDropdownOpen ? 'mb-4' : 'mb-0 lg:mb-4'}`}
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -182,6 +187,11 @@ export default function ProjectsPage() {
                 ▶
               </motion.span>
               <span>projects</span>
+              {selectedTechs.length > 0 && (
+                <span className="lg:hidden ml-auto text-xs text-text-secondary">
+                  {selectedTechs.length} filter{selectedTechs.length > 1 ? 's' : ''}
+                </span>
+              )}
             </motion.div>
             
             {/* Technology Filter */}
@@ -262,20 +272,20 @@ export default function ProjectsPage() {
         <div className="flex-1 flex flex-col min-w-0">
           {/* Filter Tabs */}
           <motion.div 
-            className="flex border-b border-dark-border bg-dark-secondary"
+            className="flex border-b border-dark-border bg-dark-secondary shrink-0 min-w-0"
             initial={{ y: -50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.8 }}
           >
             <motion.div 
-              className="flex items-center gap-3 px-6 py-3 border-r border-dark-border bg-dark-primary"
+              className="flex items-center gap-3 px-4 lg:px-6 py-3 border-r border-dark-border bg-dark-primary min-w-0 max-w-full"
               layout
               animate={{
                 backgroundColor: selectedTechs.length > 0 ? '#0F172B' : '#1E293B'
               }}
             >
               <motion.span 
-                className="text-text-secondary text-sm"
+                className="text-text-secondary text-sm truncate"
                 key={getFilterDisplayText()}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -298,11 +308,11 @@ export default function ProjectsPage() {
 
           {/* Projects Grid */}
           <div className="flex-1 overflow-auto">
-            <div className="px-16 pt-16 pb-0">
+            <div className="px-4 sm:px-8 lg:px-16 pt-6 lg:pt-16 pb-8 lg:pb-0">
               <AnimatePresence mode="wait">
                 <motion.div 
                   key={selectedTechs.join('-')}
-                  className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-10 max-w-[1200px]"
+                  className="grid grid-cols-[repeat(auto-fill,minmax(min(300px,100%),1fr))] gap-8 lg:gap-10 max-w-[1200px]"
                   variants={containerVariants}
                   initial="hidden"
                   animate="visible"
@@ -311,7 +321,7 @@ export default function ProjectsPage() {
                   {filteredProjects.map((project, index) => (
                     <motion.div 
                       key={project.id} 
-                      className="flex flex-col gap-4 max-w-[407px] h-full"
+                      className="flex flex-col gap-3 lg:gap-4 sm:max-w-[407px] h-full"
                       variants={itemVariants}
                       layout
                     >
@@ -365,7 +375,7 @@ export default function ProjectsPage() {
                         </div>
                         
                         {/* Project Content */}
-                        <div className="p-6 flex flex-col flex-1 justify-between gap-4">
+                        <div className="p-4 lg:p-6 flex flex-col flex-1 justify-between gap-4">
                           <motion.p 
                             className="text-text-secondary text-sm lg:text-base leading-relaxed line-clamp-2 min-h-[44px]"
                             initial={{ opacity: 0 }}
@@ -401,7 +411,7 @@ export default function ProjectsPage() {
             
             {/* Scroll Indicator */}
             <motion.div 
-              className="w-10 flex flex-col items-center py-3 gap-2 border-l border-dark-border"
+              className="hidden lg:flex w-10 flex-col items-center py-3 gap-2 border-l border-dark-border"
               initial={{ opacity: 0, x: 10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 1.0 }}
