@@ -9,6 +9,11 @@ export const siteConfig = {
   ogImage: '/images/Porfolio.png',
 }
 
+// RSS feed autodiscovery, repeated on every page because alternates isn't merged
+export const feedAlternates = {
+  'application/rss+xml': [{ url: '/feed.xml', title: `${siteConfig.name} · Blog` }],
+}
+
 // Next.js replaces (not merges) nested metadata objects such as openGraph,
 // so every page builds its full Open Graph / Twitter data through this helper.
 export function pageMetadata({
@@ -23,7 +28,7 @@ export function pageMetadata({
   return {
     title,
     description,
-    alternates: { canonical: path },
+    alternates: { canonical: path, types: feedAlternates },
     openGraph: {
       type: 'website',
       siteName: siteConfig.name,

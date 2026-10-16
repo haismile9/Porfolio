@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { Source_Serif_4 } from 'next/font/google'
 import '@/styles/globals.css'
 
-import { siteConfig } from '@/lib/site'
+import { feedAlternates, siteConfig } from '@/lib/site'
 
 // Serif reading font for the classic pages (has Vietnamese glyphs)
 const sourceSerif = Source_Serif_4({
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   applicationName: siteConfig.name,
   authors: [{ name: siteConfig.author, url: siteConfig.url }],
   creator: siteConfig.author,
-  alternates: { canonical: '/' },
+  alternates: { canonical: '/', types: feedAlternates },
   openGraph: {
     type: 'website',
     siteName: siteConfig.name,

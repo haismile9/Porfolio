@@ -24,6 +24,7 @@ const footerLinks = [
   { label: 'LinkedIn', href: 'https://linkedin.com/in/smile9/' },
   { label: 'Email', href: 'mailto:smilenotdev@gmail.com' },
   { label: 'CV (PDF)', href: '/CV/FullStack.pdf' },
+  { label: 'RSS', href: '/feed.xml' },
 ]
 
 const LAST_SEEN_KEY = 'chat_last_seen'

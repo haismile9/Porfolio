@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { getAllBlogs, getBlogBySlug } from '@/lib/blogs'
-import { siteConfig } from '@/lib/site'
+import { feedAlternates, siteConfig } from '@/lib/site'
 
 interface BlogPostPageProps {
   params: { slug: string }
@@ -25,7 +25,7 @@ export function generateMetadata({ params }: BlogPostPageProps): Metadata {
     description: blog.summary,
     keywords: blog.tags,
     authors: [{ name: siteConfig.author, url: siteConfig.url }],
-    alternates: { canonical: url },
+    alternates: { canonical: url, types: feedAlternates },
     openGraph: {
       type: 'article',
       siteName: siteConfig.name,
