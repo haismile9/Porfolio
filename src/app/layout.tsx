@@ -14,7 +14,7 @@ const sourceSerif = Source_Serif_4({
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
-    default: siteConfig.name,
+    default: siteConfig.title,
     template: `%s | ${siteConfig.name}`,
   },
   description: siteConfig.description,
@@ -27,13 +27,13 @@ export const metadata: Metadata = {
     siteName: siteConfig.name,
     locale: 'vi_VN',
     url: '/',
-    title: siteConfig.name,
+    title: siteConfig.title,
     description: siteConfig.description,
     images: [{ url: siteConfig.ogImage, alt: siteConfig.name }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: siteConfig.name,
+    title: siteConfig.title,
     description: siteConfig.description,
     images: [siteConfig.ogImage],
   },

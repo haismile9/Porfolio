@@ -5,7 +5,7 @@ import { BlogList, type BlogListItem } from './BlogList'
 export const metadata = pageMetadata({
   title: 'Blog',
   description:
-    'Technical articles about Next.js, NestJS, microservices, PostgreSQL, Redis and system architecture.',
+    'Ghi chép lập trình cho người mới bắt đầu: Next.js, NestJS, PostgreSQL, Redis và kiến trúc hệ thống, giải thích dễ hiểu kèm ví dụ.',
   path: '/blog',
 })
 
@@ -21,10 +21,10 @@ export default function BlogPage() {
     <>
       <header className="mb-8">
         <h1 className="text-4xl font-bold leading-tight">Blog</h1>
-        <p className="mt-2 font-bold">Ghi chép kỹ thuật của Smile</p>
+        <p className="mt-2 font-bold">Ghi chép lập trình cho người mới bắt đầu</p>
         <p className="mt-3">
-          Những gì mình học được khi làm việc với Next.js, NestJS, cơ sở dữ liệu và kiến trúc hệ thống. Hiện có{' '}
-          {blogs.length} bài viết.
+          Những gì mình học được khi làm việc với Next.js, NestJS và cơ sở dữ liệu, viết lại theo cách mình ước
+          được giải thích khi mới bắt đầu. Hiện có {blogs.length} bài viết.
         </p>
       </header>
 

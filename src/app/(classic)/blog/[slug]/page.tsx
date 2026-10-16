@@ -1,13 +1,18 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getAllBlogs, getBlogBySlug } from '@/lib/blogs'
+import { getAllBlogs, getBlogBySlug, type BlogPost } from '@/lib/blogs'
 import { getCategoryLabel } from '@/lib/categories'
 import { renderMarkdown } from '@/lib/markdown'
 import { feedAlternates, siteConfig } from '@/lib/site'
 import { ArticleSidebar } from './ArticleSidebar'
 import { Comments } from './Comments'
 import { CopyCodeButtons } from './CopyCodeButtons'
+
+
+// A post's own frontmatter image wins; otherwise use the generated /og/blog/[slug] card
+const getShareImage = (blog: BlogPost) => blog.image ?? `/og/blog/${blog.slug}`
 
 interface BlogPostPageProps {
   params: { slug: string }
@@ -24,7 +29,8 @@ export function generateMetadata({ params }: BlogPostPageProps): Metadata {
   if (!blog) return {}
 
   const url = `/blog/${blog.slug}`
-  const images = blog.image ? [{ url: blog.image, alt: blog.title }] : undefined
+  const shareImage = getShareImage(blog)
+  const images = [{ url: shareImage, width: 1200, height: 630, alt: blog.title }]
 
   return {
     title: blog.title,
@@ -48,7 +54,7 @@ export function generateMetadata({ params }: BlogPostPageProps): Metadata {
       card: 'summary_large_image',
       title: blog.title,
       description: blog.summary,
-      images: blog.image ? [blog.image] : undefined,
+      images: [shareImage],
     },
   }
 }
@@ -88,7 +94,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     dateModified: blog.date,
     inLanguage: 'vi',
     keywords: blog.tags.join(', '),
-    image: blog.image ? `${siteConfig.url}${blog.image}` : undefined,
+    image: `${siteConfig.url}${getShareImage(blog)}`,
     url: `${siteConfig.url}/blog/${blog.slug}`,
     mainEntityOfPage: `${siteConfig.url}/blog/${blog.slug}`,
     author: { '@type': 'Person', name: siteConfig.author, url: siteConfig.url },
@@ -104,7 +110,20 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         ← ~/blog
       </Link>
 
-      <header className="mt-6 mb-8">
+      {/* Featured banner (Twenty Fourteen style): the post's own image, or a generated topic banner */}
+      <div className="relative mt-6 aspect-[2/1] w-full overflow-hidden border border-paper-border bg-paper-code">
+        <Image
+          src={blog.image ?? `/og/blog/${blog.slug}/banner`}
+          alt=""
+          fill
+          priority
+          sizes="(min-width: 1280px) 672px, (min-width: 768px) 720px, 100vw"
+          className="object-cover"
+          unoptimized={!blog.image}
+        />
+      </div>
+
+      <header className="mt-8 mb-8">
         <h1 className="text-3xl sm:text-4xl font-bold leading-tight">{blog.title}</h1>
         <p className="mt-3 font-fira text-[13px] text-ink-muted">
           <time dateTime={blog.date}>{formatDate(blog.date)}</time>

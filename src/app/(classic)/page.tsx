@@ -12,7 +12,7 @@ const jsonLd = {
       '@id': `${siteConfig.url}/#website`,
       url: siteConfig.url,
       name: 'Smile',
-      alternateName: ['haismile.dev', siteConfig.name],
+      alternateName: ['haismile.dev', siteConfig.title],
       inLanguage: 'vi',
       author: { '@id': `${siteConfig.url}/#person` },
     },

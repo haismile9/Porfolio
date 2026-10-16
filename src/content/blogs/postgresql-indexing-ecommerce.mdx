@@ -1,7 +1,9 @@
 ---
 id: "3"
-title: "Tối ưu hóa chỉ mục (Indexing) PostgreSQL cho hệ thống E-commerce hàng triệu bản ghi"
-slug: "toi-uu-hoa-chi-muc-indexing-postgresql-cho-he-thong-e-commerce-hang-trieu-ban-ghi"
+title: "Index trong PostgreSQL: những điều mình ước được biết sớm hơn"
+slug: "index-trong-postgresql-nhung-dieu-minh-uoc-duoc-biet-som-hon"
+previousSlugs:
+  - "toi-uu-hoa-chi-muc-indexing-postgresql-cho-he-thong-e-commerce-hang-trieu-ban-ghi"
 date: "2026-07-10"
 readTime: "7 min read"
 category: "database"
@@ -12,7 +14,7 @@ tags:
   - "Performance"
   - "E-commerce"
 image: "/images/blog/postgres-logo.png"
-summary: "Tối ưu B-Tree Index, Composite Index và Partial Index trong PostgreSQL qua ví dụ một bảng đơn hàng 5 triệu dòng."
+summary: "Index là gì, vì sao query chậm dần khi bảng lớn lên, và khi nào nên dùng B-Tree, Composite hay Partial Index. Giải thích cho người mới bắt đầu, kèm ví dụ bảng đơn hàng."
 ---
 
 > [!TIP]
@@ -22,7 +24,7 @@ summary: "Tối ưu B-Tree Index, Composite Index và Partial Index trong Postgr
 
 ## 1. Vấn đề "Full Table Scan" khi bảng lớn
 
-Hãy xem xét bảng `orders` trong một hệ thống E-commerce với 5 triệu đơn hàng:
+Giả sử ta có bảng `orders` của một shop online, khoảng 5 triệu đơn hàng:
 
 ```sql
 -- Câu query phổ biến: tìm các đơn hàng chưa xử lý của khách hàng ID = 1042
@@ -45,8 +47,8 @@ CREATE INDEX idx_orders_user_status_date
 ON orders (user_id, status, created_at DESC);
 ```
 
-### Kết quả với EXPLAIN ANALYZE
-- Thời gian thực thi giảm từ 1850 ms xuống 1.8 ms.
+### Kết quả (minh hoạ)
+- Thời gian thực thi có thể giảm từ cỡ vài giây xuống chỉ vài mili-giây. Con số cụ thể tuỳ phần cứng và dữ liệu, nên bạn hãy tự chạy `EXPLAIN ANALYZE` trước và sau khi tạo index để thấy khác biệt trên máy mình.
 - PostgreSQL dùng Index Scan trên index mới thay vì quét toàn bảng. Vì câu query dùng `SELECT *` nên Postgres vẫn phải đọc dòng dữ liệu trong bảng; muốn có Index Only Scan thì chỉ chọn các cột nằm trong index.
 
 ---

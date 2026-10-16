@@ -2,11 +2,14 @@ import type { Metadata } from 'next'
 
 export const siteConfig = {
   url: 'https://haismile.dev',
-  name: 'Smile - Full-stack Developer',
+  // Short brand name, used as the "| Smile" suffix on page titles
+  name: 'Smile',
+  // Full title shown for the home page in search results
+  title: 'Smile – Trên con đường trở thành một lập trình viên tốt',
   author: 'Nguyen Hong Hai',
   description:
-    'Portfolio & technical blog of Nguyen Hong Hai (Smile), a Full-stack developer writing about Next.js, NestJS, microservices, databases and system architecture.',
-  ogImage: '/images/Porfolio.png',
+    'Blog của Smile (Nguyễn Hồng Hải), một lập trình viên trẻ đang học mỗi ngày để code tốt hơn. Ghi chép thật về Next.js, NestJS, PostgreSQL và Redis.',
+  ogImage: '/og',
 }
 
 // RSS feed autodiscovery, repeated on every page because alternates isn't merged

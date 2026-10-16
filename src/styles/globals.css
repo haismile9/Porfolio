@@ -104,6 +104,8 @@
   }
   .prose-classic :not(pre) > code {
     @apply rounded bg-paper-code px-1 py-0.5 font-fira text-[0.82em] text-ink;
+    /* Long inline tokens (URLs, connection strings) must wrap instead of widening the page */
+    overflow-wrap: anywhere;
   }
 
   /* Callouts: > [!TIP], > [!WARNING], > [!NOTE] */
