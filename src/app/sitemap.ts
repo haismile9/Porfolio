@@ -7,7 +7,7 @@ const absolute = (path: string) => `${siteConfig.url}${path === '/' ? '' : path}
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const blogs = getAllBlogs()
-  const latestPost = blogs.map((blog) => blog.date).sort().pop()
+  const latestPost = blogs.map((blog) => blog.publishedAt).sort().pop()
 
   const pageDefs: { path: string; changeFrequency: 'weekly' | 'monthly' | 'yearly'; priority: number; lastModified?: Date }[] = [
     { path: '/', changeFrequency: 'monthly', priority: 1 },
@@ -33,7 +33,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // Posts are Vietnamese only
   const posts: MetadataRoute.Sitemap = blogs.map((blog) => ({
     url: `${siteConfig.url}/blog/${blog.slug}`,
-    lastModified: blog.date ? new Date(blog.date) : undefined,
+    lastModified: blog.publishedAt ? new Date(blog.publishedAt) : undefined,
     changeFrequency: 'monthly',
     priority: 0.7,
   }))

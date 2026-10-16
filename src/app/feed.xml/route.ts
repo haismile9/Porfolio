@@ -21,7 +21,7 @@ export function GET() {
       <title>${escapeXml(post.title)}</title>
       <link>${url}</link>
       <guid isPermaLink="true">${url}</guid>
-      <pubDate>${new Date(post.date).toUTCString()}</pubDate>
+      <pubDate>${new Date(post.publishedAt).toUTCString()}</pubDate>
       <description>${escapeXml(post.summary)}</description>
 ${categories}
     </item>`
@@ -36,7 +36,7 @@ ${categories}
     <description>Ghi chép kỹ thuật về Next.js, NestJS, cơ sở dữ liệu và kiến trúc hệ thống.</description>
     <language>vi</language>
     <atom:link href="${siteConfig.url}/feed.xml" rel="self" type="application/rss+xml" />
-${posts[0] ? `    <lastBuildDate>${new Date(posts[0].date).toUTCString()}</lastBuildDate>\n` : ''}${items}
+${posts[0] ? `    <lastBuildDate>${new Date(posts[0].publishedAt).toUTCString()}</lastBuildDate>\n` : ''}${items}
   </channel>
 </rss>
 `

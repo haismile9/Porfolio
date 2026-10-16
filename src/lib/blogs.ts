@@ -8,7 +8,10 @@ export interface BlogPost {
   slug: string
   fileName: string
   title: string
+  // Publish day in Vietnam time ("2026-10-16"), for display, sorting and archives
   date: string
+  // Exact publish moment with the Vietnam offset ("2026-10-16T15:21:00+07:00"), for metadata
+  publishedAt: string
   readTime: string
   category: 'react' | 'nextjs' | 'backend' | 'database' | 'architecture'
   tags: string[]
@@ -18,6 +21,16 @@ export interface BlogPost {
 }
 
 const blogsDirectory = path.join(process.cwd(), 'src/content/blogs')
+
+// Frontmatter `date` is Vietnam local time: "2026-10-16 15:21", or just "2026-10-16"
+// (midnight). Without an explicit offset, search engines read a bare date as UTC
+// midnight, i.e. 07:00 in Vietnam.
+function parsePublishDate(value: string): { date: string; publishedAt: string } {
+  const match = value.trim().match(/^(\d{4}-\d{2}-\d{2})(?:[ T](\d{2}):(\d{2}))?$/)
+  if (!match) return { date: value, publishedAt: value }
+  const [, date, hours = '00', minutes = '00'] = match
+  return { date, publishedAt: `${date}T${hours}:${minutes}:00+07:00` }
+}
 
 export function getAllBlogs(): BlogPost[] {
   if (!fs.existsSync(blogsDirectory)) {
@@ -40,7 +53,7 @@ export function getAllBlogs(): BlogPost[] {
         slug: matterResult.data.slug || slugify(matterResult.data.title || fileName.replace(/\.mdx?$/, '')),
         fileName,
         title: matterResult.data.title || '',
-        date: matterResult.data.date || '',
+        ...parsePublishDate(String(matterResult.data.date || '')),
         readTime: matterResult.data.readTime || '5 min read',
         category: matterResult.data.category || 'nextjs',
         tags: matterResult.data.tags || [],
