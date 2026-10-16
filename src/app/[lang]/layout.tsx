@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Source_Serif_4 } from 'next/font/google'
+import { Analytics } from '@vercel/analytics/next'
 import '@/styles/globals.css'
 
 import { ClassicShell } from '@/components/classic/ClassicShell'
@@ -68,6 +69,8 @@ export default function LangLayout({ children, params }: LangLayoutProps) {
         <ClassicShell lang={lang} sidebar={<ClassicSidebar lang={lang} />}>
           {children}
         </ClassicShell>
+        {/* Page views; only reports on Vercel deployments with Web Analytics enabled */}
+        <Analytics />
       </body>
     </html>
   )
