@@ -9,8 +9,8 @@ export const siteConfig = {
   author: 'Nguyen Hong Hai',
   // Full title and description shown for the home page in search results
   title: {
-    vi: 'Smile – Trên con đường trở thành một lập trình viên tốt',
-    en: 'Smile – On the way to becoming a good developer',
+    vi: 'haismile.dev - Smile – Trên con đường trở thành một lập trình viên giỏi',
+    en: 'haismile.dev - Smile – On the way to becoming a good developer',
   } satisfies Record<Locale, string>,
   description: {
     vi: 'Blog của Smile, một lập trình viên trẻ đang học mỗi ngày để code tốt hơn. Ghi chép thật về Next.js, NestJS, PostgreSQL và Redis.',

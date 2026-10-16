@@ -9,7 +9,7 @@ export const dictionaries = {
     footer: { cv: 'CV (PDF)', rss: 'RSS' },
     sidebar: {
       name: 'Smile',
-      bio: 'Lập trình viên full-stack ở TP.HCM. Viết về Next.js, NestJS và cơ sở dữ liệu cho người mới bắt đầu.',
+      bio: 'Trên con đường trở thành một lập trình viên giỏi.',
       downloadCv: 'Tải CV',
       elsewhere: 'Liên kết',
       topics: 'Chủ đề',
@@ -34,7 +34,7 @@ export const dictionaries = {
     footer: { cv: 'CV (PDF)', rss: 'RSS' },
     sidebar: {
       name: 'Smile',
-      bio: 'Full-stack developer in Ho Chi Minh City. Writing about Next.js, NestJS and databases for beginners.',
+      bio: 'On the way to becoming a good developer.',
       downloadCv: 'Download CV',
       elsewhere: 'Elsewhere',
       topics: 'Topics',

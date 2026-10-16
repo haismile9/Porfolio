@@ -7,6 +7,6 @@ export function GET() {
   return renderOgImage({
     label: '~/hello',
     title: 'Smile',
-    subtitle: 'Trên con đường trở thành một lập trình viên tốt. Ghi chép về Next.js, NestJS, PostgreSQL và Redis.',
+    subtitle: 'Trên con đường trở thành một lập trình viên giỏi. Ghi chép về Next.js, NestJS, PostgreSQL và Redis.',
   })
 }

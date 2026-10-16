@@ -27,7 +27,7 @@ const copy = {
         ],
       },
       {
-        role: 'Thực tập sinh Front-end',
+        role: 'Thực tập sinh Front-end Developer',
         company: 'Hoang Phuc Thanh Immigration & Trade Co., Ltd',
         period: '06/2025 – 09/2025',
         project: 'Hệ thống CRM',
@@ -75,7 +75,7 @@ const copy = {
         ],
       },
       {
-        role: 'Intern Front-end Developer',
+        role: 'Front-end Developer Intern',
         company: 'Hoang Phuc Thanh Immigration & Trade Co., Ltd',
         period: 'Jun 2025 – Sep 2025',
         project: 'CRM System',
