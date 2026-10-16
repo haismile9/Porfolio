@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import type { BlogPost } from '@/lib/blogs'
 import { categories } from '@/lib/categories'
+import { localePath, type Locale } from '@/i18n/config'
+import { getDictionary } from '@/i18n/dictionaries'
 
 export type BlogListItem = Pick<BlogPost, 'id' | 'slug' | 'title' | 'date' | 'category' | 'tags' | 'summary'>
 
@@ -29,7 +31,9 @@ function UrlFilters({ onChange }: { onChange: (filters: Filters) => void }) {
   return null
 }
 
-export function BlogList({ posts }: { posts: BlogListItem[] }) {
+export function BlogList({ posts, lang }: { posts: BlogListItem[]; lang: Locale }) {
+  const t = getDictionary(lang).blog
+  const blogPath = localePath(lang, '/blog')
   const [filters, setFilters] = useState<Filters>({ category: 'all', month: null, query: '' })
   const [searchQuery, setSearchQuery] = useState('')
 
@@ -73,14 +77,14 @@ export function BlogList({ posts }: { posts: BlogListItem[] }) {
         type="search"
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
-        placeholder="Tìm theo tiêu đề, nội dung tóm tắt hoặc tag..."
-        aria-label="Tìm bài viết"
+        placeholder={t.searchPlaceholder}
+        aria-label={t.searchLabel}
         className="w-full border border-paper-border bg-white px-3 py-2 text-base placeholder:text-ink-muted/70 focus:outline-none focus:border-classic-accent"
       />
 
       <p className="mt-4 flex flex-wrap gap-x-3 gap-y-1 text-base text-ink-muted">
-        <span>Chủ đề:</span>
-        {[{ id: 'all', label: 'Tất cả' }, ...categories].map((cat) =>
+        <span>{t.topicLabel}</span>
+        {[{ id: 'all', label: t.allTopics }, ...categories].map((cat) =>
           filters.category === cat.id && !filters.month ? (
             <span key={cat.id} className="font-bold text-ink">
               {cat.label}
@@ -88,7 +92,7 @@ export function BlogList({ posts }: { posts: BlogListItem[] }) {
           ) : (
             <Link
               key={cat.id}
-              href={cat.id === 'all' ? '/blog' : `/blog?category=${cat.id}`}
+              href={cat.id === 'all' ? blogPath : `${blogPath}?category=${cat.id}`}
               className="text-classic-accent hover:underline"
             >
               {cat.label}
@@ -99,18 +103,16 @@ export function BlogList({ posts }: { posts: BlogListItem[] }) {
 
       {filters.month && (
         <p className="mt-2 text-base text-ink-muted">
-          Lưu trữ:{' '}
-          <span className="font-bold text-ink">
-            tháng {filters.month.slice(5, 7)}/{filters.month.slice(0, 4)}
-          </span>{' '}
-          <Link href="/blog" className="text-classic-accent underline hover:no-underline">
-            (xem tất cả)
+          {t.archiveLabel}{' '}
+          <span className="font-bold text-ink">{t.archiveMonth(filters.month.slice(5, 7), filters.month.slice(0, 4))}</span>{' '}
+          <Link href={blogPath} className="text-classic-accent underline hover:no-underline">
+            {t.showAll}
           </Link>
         </p>
       )}
 
       {postsByYear.length === 0 ? (
-        <p className="mt-10 text-ink-muted">Không tìm thấy bài viết nào.</p>
+        <p className="mt-10 text-ink-muted">{t.noResults}</p>
       ) : (
         postsByYear.map(({ year, posts: yearPosts }) => (
           <section key={year}>
@@ -122,8 +124,10 @@ export function BlogList({ posts }: { posts: BlogListItem[] }) {
                     {formatDate(post.date)}
                   </time>
                   <div>
+                    {/* Posts exist only in Vietnamese */}
                     <Link
                       href={`/blog/${post.slug}`}
+                      hrefLang="vi"
                       className="text-xl font-bold leading-snug text-classic-accent hover:underline"
                     >
                       {post.title}

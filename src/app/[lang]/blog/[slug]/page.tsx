@@ -15,12 +15,15 @@ import { CopyCodeButtons } from './CopyCodeButtons'
 const getShareImage = (blog: BlogPost) => blog.image ?? `/og/blog/${blog.slug}`
 
 interface BlogPostPageProps {
-  params: { slug: string }
+  params: { lang: string; slug: string }
 }
 
 export const dynamicParams = false
 
-export function generateStaticParams() {
+// Posts are Vietnamese only: generate them under /vi (served at /blog/...);
+// /en/blog/... redirects to the Vietnamese post in next.config.js
+export function generateStaticParams({ params }: { params: { lang: string } }) {
+  if (params.lang !== 'vi') return []
   return getAllBlogs().map((blog) => ({ slug: blog.slug }))
 }
 

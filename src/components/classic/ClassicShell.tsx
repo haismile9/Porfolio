@@ -6,6 +6,8 @@ import { usePathname } from 'next/navigation'
 import { ref, query, limitToLast, onValue } from 'firebase/database'
 import { db } from '@/lib/firebase'
 import { ChatBox } from '@/components/ChatBox'
+import { localePath, locales, stripLocale, type Locale } from '@/i18n/config'
+import { getDictionary } from '@/i18n/dictionaries'
 
 // Classic, text-focused shell (inspired by Hugo Classic / Twenty Fourteen):
 // a single narrow serif column on a light background with one accent colour.
@@ -19,13 +21,24 @@ const navItems = [
   { label: '~/contact', href: '/contact' },
 ]
 
-const footerLinks = [
-  { label: 'GitHub', href: 'https://github.com/haismile9' },
-  { label: 'LinkedIn', href: 'https://linkedin.com/in/smile9/' },
-  { label: 'Email', href: 'mailto:smilenotdev@gmail.com' },
-  { label: 'CV (PDF)', href: '/CV/FullStack.pdf' },
-  { label: 'RSS', href: '/feed.xml' },
-]
+const footerLinks = (lang: Locale) => {
+  const t = getDictionary(lang).footer
+  return [
+    { label: 'GitHub', href: 'https://github.com/haismile9' },
+    { label: 'LinkedIn', href: 'https://linkedin.com/in/smile9/' },
+    { label: 'Email', href: 'mailto:smilenotdev@gmail.com' },
+    { label: t.cv, href: '/CV/FullStack.pdf' },
+    { label: t.rss, href: '/feed.xml' },
+  ]
+}
+
+// The same page in the other language. Blog posts are Vietnamese only,
+// so from an article the English link goes to the English blog index.
+const switchLanguagePath = (pathname: string, target: Locale) => {
+  const path = stripLocale(pathname)
+  if (target !== 'vi' && path.startsWith('/blog/')) return localePath(target, '/blog')
+  return localePath(target, path)
+}
 
 const LAST_SEEN_KEY = 'chat_last_seen'
 
@@ -50,13 +63,23 @@ const writeLastSeen = (time: number) => {
   }
 }
 
-export function ClassicShell({ children, sidebar }: { children: React.ReactNode; sidebar?: React.ReactNode }) {
+export function ClassicShell({
+  children,
+  sidebar,
+  lang,
+}: {
+  children: React.ReactNode
+  sidebar?: React.ReactNode
+  lang: Locale
+}) {
   const pathname = usePathname()
   const [isChatOpen, setIsChatOpen] = useState(false)
   const [latestMessageAt, setLatestMessageAt] = useState(0)
   const [lastSeenAt, setLastSeenAt] = useState(Number.MAX_SAFE_INTEGER)
 
-  const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(`${href}/`))
+  const currentPath = stripLocale(pathname)
+  const isActive = (href: string) =>
+    href === '/' ? currentPath === '/' : currentPath === href || currentPath.startsWith(`${href}/`)
 
   // Watch only the newest chat message, to show an unread dot on the toggle
   useEffect(() => {
@@ -105,19 +128,43 @@ export function ClassicShell({ children, sidebar }: { children: React.ReactNode;
           {navItems.map((item) => (
             <Link
               key={item.href}
-              href={item.href}
+              href={localePath(lang, item.href)}
               className={`hover:underline ${isActive(item.href) ? 'underline underline-offset-4' : ''}`}
             >
               {item.label}
             </Link>
           ))}
+
+          {/* Language switch: same page in the other language */}
+          <span className="ml-auto flex gap-1.5">
+            {locales.map((locale, i) => (
+              <span key={locale} className="flex gap-1.5">
+                {i > 0 && <span aria-hidden="true">·</span>}
+                {locale === lang ? (
+                  <span className="font-bold" aria-current="true">
+                    {locale.toUpperCase()}
+                  </span>
+                ) : (
+                  <Link
+                    href={switchLanguagePath(pathname, locale)}
+                    hrefLang={locale}
+                    lang={locale}
+                    title={getDictionary(locale).languageName}
+                    className="opacity-80 hover:opacity-100 hover:underline"
+                  >
+                    {locale.toUpperCase()}
+                  </Link>
+                )}
+              </span>
+            ))}
+          </span>
         </nav>
 
         <main className="mt-10">{children}</main>
 
         <footer className="mt-16 border-t border-paper-border pt-6 text-base text-ink-muted">
           <p className="flex flex-wrap gap-x-4 gap-y-1">
-            {footerLinks.map((link) => (
+            {footerLinks(lang).map((link) => (
               <a
                 key={link.label}
                 href={link.href}

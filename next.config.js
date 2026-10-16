@@ -34,7 +34,11 @@ const nextConfig = {
     serverComponentsExternalPackages: ['@vercel/og'],
   },
   async redirects() {
-    return blogRedirects()
+    return [
+      ...blogRedirects(),
+      // Posts are Vietnamese only, so English article URLs point to the original
+      { source: '/en/blog/:slug', destination: '/blog/:slug', permanent: false },
+    ]
   },
 }
 

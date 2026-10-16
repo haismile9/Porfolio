@@ -1,16 +1,34 @@
 import Image from 'next/image'
 import { projects } from '@/data/projects'
+import type { Locale } from '@/i18n/config'
+
+const copy = {
+  vi: {
+    title: 'Dự án',
+    subtitle: 'Những thứ mình đã làm',
+    intro: 'Gồm dự án lúc đi làm, dự án cá nhân và đồ án ở trường, mới nhất ở trên. Phần lớn mã nguồn có trên',
+    screenshot: (title: string) => `Ảnh chụp màn hình ${title}`,
+  },
+  en: {
+    title: 'Projects',
+    subtitle: 'Things I have built',
+    intro: 'A mix of client work, side projects and school projects, newest first. Source code for most of them is on',
+    screenshot: (title: string) => `Screenshot of ${title}`,
+  },
+} satisfies Record<Locale, unknown>
 
 const displayUrl = (url: string) => url.replace(/^https?:\/\//, '').replace(/\/$/, '')
 
-export default function ProjectsPage() {
+export default function ProjectsPage({ params }: { params: { lang: Locale } }) {
+  const t = copy[params.lang]
+
   return (
     <>
       <header className="mb-8">
-        <h1 className="text-4xl font-bold leading-tight">Projects</h1>
-        <p className="mt-2 font-bold">Things I have built</p>
+        <h1 className="text-4xl font-bold leading-tight">{t.title}</h1>
+        <p className="mt-2 font-bold">{t.subtitle}</p>
         <p className="mt-3">
-          A mix of client work, side projects and school projects, newest first. Source code for most of them is on{' '}
+          {t.intro}{' '}
           <a
             href="https://github.com/haismile9"
             target="_blank"
@@ -34,7 +52,7 @@ export default function ProjectsPage() {
             >
               <Image
                 src={project.image}
-                alt={`Screenshot of ${project.title}`}
+                alt={t.screenshot(project.title)}
                 fill
                 sizes="(min-width: 640px) 192px, 100vw"
                 className="object-cover"
@@ -51,7 +69,7 @@ export default function ProjectsPage() {
                   {project.title}
                 </a>
               </h2>
-              <p className="mt-1">{project.description}</p>
+              <p className="mt-1">{project.description[params.lang]}</p>
               <p className="mt-1 font-fira text-[13px] text-ink-muted">{project.technologies.join(' · ')}</p>
               <p className="mt-1 font-fira text-[13px] text-ink-muted">{displayUrl(project.link)}</p>
             </div>
