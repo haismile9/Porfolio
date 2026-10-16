@@ -56,3 +56,113 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #4F48B8;
 }
+
+/* Server-rendered blog article HTML (see src/lib/markdown.ts) */
+@layer components {
+  .prose-classic > :first-child {
+    @apply mt-0;
+  }
+  .prose-classic p {
+    @apply my-4;
+  }
+  .prose-classic h2 {
+    @apply scroll-mt-6 text-2xl font-bold leading-snug mt-10 mb-3;
+  }
+  .prose-classic h3 {
+    @apply scroll-mt-6 text-xl font-bold leading-snug mt-8 mb-2;
+  }
+  .prose-classic h4 {
+    @apply text-lg font-bold mt-6 mb-2;
+  }
+  .prose-classic a {
+    @apply text-classic-accent underline underline-offset-2 hover:no-underline;
+  }
+  .prose-classic strong {
+    @apply font-semibold text-ink;
+  }
+  .prose-classic ul {
+    @apply my-4 list-disc pl-7 space-y-1.5;
+  }
+  .prose-classic ol {
+    @apply my-4 list-decimal pl-7 space-y-1.5;
+  }
+  .prose-classic li {
+    @apply pl-1;
+  }
+  .prose-classic li > ul,
+  .prose-classic li > ol {
+    @apply my-1.5;
+  }
+  .prose-classic hr {
+    @apply my-8 border-paper-border;
+  }
+  .prose-classic blockquote {
+    @apply my-6 border-l-4 border-paper-border pl-4 italic text-ink-muted;
+  }
+  .prose-classic img {
+    @apply my-6 max-w-full border border-paper-border;
+  }
+  .prose-classic :not(pre) > code {
+    @apply rounded bg-paper-code px-1 py-0.5 font-fira text-[0.82em] text-ink;
+  }
+
+  /* Callouts: > [!TIP], > [!WARNING], > [!NOTE] */
+  .prose-classic .callout {
+    @apply my-6 border-l-4 px-4 py-3 text-[17px] leading-relaxed;
+  }
+  .prose-classic .callout::before {
+    content: attr(data-label);
+    @apply mb-1 block font-bold;
+  }
+  .prose-classic .callout > :first-child {
+    @apply mt-0;
+  }
+  .prose-classic .callout > :last-child {
+    @apply mb-0;
+  }
+  .prose-classic .callout p,
+  .prose-classic .callout ol,
+  .prose-classic .callout ul {
+    @apply my-1;
+  }
+  .prose-classic .callout-tip,
+  .prose-classic .callout-note {
+    @apply border-classic-accent bg-classic-accent/5;
+  }
+  .prose-classic .callout-warning {
+    @apply border-amber-600 bg-amber-50;
+  }
+
+  /* Tables */
+  .prose-classic table {
+    @apply my-6 block w-full overflow-x-auto border-collapse text-left text-[15px];
+  }
+  .prose-classic thead tr {
+    @apply border-b-2 border-ink/70;
+  }
+  .prose-classic th {
+    @apply whitespace-nowrap py-2 pr-4 font-bold;
+  }
+  .prose-classic tbody tr {
+    @apply border-b border-paper-border;
+  }
+  .prose-classic td {
+    @apply py-2 pr-4 align-top leading-snug;
+  }
+
+  /* Code blocks (Shiki, github-light theme) */
+  .prose-classic .code-block {
+    @apply my-6 rounded border border-paper-border bg-paper-code;
+  }
+  .prose-classic .code-block-header {
+    @apply flex items-center justify-between px-4 pt-2 font-fira text-xs text-ink-muted;
+  }
+  .prose-classic .copy-code {
+    @apply transition-colors hover:text-classic-accent;
+  }
+  .prose-classic .code-block pre {
+    @apply overflow-x-auto px-4 pt-2 pb-4 font-fira text-[13px] leading-relaxed sm:text-sm;
+    /* Shiki sets its own background; keep the paper tone of the frame */
+    background-color: transparent !important;
+  }
+}
