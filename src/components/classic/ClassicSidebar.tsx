@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { getAllBlogs } from '@/lib/blogs'
 import { categories } from '@/lib/categories'
 
-// Left-hand "widget" sidebar in the spirit of Twenty Fourteen:
+// Left-hand "widget" sidebar in the spirit of Twenty Fourteen, shown on a dark background:
 // a short bio, links, blog topics and a monthly archive.
 
 const elsewhere = [
@@ -15,8 +15,8 @@ const elsewhere = [
 
 const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
-const headingClass = 'mb-2 text-sm font-bold uppercase tracking-wide text-ink'
-const linkClass = 'text-classic-accent hover:underline'
+const headingClass = 'mb-2 text-sm font-bold uppercase tracking-wide text-white'
+const linkClass = 'text-sidebar-link hover:text-white hover:underline'
 
 export function ClassicSidebar() {
   const blogs = getAllBlogs()
@@ -35,10 +35,10 @@ export function ClassicSidebar() {
   ).sort(([a], [b]) => b.localeCompare(a))
 
   return (
-    <div className="space-y-8 text-[15px] leading-relaxed text-ink-muted">
+    <div className="space-y-8 text-[15px] leading-relaxed text-sidebar-text">
       <section>
         <Image src="/images/Smile_logo.png" alt="Smile logo" width={56} height={56} className="mb-3 h-14 w-14 object-contain" />
-        <p className="font-bold text-ink">Nguyen Hong Hai</p>
+        <p className="font-bold text-white">Nguyen Hong Hai</p>
         <p>Full-stack developer in Ho Chi Minh City. Writing about Next.js, NestJS and databases.</p>
         <p className="mt-1">
           <a href="/CV/FullStack.pdf" target="_blank" rel="noopener noreferrer" className={linkClass}>

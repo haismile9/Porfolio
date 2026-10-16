@@ -91,15 +91,16 @@ export function ClassicShell({ children, sidebar }: { children: React.ReactNode;
   const hasUnread = !isChatOpen && latestMessageAt > lastSeenAt
 
   return (
-    <div className="classic-shell min-h-screen bg-paper text-ink font-serif">
-      <div className="relative max-w-[720px] mx-auto px-4 sm:px-6 pt-6 pb-10 text-[17px] sm:text-[18px] leading-[1.7]">
-        {/* Widget sidebar in the left margin on wide screens */}
-        {sidebar && (
-          <aside className="hidden xl:block absolute right-full top-0 bottom-0 mr-6 w-56 pt-6">
-            <div className="sticky top-6">{sidebar}</div>
-          </aside>
-        )}
+    <div className={`classic-shell min-h-screen bg-paper text-ink font-serif ${sidebar ? 'xl:pl-[280px]' : ''}`}>
+      {/* Dark widget sidebar pinned to the left edge on wide screens (Twenty Fourteen style) */}
+      {sidebar && (
+        <aside className="hidden xl:block fixed inset-y-0 left-0 w-[280px] overflow-y-auto bg-sidebar px-8 py-8">
+          {sidebar}
+        </aside>
+      )}
 
+      {/* Content column; on wide screens the track reserves ~240px on the right for the article TOC */}
+      <div className="relative max-w-[720px] mx-auto px-4 sm:px-6 pt-6 pb-10 text-[17px] sm:text-[18px] leading-[1.7] xl:max-w-[960px] xl:pr-[264px]">
         <nav className="flex flex-wrap gap-x-4 gap-y-1 bg-classic-accent px-3 py-1.5 font-fira text-[13px] text-white">
           {navItems.map((item) => (
             <Link

@@ -70,6 +70,10 @@ module.exports = {
         'ink': '#1F2328',
         'ink-muted': '#5F646B',
         'classic-accent': '#4F48B8',
+        // Dark left sidebar
+        'sidebar': '#111111',
+        'sidebar-text': '#A3A3A3',
+        'sidebar-link': '#A5A0FF',
       },
       fontFamily: {
         'fira': ['Fira Code', 'monospace'],
