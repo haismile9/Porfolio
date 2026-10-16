@@ -3,12 +3,12 @@
 import { useEffect, useRef } from 'react'
 
 // giscus comments, stored in this repo's GitHub Discussions (one thread per article URL).
-// The IDs are public (they end up in the page HTML anyway); NEXT_PUBLIC_GISCUS_* can override them.
+// Renders nothing until the NEXT_PUBLIC_GISCUS_* variables are configured.
 const config = {
-  repo: process.env.NEXT_PUBLIC_GISCUS_REPO || 'haismile9/Porfolio',
-  repoId: process.env.NEXT_PUBLIC_GISCUS_REPO_ID || 'R_kgDOPSTnIA',
-  category: process.env.NEXT_PUBLIC_GISCUS_CATEGORY || 'Announcements',
-  categoryId: process.env.NEXT_PUBLIC_GISCUS_CATEGORY_ID || 'DIC_kwDOPSTnIM4DIlQG',
+  repo: process.env.NEXT_PUBLIC_GISCUS_REPO,
+  repoId: process.env.NEXT_PUBLIC_GISCUS_REPO_ID,
+  category: process.env.NEXT_PUBLIC_GISCUS_CATEGORY,
+  categoryId: process.env.NEXT_PUBLIC_GISCUS_CATEGORY_ID,
 }
 
 export function Comments() {
