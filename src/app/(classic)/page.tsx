@@ -1,6 +1,38 @@
 import Link from 'next/link'
 import { getAllBlogs } from '@/lib/blogs'
 import { projects } from '@/data/projects'
+import { siteConfig } from '@/lib/site'
+
+// Structured data: WebSite lets search engines show a site name, Person ties the profiles together
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': `${siteConfig.url}/#website`,
+      url: siteConfig.url,
+      name: 'Smile',
+      alternateName: ['haismile.dev', siteConfig.name],
+      inLanguage: 'vi',
+      author: { '@id': `${siteConfig.url}/#person` },
+    },
+    {
+      '@type': 'Person',
+      '@id': `${siteConfig.url}/#person`,
+      name: siteConfig.author,
+      alternateName: 'Smile',
+      url: siteConfig.url,
+      image: `${siteConfig.url}/icon.png`,
+      jobTitle: 'Full-stack Developer',
+      address: { '@type': 'PostalAddress', addressLocality: 'Ho Chi Minh City', addressCountry: 'VN' },
+      sameAs: [
+        'https://github.com/haismile9',
+        'https://linkedin.com/in/smile9/',
+        'https://dev.to/nguyn_hi_e2ccd6e16c6b77',
+      ],
+    },
+  ],
+}
 
 const linkClass = 'text-classic-accent underline underline-offset-2 hover:no-underline'
 
@@ -10,6 +42,8 @@ export default function HomePage() {
 
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+
       <header className="mb-8">
         <p className="font-fira text-sm text-ink-muted">Hi all. I am</p>
         <h1 className="mt-1 text-4xl sm:text-5xl font-bold leading-tight">Nguyen Hong Hai</h1>
