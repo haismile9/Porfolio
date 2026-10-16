@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { ref, push, onValue, serverTimestamp } from 'firebase/database';
 import { db } from '@/lib/firebase';
-import { motion } from 'framer-motion';
 
 interface Message {
   id: string;
@@ -15,8 +14,8 @@ interface Message {
 }
 
 const BAD_WORDS = [
-  'địt', 'dit', 'dkm', 'đkm', 'vcl', 'đcm', 'dcm', 'vl', 'đm', 'dm', 
-  'cặc', 'cac', 'lồn', 'lon', 'cứt', 'cut', 'đĩ', 'di', 'đụ', 'du', 'đụ mẹ', 'dmẹ', 'đmẹ', 'dmm', 'đmm', 'đm mày', 'dm mày', 
+  'địt', 'dit', 'dkm', 'đkm', 'vcl', 'đcm', 'dcm', 'vl', 'đm', 'dm',
+  'cặc', 'cac', 'lồn', 'lon', 'cứt', 'cut', 'đĩ', 'di', 'đụ', 'du', 'đụ mẹ', 'dmẹ', 'đmẹ', 'dmm', 'đmm', 'đm mày', 'dm mày',
   'fuck', 'fuk', 'fck', 'shit', 'bitch', 'asshole', 'dick', 'pussy', 'sex', 'porn', 'nude', 'slut'
 ];
 
@@ -29,20 +28,9 @@ const filterBadWords = (text: string) => {
   return filtered;
 };
 
+// Username colours, dark enough to read on the light classic background
 const stringToColor = (str: string) => {
-  const colors = [
-    '#ff5f56', // red
-    '#ffbd2e', // yellow
-    '#27c93f', // green
-    '#58a6ff', // blue
-    '#d2a8ff', // purple
-    '#ff7b72', // coral
-    '#79c0ff', // light blue
-    '#a5d6ff', // pale blue
-    '#ffa657', // orange
-    '#f0883e',
-    '#8957e5',
-  ];
+  const colors = ['#B42318', '#B54708', '#027A48', '#175CD3', '#6941C6', '#C11574', '#0E7090', '#4F48B8'];
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
     hash = str.charCodeAt(i) + ((hash << 5) - hash);
@@ -50,9 +38,15 @@ const stringToColor = (str: string) => {
   return colors[Math.abs(hash) % colors.length];
 };
 
+const WELCOME_TEXT =
+  'Welcome to the haismile.dev chat! Messages are public. Type "/help" for commands, "/cv" to download my CV, or just say hi.';
+
 export function ChatBox({ onClose }: { onClose?: () => void }) {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [localMessages, setLocalMessages] = useState<Message[]>([]);
+  // Seed the welcome message in the initial state so it isn't added twice in StrictMode
+  const [localMessages, setLocalMessages] = useState<Message[]>(() => [
+    { id: 'local-welcome', username: 'system', text: WELCOME_TEXT, createdAt: Date.now(), isSystem: true },
+  ]);
   const [inputText, setInputText] = useState('');
   const [username, setUsername] = useState('guest');
   const [countdown, setCountdown] = useState<number>(0);
@@ -70,17 +64,13 @@ export function ChatBox({ onClose }: { onClose?: () => void }) {
       setUsername(newName);
       localStorage.setItem('chat_username', newName);
     }
-    
-    // Welcome message
-    addLocalMessage('Welcome to haismile.dev terminal!\nType "/cv" to download my Resume/CV, "/blog" to read technical articles, "/help" for commands, or chat globally.', true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Fetch messages from Firebase
   useEffect(() => {
     if (!db) return;
     const messagesRef = ref(db, 'messages');
-    
+
     const unsubscribe = onValue(messagesRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
@@ -90,7 +80,7 @@ export function ChatBox({ onClose }: { onClose?: () => void }) {
           text: value.text,
           createdAt: value.createdAt || Date.now(),
         }));
-        
+
         messageList.sort((a, b) => a.createdAt - b.createdAt);
         setMessages(messageList);
       } else {
@@ -147,15 +137,15 @@ export function ChatBox({ onClose }: { onClose?: () => void }) {
     if (isCommand) {
       // Echo the command locally
       addLocalMessage(input, false, true);
-      
+
       const cmd = input.toLowerCase();
       if (cmd === '/clear') {
         setClearTimestamp(Date.now());
         setLocalMessages([]);
       } else if (cmd === '/help') {
-        addLocalMessage(`Available commands:\n  /help       - Show this help message\n  /cv         - Download Resume/CV (PDF)\n  /blog       - Explore technical & curated blog articles\n  /whoami     - Print current user information\n  /contact    - Show contact information\n  /clear      - Clear the terminal screen\n  /name <username> - Change your username`, true);
+        addLocalMessage(`Available commands:\n  /help       - Show this help message\n  /cv         - Download Resume/CV (PDF)\n  /blog       - Open the blog\n  /whoami     - Print current user information\n  /contact    - Show contact information\n  /clear      - Clear the chat window\n  /name <username> - Change your username`, true);
       } else if (cmd === '/blog' || cmd === '/articles') {
-        addLocalMessage(`Technical Blog Articles:\n  1. [Next.js] Kiến trúc Next.js 14 App Router & Tối ưu Caching\n  2. [Backend] Xây dựng hệ thống Microservices với NestJS, Redis & PostgreSQL\n  3. [Database] Tối ưu hóa chỉ mục (Indexing) PostgreSQL cho E-commerce\n  4. [Architecture] Các mô hình Event-Driven Architecture cho hệ thống phân tán\n\nOpening _blog tab...`, true);
+        addLocalMessage('Opening the blog...', true);
         window.location.href = '/blog';
       } else if (cmd === '/cv' || cmd === '/resume' || cmd === '/cat resume.md' || cmd === '/download cv') {
         addLocalMessage(`Downloading Nguyen Hong Hai's CV (.pdf)...\nFile path: /CV/FullStack.pdf`, true);
@@ -169,7 +159,7 @@ export function ChatBox({ onClose }: { onClose?: () => void }) {
       } else if (cmd === '/whoami') {
         addLocalMessage(`You are logged in as: ${username}\nYou are a special guest exploring my portfolio!`, true);
       } else if (cmd === '/contact') {
-        addLocalMessage(`Contact Information:\n  Email    : smilenotdev@gmail.com\n  GitHub   : @haismile9\n  LinkedIn : /in/haismile9`, true);
+        addLocalMessage(`Contact Information:\n  Email    : smilenotdev@gmail.com\n  GitHub   : @haismile9\n  LinkedIn : /in/smile9`, true);
       } else if (cmd === '/sudo rm -rf /') {
         addLocalMessage("Nice try! But I don't give sudo privileges to strangers. 😉", true);
       } else if (cmd.startsWith('/name ')) {
@@ -185,7 +175,7 @@ export function ChatBox({ onClose }: { onClose?: () => void }) {
 
     // Normal global chat message
     if (countdown > 0) {
-      addLocalMessage(`System: Please wait ${countdown}s before sending another message.`, true);
+      addLocalMessage(`Please wait ${countdown}s before sending another message.`, true);
       return;
     }
 
@@ -200,7 +190,7 @@ export function ChatBox({ onClose }: { onClose?: () => void }) {
       setCountdown(3); // 3 seconds cooldown
     } catch (error) {
       console.error('Error sending message:', error);
-      addLocalMessage('System: Error connecting to chat server.', true);
+      addLocalMessage('Error connecting to chat server.', true);
     }
   };
 
@@ -211,80 +201,54 @@ export function ChatBox({ onClose }: { onClose?: () => void }) {
 
   const formatDate = (timestamp: number) => {
     const d = new Date(timestamp);
-    return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
+    return `${d.getFullYear()}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getDate().toString().padStart(2, '0')}`;
   };
 
   return (
-    <div 
-      className="flex flex-col h-full bg-[#0d1117] rounded-lg border border-dark-border overflow-hidden font-mono text-sm shadow-xl"
-      onClick={() => inputRef.current?.focus()}
-    >
-      {/* Terminal Header */}
-      <div className="flex items-center justify-between px-4 py-2 bg-[#161b22] border-b border-dark-border select-none">
-        <div className="flex items-center gap-2">
-          <span className="text-text-secondary text-xs">TERMINAL</span>
-        </div>
-        <div className="flex gap-1.5 group/dots">
-          <button
-            onClick={onClose}
-            className="w-3 h-3 rounded-full bg-[#ff5f56] hover:opacity-90 transition-opacity cursor-pointer flex items-center justify-center"
-            title="Close Terminal"
-          >
-            <span className="hidden group-hover/dots:block text-[#820005] leading-none" style={{ fontSize: '9px', fontWeight: 900 }}>×</span>
-          </button>
-          <div className="w-3 h-3 rounded-full bg-[#ffbd2e] flex items-center justify-center">
-            <span className="hidden group-hover/dots:block text-[#805300] leading-none" style={{ fontSize: '9px', fontWeight: 900 }}>−</span>
-          </div>
-          <div className="w-3 h-3 rounded-full bg-[#27c93f] flex items-center justify-center">
-            <span className="hidden group-hover/dots:block text-[#006400] leading-none" style={{ fontSize: '8px', fontWeight: 900 }}>+</span>
-          </div>
-        </div>
+    <div className="flex h-full flex-col bg-paper font-serif text-ink">
+      {/* Title bar, matching the site navigation */}
+      <div className="flex items-center justify-between bg-classic-accent px-3 py-1.5 font-fira text-[13px] text-white select-none">
+        <span>~/chat</span>
+        <button onClick={onClose} className="hover:underline" title="Close chat">
+          close ×
+        </button>
       </div>
 
-      {/* Terminal Output */}
-      <div className="flex-1 overflow-y-auto p-4 pb-2 space-y-1.5 scrollbar-thin scrollbar-thumb-dark-border scrollbar-track-transparent">
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto px-1 py-3 text-base leading-relaxed">
         {allMessages.map((msg, index) => {
           const prevMsg = index > 0 ? allMessages[index - 1] : null;
           const showDateSeparator = !prevMsg || formatDate(prevMsg.createdAt) !== formatDate(msg.createdAt);
-          const timeStr = formatTime(msg.createdAt);
-          const dateStr = formatDate(msg.createdAt);
 
           return (
             <div key={msg.id}>
               {showDateSeparator && (
-                <div className="flex items-center justify-center my-4 opacity-50 select-none">
-                  <div className="h-px bg-dark-border flex-1"></div>
-                  <span className="px-4 text-xs font-medium text-text-secondary">{dateStr}</span>
-                  <div className="h-px bg-dark-border flex-1"></div>
-                </div>
+                <p className="mt-4 mb-2 border-b border-paper-border pb-1 font-fira text-xs text-ink-muted select-none">
+                  {formatDate(msg.createdAt)}
+                </p>
               )}
-              
+
               {msg.isSystem ? (
-                <motion.div 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="flex gap-2 whitespace-pre-wrap py-1"
-                >
-                  <span className="text-text-secondary/40 shrink-0 select-none">[{timeStr}]</span>
-                  <span className="text-text-secondary flex-1">{msg.text}</span>
-                </motion.div>
-              ) : (
-                <motion.div 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="flex gap-2 whitespace-pre-wrap py-1 leading-relaxed"
-                >
-                  <span className="text-text-secondary/40 shrink-0 select-none">[{timeStr}]</span>
-                  <span 
-                    className="shrink-0 font-medium" 
-                    style={{ color: msg.username === username ? '#27c93f' : stringToColor(msg.username) }}
-                  >
-                    {msg.username}<span className="hidden sm:inline">@haismile.dev:~</span>$
-                  </span>
-                  <span className="text-text-primary break-words flex-1">
+                <p className="my-1.5 flex gap-3">
+                  <time className="w-11 shrink-0 pt-0.5 font-fira text-xs text-ink-muted select-none">{formatTime(msg.createdAt)}</time>
+                  <span className={`flex-1 whitespace-pre-wrap text-ink-muted ${msg.text.includes('\n  ') ? 'font-fira text-[13px]' : 'italic'}`}>
                     {msg.text}
                   </span>
-                </motion.div>
+                </p>
+              ) : (
+                <p className="my-1.5 flex gap-3">
+                  <time className="w-11 shrink-0 pt-0.5 font-fira text-xs text-ink-muted select-none">{formatTime(msg.createdAt)}</time>
+                  <span className="flex-1 whitespace-pre-wrap break-words">
+                    <span
+                      className="font-bold"
+                      style={{ color: msg.username === username ? '#027A48' : stringToColor(msg.username) }}
+                    >
+                      {msg.username}
+                    </span>
+                    <span className="text-ink-muted">: </span>
+                    <span className={msg.isEcho ? 'font-fira text-[13px]' : ''}>{msg.text}</span>
+                  </span>
+                </p>
               )}
             </div>
           );
@@ -292,21 +256,27 @@ export function ChatBox({ onClose }: { onClose?: () => void }) {
         <div ref={messagesEndRef} className="h-1" />
       </div>
 
-      {/* Terminal Input */}
-      <form onSubmit={handleSendMessage} className="flex items-center gap-2 px-4 pb-4 pt-2">
-        <span className="text-accent-green font-medium shrink-0">
-          {username}<span className="hidden sm:inline">@haismile.dev:~</span>$
-        </span>
+      {/* Input */}
+      <form onSubmit={handleSendMessage} className="flex items-center gap-2 border-t border-paper-border pt-3">
         <input
+          id="chat-input"
           ref={inputRef}
           type="text"
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
-          className="flex-1 bg-transparent border-none outline-none text-text-primary focus:ring-0 p-0"
+          placeholder="Write a message or /help"
+          aria-label={`Message as ${username}`}
+          className="min-w-0 flex-1 border border-paper-border bg-white px-3 py-1.5 text-base placeholder:text-ink-muted/70 focus:outline-none focus:border-classic-accent"
           autoFocus
           spellCheck="false"
           autoComplete="off"
         />
+        <button
+          type="submit"
+          className="shrink-0 bg-classic-accent px-3 py-1.5 font-fira text-[13px] text-white hover:opacity-90"
+        >
+          send
+        </button>
       </form>
     </div>
   );

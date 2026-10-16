@@ -1,21 +1,48 @@
 'use client'
 
-import { useState, useMemo, useEffect, useRef } from 'react'
+import { useState, useMemo, useEffect, Suspense } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { BlogPost } from '@/lib/blogs'
+import { usePathname, useSearchParams } from 'next/navigation'
+import type { BlogPost } from '@/lib/blogs'
+import { categories, getCategoryLabel } from '@/lib/categories'
+import { slugify } from '@/lib/slugify'
 
-// Classic, text-focused blog layout (inspired by Hugo Classic / Twenty Fourteen):
-// a single narrow column, serif type, one accent colour and no animations.
-
-const categories = [
-  { id: 'nextjs', label: 'Next.js', path: 'nextjs' },
-  { id: 'backend', label: 'Backend & Microservices', path: 'backend' },
-  { id: 'database', label: 'Database & SQL', path: 'database' },
-  { id: 'architecture', label: 'System Architecture', path: 'architecture' },
-]
+// Blog list and article view, rendered inside the classic shell.
 
 const formatDate = (date: string) => date.replace(/-/g, '/')
+
+const stripInlineMarkdown = (text: string) => text.replace(/\*\*|`|\*/g, '')
+const headingId = (text: string) => slugify(stripInlineMarkdown(text))
+
+interface TocItem {
+  id: string
+  text: string
+  level: number
+}
+
+// Headings (# to ###) outside code blocks, for the table of contents
+const extractToc = (content: string): TocItem[] => {
+  const withoutCode = content.replace(/\r/g, '').replace(/```[\s\S]*?```/g, '')
+  const regex = /^(#{1,3})\s+(.*)$/gm
+  const items: TocItem[] = []
+  let match: RegExpExecArray | null
+  while ((match = regex.exec(withoutCode)) !== null) {
+    items.push({ id: headingId(match[2]), text: stripInlineMarkdown(match[2]), level: Math.max(2, match[1].length) })
+  }
+  return items
+}
+
+// Reads ?category= and ?month= from the URL. Kept in its own Suspense boundary so
+// useSearchParams doesn't opt the whole blog (and its article HTML) out of static rendering.
+function UrlFilters({ onChange }: { onChange: (filters: { category: string; month: string | null }) => void }) {
+  const searchParams = useSearchParams()
+  const category = searchParams.get('category') ?? 'all'
+  const month = searchParams.get('month')
+  useEffect(() => {
+    onChange({ category, month })
+  }, [category, month, onChange])
+  return null
+}
 
 interface BlogClientProps {
   blogs: BlogPost[]
@@ -23,8 +50,10 @@ interface BlogClientProps {
 
 export default function BlogClient({ blogs }: BlogClientProps) {
   const pathname = usePathname()
-  const scrollRef = useRef<HTMLDivElement>(null)
-  const [selectedCategory, setSelectedCategory] = useState<string>('all')
+  const [filters, setFilters] = useState<{ category: string; month: string | null }>({ category: 'all', month: null })
+  const selectedCategory = filters.category
+  const selectedMonth = filters.month
+  const [activeHeading, setActiveHeading] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState<string>('')
   const [copiedCodeIndex, setCopiedCodeIndex] = useState<number | null>(null)
 
@@ -36,9 +65,10 @@ export default function BlogClient({ blogs }: BlogClientProps) {
     return blogs.find((b) => b.slug === slug) || null
   }, [pathname, blogs])
 
-  // The scroll container lives in the blog layout, so reset it on navigation
+  // BlogClient lives in the blog layout and persists across navigation,
+  // so scroll back to the top when switching between list and articles
   useEffect(() => {
-    scrollRef.current?.scrollTo({ top: 0 })
+    window.scrollTo({ top: 0 })
   }, [pathname])
 
   // Newest first
@@ -48,6 +78,7 @@ export default function BlogClient({ blogs }: BlogClientProps) {
     const query = searchQuery.trim().toLowerCase()
     return sortedBlogs.filter((blog) => {
       if (selectedCategory !== 'all' && blog.category !== selectedCategory) return false
+      if (selectedMonth && !blog.date.startsWith(selectedMonth)) return false
       if (!query) return true
       return (
         blog.title.toLowerCase().includes(query) ||
@@ -55,7 +86,7 @@ export default function BlogClient({ blogs }: BlogClientProps) {
         blog.tags.some((t) => t.toLowerCase().includes(query))
       )
     })
-  }, [sortedBlogs, selectedCategory, searchQuery])
+  }, [sortedBlogs, selectedCategory, selectedMonth, searchQuery])
 
   const blogsByYear = useMemo(() => {
     const groups: { year: string; posts: BlogPost[] }[] = []
@@ -68,7 +99,25 @@ export default function BlogClient({ blogs }: BlogClientProps) {
     return groups
   }, [filteredBlogs])
 
-  const getCategoryLabel = (id: string) => categories.find((c) => c.id === id)?.label ?? 'Technical'
+  const toc = useMemo(() => (activeBlog ? extractToc(activeBlog.content) : []), [activeBlog])
+
+  // Highlight the table-of-contents entry for the section currently being read
+  useEffect(() => {
+    if (toc.length === 0) return
+    const headings = toc
+      .map((item) => document.getElementById(item.id))
+      .filter((el): el is HTMLElement => el !== null)
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActiveHeading(entry.target.id)
+        })
+      },
+      { rootMargin: '0px 0px -75% 0px' }
+    )
+    headings.forEach((el) => observer.observe(el))
+    return () => observer.disconnect()
+  }, [toc])
 
   const handleCopyCode = (codeText: string, index: number) => {
     navigator.clipboard.writeText(codeText)
@@ -240,16 +289,17 @@ export default function BlogClient({ blogs }: BlogClientProps) {
         if (headingMatch) {
           const level = headingMatch[1].length
           const text = parseInlineMarkdown(headingMatch[2])
+          const id = headingId(headingMatch[2])
           if (level <= 2) {
             return (
-              <h2 key={key} className="text-2xl font-bold leading-snug mt-10 mb-3">
+              <h2 key={key} id={id} className="scroll-mt-6 text-2xl font-bold leading-snug mt-10 mb-3">
                 {text}
               </h2>
             )
           }
           if (level === 3) {
             return (
-              <h3 key={key} className="text-xl font-bold leading-snug mt-8 mb-2">
+              <h3 key={key} id={id} className="scroll-mt-6 text-xl font-bold leading-snug mt-8 mb-2">
                 {text}
               </h3>
             )
@@ -350,34 +400,30 @@ export default function BlogClient({ blogs }: BlogClientProps) {
   const newerPost = activeIndex > 0 ? sortedBlogs[activeIndex - 1] : null
   const olderPost = activeIndex >= 0 && activeIndex < sortedBlogs.length - 1 ? sortedBlogs[activeIndex + 1] : null
 
+  // Related posts: same topic counts double, plus one point per shared tag
+  const relatedPosts = activeBlog
+    ? sortedBlogs
+        .filter((b) => b.id !== activeBlog.id)
+        .map((b) => ({
+          post: b,
+          score: (b.category === activeBlog.category ? 2 : 0) + b.tags.filter((t) => activeBlog.tags.includes(t)).length,
+        }))
+        .filter((item) => item.score > 0)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 3)
+        .map((item) => item.post)
+    : []
+
   return (
-    <div ref={scrollRef} className="flex-1 min-h-0 overflow-y-auto bg-paper text-ink font-serif">
-      <div className="max-w-[720px] mx-auto px-4 sm:px-6 pt-6 pb-16 text-[17px] sm:text-[18px] leading-[1.7]">
-        {/* Top navigation bar */}
-        <nav className="flex flex-wrap gap-x-4 gap-y-1 bg-classic-accent px-3 py-1.5 font-fira text-[13px] text-white">
-          <Link
-            href="/blog"
-            onClick={() => setSelectedCategory('all')}
-            className={`hover:underline ${!activeBlog && selectedCategory === 'all' ? 'underline underline-offset-4' : ''}`}
-          >
-            ~/blog
-          </Link>
-          {categories.map((cat) => (
-            <Link
-              key={cat.id}
-              href="/blog"
-              onClick={() => setSelectedCategory(cat.id)}
-              className={`hover:underline ${!activeBlog && selectedCategory === cat.id ? 'underline underline-offset-4' : ''}`}
-            >
-              ~/{cat.path}
-            </Link>
-          ))}
-        </nav>
+    <>
+        <Suspense fallback={null}>
+          <UrlFilters onChange={setFilters} />
+        </Suspense>
 
         {!activeBlog ? (
           /* ================= Article list (/blog) ================= */
           <>
-            <header className="mt-10 mb-8">
+            <header className="mb-8">
               <h1 className="text-4xl font-bold leading-tight">Blog</h1>
               <p className="mt-2 font-bold">Ghi chép kỹ thuật của Smile</p>
               <p className="mt-3">
@@ -394,12 +440,31 @@ export default function BlogClient({ blogs }: BlogClientProps) {
               className="w-full border border-paper-border bg-white px-3 py-2 text-base placeholder:text-ink-muted/70 focus:outline-none focus:border-classic-accent"
             />
 
-            {selectedCategory !== 'all' && (
-              <p className="mt-4 text-base text-ink-muted">
-                Chủ đề: <span className="font-bold text-ink">{getCategoryLabel(selectedCategory)}</span>{' '}
-                <button onClick={() => setSelectedCategory('all')} className="text-classic-accent underline hover:no-underline">
+            <p className="mt-4 flex flex-wrap gap-x-3 gap-y-1 text-base text-ink-muted">
+              <span>Chủ đề:</span>
+              {[{ id: 'all', label: 'Tất cả' }, ...categories].map((cat) =>
+                selectedCategory === cat.id && !selectedMonth ? (
+                  <span key={cat.id} className="font-bold text-ink">
+                    {cat.label}
+                  </span>
+                ) : (
+                  <Link
+                    key={cat.id}
+                    href={cat.id === 'all' ? '/blog' : `/blog?category=${cat.id}`}
+                    className="text-classic-accent hover:underline"
+                  >
+                    {cat.label}
+                  </Link>
+                )
+              )}
+            </p>
+
+            {selectedMonth && (
+              <p className="mt-2 text-base text-ink-muted">
+                Lưu trữ: <span className="font-bold text-ink">tháng {selectedMonth.slice(5, 7)}/{selectedMonth.slice(0, 4)}</span>{' '}
+                <Link href="/blog" className="text-classic-accent underline hover:no-underline">
                   (xem tất cả)
-                </button>
+                </Link>
               </p>
             )}
 
@@ -433,7 +498,46 @@ export default function BlogClient({ blogs }: BlogClientProps) {
           </>
         ) : (
           /* ================= Article view (/blog/[slug]) ================= */
-          <article className="mt-8">
+          <article className="relative">
+            {/* Table of contents + related posts in the right margin on wide screens */}
+            {(toc.length > 0 || relatedPosts.length > 0) && (
+              <aside className="hidden xl:block absolute left-full top-0 bottom-0 ml-8 w-52">
+                <div className="sticky top-6 max-h-[calc(100vh-3rem)] overflow-y-auto space-y-8 text-[15px] leading-snug text-ink-muted">
+                  {toc.length > 0 && (
+                    <nav aria-label="Mục lục">
+                      <h2 className="mb-2 text-sm font-bold uppercase tracking-wide text-ink">Mục lục</h2>
+                      <ul className="space-y-1.5">
+                        {toc.map((item) => (
+                          <li key={item.id} className={item.level === 3 ? 'pl-3 text-sm' : ''}>
+                            <a
+                              href={`#${item.id}`}
+                              className={activeHeading === item.id ? 'font-bold text-ink' : 'text-classic-accent hover:underline'}
+                            >
+                              {item.text}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    </nav>
+                  )}
+                  {relatedPosts.length > 0 && (
+                    <section>
+                      <h2 className="mb-2 text-sm font-bold uppercase tracking-wide text-ink">Bài liên quan</h2>
+                      <ul className="space-y-2">
+                        {relatedPosts.map((post) => (
+                          <li key={post.id}>
+                            <Link href={`/blog/${post.slug}`} className="text-classic-accent hover:underline">
+                              {post.title}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </section>
+                  )}
+                </div>
+              </aside>
+            )}
+
             <Link href="/blog" className="font-fira text-sm text-classic-accent hover:underline">
               ← ~/blog
             </Link>
@@ -460,10 +564,7 @@ export default function BlogClient({ blogs }: BlogClientProps) {
                     {i > 0 && ', '}
                     <Link
                       href="/blog"
-                      onClick={() => {
-                        setSelectedCategory('all')
-                        setSearchQuery(tag)
-                      }}
+                      onClick={() => setSearchQuery(tag)}
                       className="text-classic-accent hover:underline"
                     >
                       #{tag}
@@ -491,11 +592,9 @@ export default function BlogClient({ blogs }: BlogClientProps) {
                 </nav>
               )}
 
-              <p className="mt-8 text-sm text-ink-muted">© 2026 Nguyen Hong Hai</p>
             </footer>
           </article>
         )}
-      </div>
-    </div>
+    </>
   )
 }

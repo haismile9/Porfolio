@@ -45,23 +45,14 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #1D293D;
+  background: #F3F2EE;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #314158;
+  background: #C9C5BC;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #43D9AD;
-}
-
-/* Horizontal tab strips that scroll without a visible bar (mobile) */
-.scrollbar-none {
-  scrollbar-width: none;
-}
-
-.scrollbar-none::-webkit-scrollbar {
-  display: none;
+  background: #4F48B8;
 }

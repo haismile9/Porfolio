@@ -1,6 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
+import { slugify } from './slugify'
 
 export interface BlogPost {
   id: string
@@ -17,19 +18,6 @@ export interface BlogPost {
 }
 
 const blogsDirectory = path.join(process.cwd(), 'src/content/blogs')
-
-// Turns a Vietnamese title into a URL slug without diacritics,
-// e.g. "Kiến trúc Next.js 14" -> "kien-truc-next-js-14"
-export function slugify(text: string): string {
-  return text
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/đ/g, 'd')
-    .replace(/Đ/g, 'D')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-}
 
 export function getAllBlogs(): BlogPost[] {
   if (!fs.existsSync(blogsDirectory)) {
