@@ -11,7 +11,6 @@ const copy = {
     experience: 'Kinh nghiệm',
     education: 'Học vấn',
     skills: 'Kỹ năng',
-    outsideWork: 'Ngoài giờ làm',
     resume: 'CV',
     jobs: [
       {
@@ -38,9 +37,20 @@ const copy = {
         ],
       },
     ],
-    school: 'Cao đẳng Văn Lang Sài Gòn',
-    major: 'Công nghệ thông tin, GPA 3.17 / 4.0.',
-    awards: ['Giải Ba, Altair Engineering Challenge 2025', 'Sinh viên xuất sắc (2023 – 2024)'],
+    schools: [
+      {
+        name: 'Đại học Công nghệ Kỹ thuật TP.HCM (HCMUTE)',
+        period: 'Đang học',
+        major: 'Công nghệ thông tin (liên thông).',
+        awards: [],
+      },
+      {
+        name: 'Cao đẳng Văn Lang Sài Gòn',
+        period: '2023 – 2025',
+        major: 'Công nghệ thông tin, GPA 3.17 / 4.0.',
+        awards: ['Giải Ba, Altair Engineering Challenge 2025', 'Sinh viên xuất sắc (2023 – 2024)'],
+      },
+    ],
     skillGroups: ['Frontend', 'Backend', 'Cơ sở dữ liệu', 'API', 'DevOps', 'Quản lý mã nguồn'],
   },
   en: {
@@ -49,7 +59,6 @@ const copy = {
     experience: 'Experience',
     education: 'Education',
     skills: 'Skills',
-    outsideWork: 'Outside of work',
     resume: 'Resume',
     jobs: [
       {
@@ -76,9 +85,20 @@ const copy = {
         ],
       },
     ],
-    school: 'Van Lang Sai Gon College',
-    major: 'Information Technology, GPA 3.17 / 4.0.',
-    awards: ['3rd Prize, Altair Engineering Challenge 2025', 'Outstanding Student Award (2023 – 2024)'],
+    schools: [
+      {
+        name: 'HCMUTE, Ho Chi Minh City',
+        period: 'In progress',
+        major: "Information Technology (college-to-bachelor's program).",
+        awards: [],
+      },
+      {
+        name: 'Van Lang Sai Gon College',
+        period: '2023 – 2025',
+        major: 'Information Technology, GPA 3.17 / 4.0.',
+        awards: ['3rd Prize, Altair Engineering Challenge 2025', 'Outstanding Student Award (2023 – 2024)'],
+      },
+    ],
     skillGroups: ['Frontend', 'Backend', 'Databases', 'APIs', 'DevOps', 'Version control'],
   },
 } satisfies Record<Locale, unknown>
@@ -115,28 +135,52 @@ export default function AboutPage({ params }: { params: { lang: Locale } }) {
 
       {lang === 'vi' ? (
         <>
+          <p className="my-4">Chào bạn, mình là Hồng Hải, mọi người hay gọi mình là Smile.</p>
           <p className="my-4">
-            Chào bạn, mình là Hồng Hải, trên mạng mọi người hay gọi mình là Smile. Mình làm web, và đôi khi làm chỉ vì
-            thấy vui.
+            Mình lớn lên ở quê, và may mắn được ba mẹ cho tiếp xúc với máy tính sớm hơn bạn bè cùng trang lứa. Như hầu
+            hết thằng con nít có máy tính hồi đó, mình dùng nó để… chơi game. Warcraft, Half-Life 2, Đột Kích,
+            FIFA Online 3, 3Q, chơi đủ hết.
           </p>
           <p className="my-4">
-            Mình bắt đầu học code vì muốn hiểu mọi thứ bên dưới hoạt động ra sao, và sự tò mò đó dần thành công việc.
-            Hiện mình làm cả frontend lẫn backend: React và Next.js ở phía giao diện, Node.js và NestJS ở phía server,
-            PostgreSQL và Redis cho dữ liệu, Docker và Nginx để triển khai. Những gì học được mình ghi lại trên{' '}
-            <Link href={href('/blog')} className={linkClass}>blog</Link>.
+            Cái làm mình mê code là những lúc học được một thứ mới và hiểu ra nó vận hành thế nào: logic chạy ra sao, vì
+            sao viết vầy mà không viết kia. Mấy khoảnh khắc &ldquo;à, ra là vậy&rdquo; đó là thứ giữ mình lại với nghề.{' '}
+            <Link href={href('/blog')} className={linkClass}>Blog</Link> này cũng để ghi lại chúng, viết lại cho dễ
+            hiểu nhất có thể.
+          </p>
+          <p className="my-4">
+            Mình tốt nghiệp cao đẳng, đi làm full-stack được hơn một năm, học được rất nhiều thứ mà ngồi trên ghế nhà
+            trường không có. Nhưng càng làm càng thấy kiến thức nền của mình còn mỏng, nên mình quyết định học liên
+            thông lên Đại học Công nghệ Kỹ thuật TP.HCM (HCMUTE). Không phải để lấy cái bằng cho đẹp, mà để đứng vững
+            hơn trên con đường này.
+          </p>
+          <p className="my-4">
+            Ngoài giờ làm, mình đá bóng, tập gym, đánh guitar, và nghe podcast thời sự với podcast về ngành IT.
           </p>
         </>
       ) : (
         <>
+          <p className="my-4">Hi, I&apos;m Hong Hai. Most people call me Smile.</p>
           <p className="my-4">
-            Hi, I&apos;m Hong Hai, though most people online know me as Smile. I build things for the web, and
-            sometimes just for the fun of it.
+            I grew up in the countryside, and I was lucky that my parents let me use a computer earlier than most kids
+            my age. Like pretty much every kid with a computer back then, I used it to… play games. Warcraft, Half-Life
+            2, CrossFire, FIFA Online 3, 3Q, I played them all.
           </p>
           <p className="my-4">
-            I started coding because I wanted to understand how things work under the hood. That curiosity turned
-            into a career. These days I work across the stack: React and Next.js on the front, Node.js and NestJS on
-            the back, PostgreSQL and Redis for data, and Docker and Nginx to ship it all. I write about what I learn
-            on the <Link href={href('/blog')} className={linkClass}>blog</Link> (in Vietnamese).
+            What made me fall for coding is the moment I learn something new and understand how it works: how the
+            logic flows, why you write it this way and not that way. Those &ldquo;oh, so that&apos;s how it
+            works&rdquo; moments are what keep me in this field. The{' '}
+            <Link href={href('/blog')} className={linkClass}>blog</Link> is where I write them down, as simply as I
+            can (in Vietnamese).
+          </p>
+          <p className="my-4">
+            I graduated from college and have been working as a full-stack developer for a little over a year,
+            learning a lot that school never taught me. But the more I worked, the more I saw how thin my fundamentals
+            were, so I decided to continue to a bachelor&apos;s degree at HCMUTE. Not for a nicer diploma, but to stand
+            on firmer ground on this path.
+          </p>
+          <p className="my-4">
+            Outside of work, I play football, go to the gym, play the guitar, and listen to news podcasts and podcasts
+            about the IT industry.
           </p>
         </>
       )}
@@ -160,16 +204,22 @@ export default function AboutPage({ params }: { params: { lang: Locale } }) {
       ))}
 
       <h2 className="text-2xl font-bold leading-snug mt-10 mb-3">{t.education}</h2>
-      <h3 className="text-xl font-bold leading-snug">{t.school}</h3>
-      <p className="font-fira text-[13px] text-ink-muted">2023 – 2025</p>
-      <p className="mt-2">{t.major}</p>
-      <ul className="mt-2 list-disc pl-7 space-y-1">
-        {t.awards.map((award) => (
-          <li key={award} className="pl-1">
-            {award}
-          </li>
-        ))}
-      </ul>
+      {t.schools.map((school) => (
+        <section key={school.name} className="my-6">
+          <h3 className="text-xl font-bold leading-snug">{school.name}</h3>
+          <p className="font-fira text-[13px] text-ink-muted">{school.period}</p>
+          <p className="mt-2">{school.major}</p>
+          {school.awards.length > 0 && (
+            <ul className="mt-2 list-disc pl-7 space-y-1">
+              {school.awards.map((award) => (
+                <li key={award} className="pl-1">
+                  {award}
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      ))}
 
       <h2 className="text-2xl font-bold leading-snug mt-10 mb-3">{t.skills}</h2>
       <dl className="space-y-2">
@@ -180,19 +230,6 @@ export default function AboutPage({ params }: { params: { lang: Locale } }) {
           </div>
         ))}
       </dl>
-
-      <h2 className="text-2xl font-bold leading-snug mt-10 mb-3">{t.outsideWork}</h2>
-      {lang === 'vi' ? (
-        <p className="my-4">
-          Mình đi tập gym, đá bóng, chơi guitar và nghe rất nhiều rap. Triết lý mình cố giữ: làm những thứ có ý nghĩa,
-          giữ mọi thứ đơn giản, và luôn mỉm cười khi làm.
-        </p>
-      ) : (
-        <p className="my-4">
-          I go to the gym, play football, play the guitar and listen to a lot of rap. The philosophy I try to stick
-          to: build things that matter, keep it simple, and smile while doing it.
-        </p>
-      )}
 
       <h2 className="text-2xl font-bold leading-snug mt-10 mb-3">{t.resume}</h2>
       {lang === 'vi' ? (

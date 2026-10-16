@@ -9,7 +9,8 @@ const linkClass = 'text-classic-accent underline underline-offset-2 hover:no-und
 const copy = {
   vi: {
     greeting: 'Xin chào, mình là',
-    name: 'Nguyễn Hồng Hải',
+    name: 'Hồng Hải',
+    nickname: '(gọi Smile cũng được)',
     role: 'Full-stack Developer · TP. Hồ Chí Minh',
     recentPosts: 'Bài viết mới',
     allPosts: 'Xem tất cả bài viết →',
@@ -17,8 +18,9 @@ const copy = {
     allProjects: 'Xem tất cả dự án →',
   },
   en: {
-    greeting: 'Hi all. I am',
-    name: 'Nguyen Hong Hai',
+    greeting: "Hi, I'm",
+    name: 'Hong Hai',
+    nickname: '(Smile works too)',
     role: 'Full-stack Developer · Ho Chi Minh City, Vietnam',
     recentPosts: 'Recent posts (in Vietnamese)',
     allPosts: 'All posts →',
@@ -71,46 +73,36 @@ export default function HomePage({ params }: { params: { lang: Locale } }) {
 
       <header className="mb-8">
         <p className="font-fira text-sm text-ink-muted">{t.greeting}</p>
-        <h1 className="mt-1 text-4xl sm:text-5xl font-bold leading-tight">{t.name}</h1>
+        <h1 className="mt-1 text-4xl sm:text-5xl font-bold leading-tight">
+          {t.name} <span className="text-2xl sm:text-3xl font-normal text-ink-muted">{t.nickname}</span>
+        </h1>
         <p className="mt-2 font-bold">{t.role}</p>
       </header>
 
       {lang === 'vi' ? (
-        <>
-          <p className="my-4">
-            Mình làm web từ đầu đến cuối: React và Next.js ở phía giao diện, Node.js và NestJS ở phía server,
-            PostgreSQL và Redis cho dữ liệu, Docker và Nginx để triển khai. Hiện mình đang làm một hệ thống quản lý
-            thiết bị y tế theo thời gian thực.
-          </p>
-          <p className="my-4">
-            Đây là nơi mình lưu lại các <Link href={href('/projects')} className={linkClass}>dự án</Link>, viết{' '}
-            <Link href={href('/blog')} className={linkClass}>ghi chép lập trình cho người mới bắt đầu</Link>, và giấu
-            vài <Link href={href('/games')} className={linkClass}>trò chơi nhỏ</Link>. Đọc thêm về mình ở{' '}
-            <Link href={href('/about')} className={linkClass}>trang giới thiệu</Link>, hoặc xem code của mình trên{' '}
-            <a href="https://github.com/haismile9" target="_blank" rel="noopener noreferrer" className={linkClass}>
-              GitHub
-            </a>
-            .
-          </p>
-        </>
+        <p className="my-4">
+          Tốt nghiệp cao đẳng, đi làm được hơn một năm, hiện đang học liên thông tại HCMUTE. Ở đây có mấy{' '}
+          <Link href={href('/projects')} className={linkClass}>dự án</Link> mình từng làm,{' '}
+          <Link href={href('/blog')} className={linkClass}>blog</Link> nơi mình viết lại những thứ vừa học cho người
+          mới, và vài <Link href={href('/games')} className={linkClass}>trò chơi nhỏ</Link> làm cho vui. Code thì nằm
+          hết trên{' '}
+          <a href="https://github.com/haismile9" target="_blank" rel="noopener noreferrer" className={linkClass}>
+            GitHub
+          </a>
+          .
+        </p>
       ) : (
-        <>
-          <p className="my-4">
-            I build web applications end to end: React and Next.js on the front, Node.js and NestJS on the back,
-            PostgreSQL and Redis for data, and Docker and Nginx to ship it. Right now I work on a real-time medical
-            device management system.
-          </p>
-          <p className="my-4">
-            This site is where I keep my <Link href={href('/projects')} className={linkClass}>projects</Link>, write{' '}
-            <Link href={href('/blog')} className={linkClass}>beginner-friendly notes</Link> (in Vietnamese), and hide
-            a few <Link href={href('/games')} className={linkClass}>small games</Link>. More about me on the{' '}
-            <Link href={href('/about')} className={linkClass}>about page</Link>, or find my code on{' '}
-            <a href="https://github.com/haismile9" target="_blank" rel="noopener noreferrer" className={linkClass}>
-              GitHub
-            </a>
-            .
-          </p>
-        </>
+        <p className="my-4">
+          College graduate, a little over a year into working as a developer, and now studying for my bachelor&apos;s
+          degree at HCMUTE. Here you&apos;ll find some <Link href={href('/projects')} className={linkClass}>projects</Link>{' '}
+          I&apos;ve built, a <Link href={href('/blog')} className={linkClass}>blog</Link> (in Vietnamese) where I rewrite
+          what I&apos;ve just learned for beginners, and a few <Link href={href('/games')} className={linkClass}>small games</Link>{' '}
+          made for fun. The code is all on{' '}
+          <a href="https://github.com/haismile9" target="_blank" rel="noopener noreferrer" className={linkClass}>
+            GitHub
+          </a>
+          .
+        </p>
       )}
 
       <h2 className="text-2xl font-bold leading-snug mt-10 mb-4 border-b border-paper-border pb-1">{t.recentPosts}</h2>
