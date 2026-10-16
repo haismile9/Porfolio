@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getAllBlogs, getBlogBySlug, type BlogPost } from '@/lib/blogs'
+import { getAllBlogs, getBlogBySlug, tagPath, type BlogPost } from '@/lib/blogs'
 import { getCategoryLabel } from '@/lib/categories'
 import { renderMarkdown } from '@/lib/markdown'
 import { feedAlternates, siteConfig } from '@/lib/site'
@@ -149,7 +149,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           {blog.tags.map((tag, i) => (
             <span key={tag}>
               {i > 0 && ', '}
-              <Link href={`/blog?q=${encodeURIComponent(tag)}`} className="text-classic-accent hover:underline">
+              <Link href={tagPath(tag)} className="text-classic-accent hover:underline">
                 #{tag}
               </Link>
             </span>

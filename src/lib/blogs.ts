@@ -59,3 +59,31 @@ export function getAllBlogs(): BlogPost[] {
 export function getBlogBySlug(slug: string): BlogPost | undefined {
   return getAllBlogs().find((blog) => blog.slug === slug)
 }
+
+export interface BlogTag {
+  slug: string
+  label: string
+  count: number
+}
+
+// Every tag used by a post, with a URL slug ("Next.js" -> "next-js"), most used first
+export function getAllTags(): BlogTag[] {
+  const tags = new Map<string, BlogTag>()
+  getAllBlogs().forEach((blog) => {
+    blog.tags.forEach((label) => {
+      const slug = slugify(label)
+      const tag = tags.get(slug)
+      if (tag) tag.count += 1
+      else tags.set(slug, { slug, label, count: 1 })
+    })
+  })
+  return Array.from(tags.values()).sort((a, b) => b.count - a.count || a.label.localeCompare(b.label))
+}
+
+export function getBlogsByTag(tagSlug: string): BlogPost[] {
+  return getAllBlogs()
+    .filter((blog) => blog.tags.some((label) => slugify(label) === tagSlug))
+    .sort((a, b) => b.date.localeCompare(a.date))
+}
+
+export const tagPath = (label: string) => `/blog/tag/${slugify(label)}`

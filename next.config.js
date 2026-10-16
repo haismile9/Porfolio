@@ -36,8 +36,9 @@ const nextConfig = {
   async redirects() {
     return [
       ...blogRedirects(),
-      // Posts are Vietnamese only, so English article URLs point to the original
+      // Posts and tag pages are Vietnamese only, so English URLs point to the originals
       { source: '/en/blog/:slug', destination: '/blog/:slug', permanent: false },
+      { source: '/en/blog/tag/:tag', destination: '/blog/tag/:tag', permanent: false },
     ]
   },
 }

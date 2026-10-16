@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next'
-import { getAllBlogs } from '@/lib/blogs'
+import { getAllBlogs, getAllTags } from '@/lib/blogs'
 import { siteConfig } from '@/lib/site'
 import { languageAlternates, locales, localePath } from '@/i18n/config'
 
@@ -38,5 +38,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }))
 
-  return [...pages, ...posts]
+  // Tag pages (Vietnamese only)
+  const tags: MetadataRoute.Sitemap = getAllTags().map((tag) => ({
+    url: `${siteConfig.url}/blog/tag/${tag.slug}`,
+    changeFrequency: 'weekly',
+    priority: 0.4,
+  }))
+
+  return [...pages, ...posts, ...tags]
 }
