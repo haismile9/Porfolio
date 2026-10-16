@@ -179,8 +179,7 @@ export default function AboutPage({ params }: { params: { lang: Locale } }) {
             on firmer ground on this path.
           </p>
           <p className="my-4">
-            Outside of work, I play football, go to the gym, play the guitar, and listen to news podcasts and podcasts
-            about the IT industry.
+            Outside of work, I play football, go to the gym, play the guitar, and listen to podcasts.
           </p>
         </>
       )}
