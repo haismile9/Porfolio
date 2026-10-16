@@ -9,8 +9,7 @@ const linkClass = 'text-classic-accent underline underline-offset-2 hover:no-und
 const copy = {
   vi: {
     greeting: 'Xin chào, mình là',
-    name: 'Hồng Hải',
-    nickname: '(gọi Smile cũng được)',
+    name: 'Smile',
     role: 'Full-stack Developer · TP. Hồ Chí Minh',
     recentPosts: 'Bài viết mới',
     allPosts: 'Xem tất cả bài viết →',
@@ -19,8 +18,7 @@ const copy = {
   },
   en: {
     greeting: "Hi, I'm",
-    name: 'Hong Hai',
-    nickname: '(Smile works too)',
+    name: 'Smile',
     role: 'Full-stack Developer · Ho Chi Minh City, Vietnam',
     recentPosts: 'Recent posts (in Vietnamese)',
     allPosts: 'All posts →',
@@ -73,9 +71,7 @@ export default function HomePage({ params }: { params: { lang: Locale } }) {
 
       <header className="mb-8">
         <p className="font-fira text-sm text-ink-muted">{t.greeting}</p>
-        <h1 className="mt-1 text-4xl sm:text-5xl font-bold leading-tight">
-          {t.name} <span className="text-2xl sm:text-3xl font-normal text-ink-muted">{t.nickname}</span>
-        </h1>
+        <h1 className="mt-1 text-4xl sm:text-5xl font-bold leading-tight">{t.name}</h1>
         <p className="mt-2 font-bold">{t.role}</p>
       </header>
 

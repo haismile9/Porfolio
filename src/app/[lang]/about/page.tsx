@@ -105,7 +105,7 @@ const copy = {
 
 // Same order as copy[lang].skillGroups
 const skillItems = [
-  'JavaScript, TypeScript, HTML5, CSS3, React.js, Next.js, Vite, Tailwind CSS, Framer Motion',
+  'JavaScript, TypeScript, HTML5, CSS3, React.js, Next.js, Vite, Tailwind CSS',
   'Node.js, Express.js, NestJS, Prisma',
   'PostgreSQL, MySQL, MS SQL Server, Redis',
   'RESTful API, Swagger, Postman, Socket.io',
@@ -135,7 +135,7 @@ export default function AboutPage({ params }: { params: { lang: Locale } }) {
 
       {lang === 'vi' ? (
         <>
-          <p className="my-4">Chào bạn, mình là Hồng Hải, mọi người hay gọi mình là Smile.</p>
+          <p className="my-4">Chào bạn, mình là Nguyễn Hồng Hải, tác giả của blog này.</p>
           <p className="my-4">
             Mình lớn lên ở quê, và may mắn được ba mẹ cho tiếp xúc với máy tính sớm hơn bạn bè cùng trang lứa. Như hầu
             hết thằng con nít có máy tính hồi đó, mình dùng nó để… chơi game. Warcraft, Half-Life 2, Đột Kích,
@@ -159,7 +159,7 @@ export default function AboutPage({ params }: { params: { lang: Locale } }) {
         </>
       ) : (
         <>
-          <p className="my-4">Hi, I&apos;m Hong Hai. Most people call me Smile.</p>
+          <p className="my-4">Hi, I&apos;m Nguyen Hong Hai, the author of this blog.</p>
           <p className="my-4">
             I grew up in the countryside, and I was lucky that my parents let me use a computer earlier than most kids
             my age. Like pretty much every kid with a computer back then, I used it to… play games. Warcraft, Half-Life

@@ -74,7 +74,7 @@ export function renderOgImage({ label, title, subtitle, meta }: { label: string;
             <div style={{ display: 'flex', alignItems: 'center' }}>
               {/* eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text */}
               <img src={logo} width={56} height={56} />
-              <div style={{ display: 'flex', marginLeft: 16, fontSize: 30, fontWeight: 700, color: colors.ink }}>Nguyen Hong Hai</div>
+              <div style={{ display: 'flex', marginLeft: 16, fontSize: 30, fontWeight: 700, color: colors.ink }}>Smile</div>
               <div style={{ display: 'flex', marginLeft: 16, fontFamily: 'Fira Code', fontSize: 24, color: colors.muted }}>
                 haismile.dev
               </div>

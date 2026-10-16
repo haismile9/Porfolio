@@ -8,7 +8,6 @@ A modern, responsive developer portfolio website built with the latest technolog
 - **TypeScript** for type safety
 - **Tailwind CSS** for styling
 - **shadcn/ui** for UI components
-- **Framer Motion** for animations
 - **React** for component architecture
 
 ## 🎨 Design Features
@@ -16,7 +15,6 @@ A modern, responsive developer portfolio website built with the latest technolog
 - **Responsive Design**: Mobile-first approach that works on all devices
 - **Dark Theme**: Modern dark color scheme with accent colors
 - **Interactive Snake Game**: Playable snake game component
-- **Smooth Animations**: Powered by Framer Motion
 - **Semantic HTML**: Accessible and SEO-friendly structure
 - **Performance Optimized**: Next.js Image optimization and lazy loading
 

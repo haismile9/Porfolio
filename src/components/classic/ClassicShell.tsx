@@ -176,7 +176,7 @@ export function ClassicShell({
               </a>
             ))}
           </p>
-          <p className="mt-3 text-sm">© 2026 Nguyen Hong Hai · haismile.dev</p>
+          <p className="mt-3 text-sm">© 2026 Smile · haismile.dev</p>
         </footer>
       </div>
 

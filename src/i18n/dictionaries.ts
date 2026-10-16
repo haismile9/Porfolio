@@ -8,7 +8,7 @@ export const dictionaries = {
     languageName: 'Tiếng Việt',
     footer: { cv: 'CV (PDF)', rss: 'RSS' },
     sidebar: {
-      name: 'Nguyễn Hồng Hải',
+      name: 'Smile',
       bio: 'Lập trình viên full-stack ở TP.HCM. Viết về Next.js, NestJS và cơ sở dữ liệu cho người mới bắt đầu.',
       downloadCv: 'Tải CV',
       elsewhere: 'Liên kết',
@@ -33,7 +33,7 @@ export const dictionaries = {
     languageName: 'English',
     footer: { cv: 'CV (PDF)', rss: 'RSS' },
     sidebar: {
-      name: 'Nguyen Hong Hai',
+      name: 'Smile',
       bio: 'Full-stack developer in Ho Chi Minh City. Writing about Next.js, NestJS and databases for beginners.',
       downloadCv: 'Download CV',
       elsewhere: 'Elsewhere',

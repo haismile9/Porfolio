@@ -148,7 +148,7 @@ export function ChatBox({ onClose }: { onClose?: () => void }) {
         addLocalMessage('Opening the blog...', true);
         window.location.href = '/blog';
       } else if (cmd === '/cv' || cmd === '/resume' || cmd === '/cat resume.md' || cmd === '/download cv') {
-        addLocalMessage(`Downloading Nguyen Hong Hai's CV (.pdf)...\nFile path: /CV/FullStack.pdf`, true);
+        addLocalMessage(`Downloading Smile's CV (.pdf)...\nFile path: /CV/FullStack.pdf`, true);
         const link = document.createElement('a');
         link.href = '/CV/FullStack.pdf';
         link.download = 'Nguyen-Hong-Hai-CV.pdf';

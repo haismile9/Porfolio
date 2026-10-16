@@ -13,8 +13,8 @@ export const siteConfig = {
     en: 'Smile – On the way to becoming a good developer',
   } satisfies Record<Locale, string>,
   description: {
-    vi: 'Blog của Smile (Nguyễn Hồng Hải), một lập trình viên trẻ đang học mỗi ngày để code tốt hơn. Ghi chép thật về Next.js, NestJS, PostgreSQL và Redis.',
-    en: 'Portfolio of Smile (Nguyen Hong Hai), a young developer in Vietnam learning every day to write better code, with beginner-friendly notes on Next.js, NestJS, PostgreSQL and Redis.',
+    vi: 'Blog của Smile, một lập trình viên trẻ đang học mỗi ngày để code tốt hơn. Ghi chép thật về Next.js, NestJS, PostgreSQL và Redis.',
+    en: 'Portfolio of Smile, a young developer in Vietnam learning every day to write better code, with beginner-friendly notes on Next.js, NestJS, PostgreSQL and Redis.',
   } satisfies Record<Locale, string>,
   ogImage: { vi: '/og', en: '/og/en' } satisfies Record<Locale, string>,
 }
