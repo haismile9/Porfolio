@@ -154,7 +154,7 @@ export default function AboutPage({ params }: { params: { lang: Locale } }) {
             hơn trên con đường này.
           </p>
           <p className="my-4">
-            Ngoài giờ làm, mình đá bóng, tập gym, đánh guitar, và nghe podcast thời sự với podcast về ngành IT.
+            Ngoài giờ làm, mình đá bóng, tập gym, đánh guitar, và nghe podcast.
           </p>
         </>
       ) : (
