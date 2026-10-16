@@ -21,7 +21,7 @@ export function ClientShell({ children }: ClientShellProps) {
   let activeTab = '_hello'
   if (pathname === '/about') activeTab = '_about-me'
   else if (pathname === '/projects') activeTab = '_projects'
-  else if (pathname === '/blog') activeTab = '_blog'
+  else if (pathname === '/blog' || pathname.startsWith('/blog/')) activeTab = '_blog'
   else if (pathname === '/games') activeTab = '_game'
   else if (pathname === '/contact') activeTab = '_contact-me'
 

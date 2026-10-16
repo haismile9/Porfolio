@@ -3,10 +3,35 @@ import { PageTransition } from '@/components/PageTransition'
 import '@/styles/globals.css'
 
 import { ClientShell } from '@/components/ClientShell'
+import { siteConfig } from '@/lib/site'
 
 export const metadata: Metadata = {
-  title: 'Smile - Full-tack developer',
-  description: 'Portfolio website of Smile, a Full-tack developer',
+  metadataBase: new URL(siteConfig.url),
+  title: {
+    default: siteConfig.name,
+    template: `%s | ${siteConfig.name}`,
+  },
+  description: siteConfig.description,
+  applicationName: siteConfig.name,
+  authors: [{ name: siteConfig.author, url: siteConfig.url }],
+  creator: siteConfig.author,
+  alternates: { canonical: '/' },
+  openGraph: {
+    type: 'website',
+    siteName: siteConfig.name,
+    locale: 'vi_VN',
+    url: '/',
+    title: siteConfig.name,
+    description: siteConfig.description,
+    images: [{ url: siteConfig.ogImage, alt: siteConfig.name }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: siteConfig.name,
+    description: siteConfig.description,
+    images: [siteConfig.ogImage],
+  },
+  robots: { index: true, follow: true },
 }
 
 export default function RootLayout({
@@ -15,7 +40,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="vi" className="dark">
       <body className="bg-dark-bg text-text-primary font-fira antialiased">
         <ClientShell>
           {children}

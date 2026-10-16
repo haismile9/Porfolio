@@ -34,10 +34,13 @@ const pageTransition = {
 
 export function PageTransition({ children }: PageTransitionProps) {
   const pathname = usePathname();
+  // Animate only when switching top-level sections, so navigating
+  // between /blog and /blog/[slug] doesn't replay the page transition
+  const section = pathname.split('/')[1] || '/';
 
   return (
     <motion.div
-      key={pathname}
+      key={section}
       initial="initial"
       animate="in"
       variants={pageVariants}

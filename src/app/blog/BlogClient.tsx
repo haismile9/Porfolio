@@ -3,6 +3,8 @@
 import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
+import Link from 'next/link'
+import { usePathname, useRouter } from 'next/navigation'
 import { BlogPost } from '@/lib/blogs'
 
 // Animation variants synchronized with _projects and _about-me
@@ -46,22 +48,30 @@ interface BlogClientProps {
 export default function BlogClient({ blogs }: BlogClientProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
   const [searchQuery, setSearchQuery] = useState<string>('')
-  // activeBlogId = null means GRID CARD VIEW; non-null means DETAIL ARTICLE VIEW
-  const [activeBlogId, setActiveBlogId] = useState<string | null>(null)
+  const pathname = usePathname()
+  const router = useRouter()
+
+  // The active article comes from the URL: /blog is the GRID CARD VIEW,
+  // /blog/[slug] is the DETAIL ARTICLE VIEW.
+  const activeBlog = useMemo(() => {
+    const slug = pathname.startsWith('/blog/') ? decodeURIComponent(pathname.slice('/blog/'.length)) : null
+    if (!slug) return null
+    return blogs.find((b) => b.slug === slug) || null
+  }, [pathname, blogs])
+
   const [isMobileTreeOpen, setIsMobileTreeOpen] = useState(false)
-  const [expandedFolders, setExpandedFolders] = useState<Record<string, boolean>>({
+  const [expandedFolders, setExpandedFolders] = useState<Record<string, boolean>>(() => ({
     all: true,
-    nextjs: false,
-    backend: false,
-    database: false,
-    architecture: false,
-  })
+    nextjs: activeBlog?.category === 'nextjs',
+    backend: activeBlog?.category === 'backend',
+    database: activeBlog?.category === 'database',
+    architecture: activeBlog?.category === 'architecture',
+  }))
   const [copiedCodeIndex, setCopiedCodeIndex] = useState<number | null>(null)
 
-  const activeBlog = useMemo(() => {
-    if (!activeBlogId) return null
-    return blogs.find((b) => b.id === activeBlogId) || null
-  }, [activeBlogId, blogs])
+  const goToArticleList = () => {
+    if (activeBlog) router.push('/blog')
+  }
 
   const filteredBlogs = useMemo(() => {
     return blogs.filter((blog) => {
@@ -100,7 +110,7 @@ export default function BlogClient({ blogs }: BlogClientProps) {
       [catId]: !prev[catId],
     }))
     setSelectedCategory(catId)
-    setActiveBlogId(null)
+    goToArticleList()
   }
 
   const getCategoryBadge = (category: string) => {
@@ -499,7 +509,7 @@ export default function BlogClient({ blogs }: BlogClientProps) {
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value)
-                setActiveBlogId(null) // Switch to grid view when searching
+                goToArticleList() // Switch to grid view when searching
               }}
               placeholder="Search topics, titles or #tags..."
               className="w-full bg-dark-primary border border-dark-border rounded-lg pl-8 pr-3 py-2 lg:py-1.5 text-base lg:text-xs font-fira text-text-primary placeholder-text-secondary/60 focus:outline-none focus:border-accent-blue transition-colors"
@@ -557,11 +567,11 @@ export default function BlogClient({ blogs }: BlogClientProps) {
                   <button
                     onClick={() => {
                       setSelectedCategory('all')
-                      setActiveBlogId(null)
+                      goToArticleList()
                       setIsMobileTreeOpen(false)
                     }}
                     className={`w-full text-left px-2.5 py-1.5 rounded-md flex items-center gap-2 transition-colors ${
-                      selectedCategory === 'all' && activeBlogId === null
+                      selectedCategory === 'all' && !activeBlog
                         ? 'bg-white/10 text-white font-semibold'
                         : 'text-text-secondary hover:text-white hover:bg-dark-primary/40'
                     }`}
@@ -595,7 +605,7 @@ export default function BlogClient({ blogs }: BlogClientProps) {
                 <button
                   onClick={() => toggleFolder(cat.id)}
                   className={`w-full flex items-center justify-between px-2 py-1.5 rounded-lg transition-colors text-left ${
-                    selectedCategory === cat.id && activeBlogId === null
+                    selectedCategory === cat.id && !activeBlog
                       ? 'bg-dark-primary text-white font-medium border border-dark-border'
                       : 'hover:bg-dark-primary/40'
                   }`}
@@ -635,13 +645,14 @@ export default function BlogClient({ blogs }: BlogClientProps) {
                       className="pl-6 space-y-0.5 border-l border-dark-border/40 ml-3 py-1 overflow-hidden"
                     >
                       {catArticles.map((blog) => {
-                        const isSelected = activeBlogId === blog.id
+                        const isSelected = activeBlog?.id === blog.id
                         return (
-                          <button
+                          <Link
                             key={blog.id}
+                            href={`/blog/${blog.slug}`}
                             onClick={() => {
                               setSelectedCategory(cat.id)
-                              setActiveBlogId(blog.id)
+                              setIsMobileTreeOpen(false)
                             }}
                             className={`w-full text-left px-2.5 py-1.5 rounded-md flex items-center gap-2 truncate text-xs transition-colors ${
                               isSelected
@@ -656,8 +667,8 @@ export default function BlogClient({ blogs }: BlogClientProps) {
                               height={14}
                               className="shrink-0"
                             />
-                            <span className="truncate">{blog.slug}</span>
-                          </button>
+                            <span className="truncate">{blog.fileName}</span>
+                          </Link>
                         )
                       })}
                     </motion.div>
@@ -674,7 +685,7 @@ export default function BlogClient({ blogs }: BlogClientProps) {
         <AnimatePresence mode="wait">
           {!activeBlog ? (
             /* ========================================================
-               STATE 1: GRID CARD VIEW (activeBlogId === null)
+               STATE 1: GRID CARD VIEW (/blog)
                ======================================================== */
             <motion.div
               key="grid-view"
@@ -728,11 +739,10 @@ export default function BlogClient({ blogs }: BlogClientProps) {
                   >
                     {filteredBlogs.map((blog) => {
                       return (
+                        <Link key={blog.id} href={`/blog/${blog.slug}`} className="block">
                         <motion.div
-                          key={blog.id}
                           variants={itemVariants}
                           layout
-                          onClick={() => setActiveBlogId(blog.id)}
                           whileHover={{
                             y: -6,
                             scale: 1.02,
@@ -740,7 +750,7 @@ export default function BlogClient({ blogs }: BlogClientProps) {
                             transition: { duration: 0.2 },
                           }}
                           whileTap={{ scale: 0.98 }}
-                          className="bg-dark-secondary/60 border border-dark-border hover:border-accent-blue/60 rounded-2xl p-5 transition-all group flex flex-col justify-between shadow-xl cursor-pointer"
+                          className="h-full bg-dark-secondary/60 border border-dark-border hover:border-accent-blue/60 rounded-2xl p-5 transition-all group flex flex-col justify-between shadow-xl cursor-pointer"
                         >
                           <div>
                             {/* Card Title */}
@@ -796,6 +806,7 @@ export default function BlogClient({ blogs }: BlogClientProps) {
                             </div>
                           </div>
                         </motion.div>
+                        </Link>
                       )
                     })}
                   </motion.div>
@@ -804,7 +815,7 @@ export default function BlogClient({ blogs }: BlogClientProps) {
             </motion.div>
           ) : (
             /* ========================================================
-               STATE 2: DETAIL ARTICLE VIEW (activeBlogId !== null)
+               STATE 2: DETAIL ARTICLE VIEW (/blog/[slug])
                ======================================================== */
             <motion.div
               key="detail-view"
@@ -821,13 +832,13 @@ export default function BlogClient({ blogs }: BlogClientProps) {
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="flex flex-wrap items-center justify-between gap-2 bg-dark-secondary border-b border-dark-border px-3 sm:px-6 py-2 sm:py-2.5 text-xs font-fira shrink-0"
               >
-                <button
-                  onClick={() => setActiveBlogId(null)}
+                <Link
+                  href="/blog"
                   className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-lg bg-dark-primary border border-dark-border text-text-secondary hover:text-white hover:border-accent-blue transition-colors font-medium"
                 >
                   <span>←</span>
                   <span className="sm:inline">Back to All Articles</span>
-                </button>
+                </Link>
                 <div className="flex items-center gap-3 text-text-secondary text-xs">
                   <span className="flex items-center gap-1.5 text-accent-orange font-semibold">
                     <Image
@@ -837,7 +848,7 @@ export default function BlogClient({ blogs }: BlogClientProps) {
                       height={14}
                       className="shrink-0"
                     />
-                    <span>{activeBlog.slug}</span>
+                    <span>{activeBlog.fileName}</span>
                   </span>
                   <span className="hidden sm:inline">•</span>
                   <span className="hidden sm:inline">UTF-8</span>
@@ -948,12 +959,12 @@ export default function BlogClient({ blogs }: BlogClientProps) {
                       © 2026 Nguyen Hong Hai • Written with passion for the developer community
                     </div>
                     <div className="flex items-center gap-3">
-                      <button
-                        onClick={() => setActiveBlogId(null)}
+                      <Link
+                        href="/blog"
                         className="px-3 py-1.5 rounded-lg bg-dark-secondary border border-dark-border hover:border-accent-blue hover:text-white transition-colors"
                       >
                         ← Back to All Articles
-                      </button>
+                      </Link>
                       <button
                         onClick={() => {
                           const anchor = document.getElementById('article-top-anchor')
