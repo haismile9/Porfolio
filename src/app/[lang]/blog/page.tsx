@@ -10,15 +10,16 @@ const copy = {
     description:
       'Ghi chép lập trình cho người mới bắt đầu: Next.js, NestJS, PostgreSQL, Redis và kiến trúc hệ thống, giải thích dễ hiểu kèm ví dụ.',
     subtitle: 'Ghi chép lập trình cho người mới bắt đầu',
-    intro: 'Những gì mình học được khi đi làm, viết lại theo cách mình ước có người giải thích cho mình hồi mới bắt đầu.',
+    intro: (count: number) =>
+      `Những gì mình học được khi đi làm, viết lại theo cách mình ước có người giải thích cho mình hồi mới bắt đầu. Hiện có ${count} bài viết.`,
   },
   en: {
     title: 'Blog',
     description:
       'Beginner-friendly programming notes (in Vietnamese) on Next.js, NestJS, PostgreSQL, Redis and system architecture.',
     subtitle: 'Programming notes for beginners',
-    intro:
-      "What I've learned on the job, rewritten the way I wish someone had explained it to me when I was starting out. The posts are written in Vietnamese.",
+    intro: (count: number) =>
+      `What I've learned on the job, rewritten the way I wish someone had explained it to me when I was starting out. The posts are written in Vietnamese. ${count} posts so far.`,
   },
 } satisfies Record<Locale, unknown>
 
@@ -41,7 +42,7 @@ export default function BlogPage({ params }: { params: { lang: Locale } }) {
       <header className="mb-8">
         <h1 className="text-4xl font-bold leading-tight">{t.title}</h1>
         <p className="mt-2 font-bold">{t.subtitle}</p>
-        <p className="mt-3">{t.intro}</p>
+        <p className="mt-3">{t.intro(blogs.length)}</p>
       </header>
 
       <BlogList posts={posts} lang={params.lang} />
