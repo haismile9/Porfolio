@@ -13,6 +13,7 @@ tags:
   - "Microservices"
   - "Event-Driven"
   - "Kafka"
+image: "/images/blog/inside-eda.png"
 summary: "Giải thích kiến trúc hướng sự kiện bằng ví dụ đơn hàng: Event Notification, Event-Carried State Transfer, Event Sourcing, và cách chọn giữa Redis, RabbitMQ, Kafka."
 ---
 
@@ -56,3 +57,7 @@ Thay vì chỉ gửi `{ "orderId": 123 }`, event sẽ mang theo toàn bộ dữ 
 - **Redis Pub/Sub & Streams**: Phù hợp khi cần độ trễ thấp và triển khai đơn giản, ví dụ notification hoặc chat. Pub/Sub không lưu lại tin nhắn, nên dùng Streams nếu không được phép mất event.
 - **RabbitMQ**: Hỗ trợ định tuyến tin nhắn linh hoạt (Topic / Direct / Fanout Exchange) và work queue.
 - **Apache Kafka**: Phù hợp cho luồng dữ liệu lớn (stream processing) và khi cần lưu log sự kiện lâu dài để đọc lại.
+
+---
+
+*Ảnh bìa: "Inside event-driven architectures" từ [EDA Visuals](https://eda-visuals.boyney.io/) của David Boyne.*
