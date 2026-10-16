@@ -6,6 +6,7 @@ import { getCategoryLabel } from '@/lib/categories'
 import { renderMarkdown } from '@/lib/markdown'
 import { feedAlternates, siteConfig } from '@/lib/site'
 import { ArticleSidebar } from './ArticleSidebar'
+import { Comments } from './Comments'
 import { CopyCodeButtons } from './CopyCodeButtons'
 
 interface BlogPostPageProps {
@@ -152,6 +153,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           </nav>
         )}
       </footer>
+
+      <Comments />
     </article>
   )
 }
