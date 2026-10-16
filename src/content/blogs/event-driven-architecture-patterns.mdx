@@ -16,14 +16,13 @@ summary: "Phân tích chi tiết 3 mô hình Event Notification, Event-Carried S
 ---
 
 > [!TIP]
-> **Key Takeaways / Tóm tắt nhanh cho Dev:**
 > 1. **Event Notification**: Service phát ra sự kiện ngắn gọn chỉ báo hiệu trạng thái thay đổi, service nhận sẽ tự query dữ liệu chi tiết nếu cần.
 > 2. **Event-Carried State Transfer**: Sự kiện chứa sẵn toàn bộ payload dữ liệu để service nhận update cache nội bộ mà không cần gọi lại service gốc.
 > 3. **Event Sourcing**: Lưu trữ lịch sử thay đổi của state dưới dạng chuỗi sự kiện không thể thay đổi (append-only log), phù hợp cho hệ thống kế toán / ví điện tử.
 
 ## 1. Khi nào nên dùng Event-Driven Architecture (EDA)?
 
-Khi hệ thống có số lượng service phụ thuộc lẫn nhau tăng lên, các lời gọi API HTTP đồng bộ (Synchronous HTTP calls) sẽ gây nên hiện tượng **Cascading Latency** (độ trễ dây chuyền).
+Khi hệ thống có số lượng service phụ thuộc lẫn nhau tăng lên, các lời gọi API HTTP đồng bộ (Synchronous HTTP calls) sẽ gây nên hiện tượng Cascading Latency (độ trễ dây chuyền).
 
 EDA giải quyết vấn đề này bằng cách cho phép producer và consumer hoàn toàn độc lập về mặt thời gian (temporal decoupling).
 
@@ -53,6 +52,6 @@ Thay vì chỉ gửi `{ "orderId": 123 }`, event sẽ mang theo toàn bộ dữ 
 
 ## 3. Lựa chọn Message Broker: Redis vs Kafka vs RabbitMQ
 
-- **Redis Pub/Sub & Streams**: Tuyệt vời cho ứng dụng cần độ trễ thấp (<1ms), triển khai siêu nhanh, phù hợp cho notification và chat.
-- **RabbitMQ**: Mạnh về định tuyến tin nhắn phức tạp (Topic / Direct / Fanout Exchange) và đảm bảo công việc (Work Queues).
-- **Apache Kafka**: Tiêu chuẩn vàng cho xử lý dòng dữ liệu lớn (Big Data / Stream Processing), lưu trữ log bền vững lâu dài.
+- **Redis Pub/Sub & Streams**: Phù hợp khi cần độ trễ thấp và triển khai đơn giản, ví dụ notification hoặc chat. Pub/Sub không lưu lại tin nhắn, nên dùng Streams nếu không được phép mất event.
+- **RabbitMQ**: Hỗ trợ định tuyến tin nhắn linh hoạt (Topic / Direct / Fanout Exchange) và work queue.
+- **Apache Kafka**: Phù hợp cho luồng dữ liệu lớn (stream processing) và khi cần lưu log sự kiện lâu dài để đọc lại.

@@ -1,9 +1,17 @@
 import type { Metadata } from 'next'
+import { Source_Serif_4 } from 'next/font/google'
 import { PageTransition } from '@/components/PageTransition'
 import '@/styles/globals.css'
 
 import { ClientShell } from '@/components/ClientShell'
 import { siteConfig } from '@/lib/site'
+
+// Serif reading font for the classic-style blog (has Vietnamese glyphs)
+const sourceSerif = Source_Serif_4({
+  subsets: ['latin', 'vietnamese'],
+  variable: '--font-serif',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -40,7 +48,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="vi" className="dark">
+    <html lang="vi" className={`dark ${sourceSerif.variable}`}>
       <body className="bg-dark-bg text-text-primary font-fira antialiased">
         <ClientShell>
           {children}

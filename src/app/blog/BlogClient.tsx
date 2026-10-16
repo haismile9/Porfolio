@@ -1,132 +1,74 @@
 'use client'
 
-import { useState, useMemo } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import Image from 'next/image'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { BlogPost } from '@/lib/blogs'
 
-// Animation variants synchronized with _projects and _about-me
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      delayChildren: 0.5,
-      staggerChildren: 0.15,
-    },
-  },
-}
+// Classic, text-focused blog layout (inspired by Hugo Classic / Twenty Fourteen):
+// a single narrow column, serif type, one accent colour and no animations.
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 30, scale: 0.94 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: {
-      type: 'spring',
-      stiffness: 100,
-      damping: 14,
-    },
-  },
-  exit: {
-    opacity: 0,
-    y: -20,
-    scale: 0.95,
-    transition: {
-      duration: 0.2,
-    },
-  },
-}
+const categories = [
+  { id: 'nextjs', label: 'Next.js', path: 'nextjs' },
+  { id: 'backend', label: 'Backend & Microservices', path: 'backend' },
+  { id: 'database', label: 'Database & SQL', path: 'database' },
+  { id: 'architecture', label: 'System Architecture', path: 'architecture' },
+]
+
+const formatDate = (date: string) => date.replace(/-/g, '/')
 
 interface BlogClientProps {
   blogs: BlogPost[]
 }
 
 export default function BlogClient({ blogs }: BlogClientProps) {
+  const pathname = usePathname()
+  const scrollRef = useRef<HTMLDivElement>(null)
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
   const [searchQuery, setSearchQuery] = useState<string>('')
-  const pathname = usePathname()
-  const router = useRouter()
+  const [copiedCodeIndex, setCopiedCodeIndex] = useState<number | null>(null)
 
-  // The active article comes from the URL: /blog is the GRID CARD VIEW,
-  // /blog/[slug] is the DETAIL ARTICLE VIEW.
+  // The active article comes from the URL: /blog is the article list,
+  // /blog/[slug] is the article view.
   const activeBlog = useMemo(() => {
     const slug = pathname.startsWith('/blog/') ? decodeURIComponent(pathname.slice('/blog/'.length)) : null
     if (!slug) return null
     return blogs.find((b) => b.slug === slug) || null
   }, [pathname, blogs])
 
-  const [isMobileTreeOpen, setIsMobileTreeOpen] = useState(false)
-  const [expandedFolders, setExpandedFolders] = useState<Record<string, boolean>>(() => ({
-    all: true,
-    nextjs: activeBlog?.category === 'nextjs',
-    backend: activeBlog?.category === 'backend',
-    database: activeBlog?.category === 'database',
-    architecture: activeBlog?.category === 'architecture',
-  }))
-  const [copiedCodeIndex, setCopiedCodeIndex] = useState<number | null>(null)
+  // The scroll container lives in the blog layout, so reset it on navigation
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ top: 0 })
+  }, [pathname])
 
-  const goToArticleList = () => {
-    if (activeBlog) router.push('/blog')
-  }
+  // Newest first
+  const sortedBlogs = useMemo(() => [...blogs].sort((a, b) => b.date.localeCompare(a.date)), [blogs])
 
   const filteredBlogs = useMemo(() => {
-    return blogs.filter((blog) => {
-      // Category filter
-      if (selectedCategory !== 'all' && blog.category !== selectedCategory) {
-        return false
-      }
-
-      // Search query filter
-      if (searchQuery.trim()) {
-        const query = searchQuery.toLowerCase()
-        const matchTitle = blog.title.toLowerCase().includes(query)
-        const matchTag = blog.tags.some((t) => t.toLowerCase().includes(query))
-        const matchSummary = blog.summary.toLowerCase().includes(query)
-        return matchTitle || matchTag || matchSummary
-      }
-
-      return true
+    const query = searchQuery.trim().toLowerCase()
+    return sortedBlogs.filter((blog) => {
+      if (selectedCategory !== 'all' && blog.category !== selectedCategory) return false
+      if (!query) return true
+      return (
+        blog.title.toLowerCase().includes(query) ||
+        blog.summary.toLowerCase().includes(query) ||
+        blog.tags.some((t) => t.toLowerCase().includes(query))
+      )
     })
-  }, [selectedCategory, searchQuery, blogs])
+  }, [sortedBlogs, selectedCategory, searchQuery])
 
-  const categories = [
-    { id: 'nextjs', label: 'Next.js', count: blogs.filter(b => b.category === 'nextjs').length },
-    { id: 'backend', label: 'Backend & Microservices', count: blogs.filter(b => b.category === 'backend').length },
-    { id: 'database', label: 'Database & SQL', count: blogs.filter(b => b.category === 'database').length },
-    { id: 'architecture', label: 'System Architecture', count: blogs.filter(b => b.category === 'architecture').length },
-  ]
+  const blogsByYear = useMemo(() => {
+    const groups: { year: string; posts: BlogPost[] }[] = []
+    filteredBlogs.forEach((blog) => {
+      const year = blog.date.slice(0, 4)
+      const group = groups.find((g) => g.year === year)
+      if (group) group.posts.push(blog)
+      else groups.push({ year, posts: [blog] })
+    })
+    return groups
+  }, [filteredBlogs])
 
-  const getFolderColor = (categoryId: string) => {
-    return 'text-text-secondary group-hover:text-white transition-colors'
-  }
-
-  const toggleFolder = (catId: string) => {
-    setExpandedFolders((prev) => ({
-      ...prev,
-      [catId]: !prev[catId],
-    }))
-    setSelectedCategory(catId)
-    goToArticleList()
-  }
-
-  const getCategoryBadge = (category: string) => {
-    switch (category) {
-      case 'nextjs':
-        return { label: '// NEXT.JS & FRONTEND', color: 'bg-dark-primary border border-dark-border text-text-secondary' }
-      case 'backend':
-        return { label: '// BACKEND & MICROSERVICES', color: 'bg-dark-primary border border-dark-border text-text-secondary' }
-      case 'database':
-        return { label: '// DATABASE & SQL', color: 'bg-dark-primary border border-dark-border text-text-secondary' }
-      case 'architecture':
-        return { label: '// SYSTEM ARCHITECTURE', color: 'bg-dark-primary border border-dark-border text-text-secondary' }
-      default:
-        return { label: '// TECHNICAL ARTICLE', color: 'bg-dark-primary border border-dark-border text-text-secondary' }
-    }
-  }
+  const getCategoryLabel = (id: string) => categories.find((c) => c.id === id)?.label ?? 'Technical'
 
   const handleCopyCode = (codeText: string, index: number) => {
     navigator.clipboard.writeText(codeText)
@@ -142,24 +84,21 @@ export default function BlogClient({ blogs }: BlogClientProps) {
       if (!part) return null
       if (part.startsWith('**') && part.endsWith('**') && part.length >= 4) {
         return (
-          <strong key={index} className="text-white font-semibold">
+          <strong key={index} className="font-semibold text-ink">
             {part.slice(2, -2)}
           </strong>
         )
       }
       if (part.startsWith('`') && part.endsWith('`') && part.length >= 2) {
         return (
-          <code
-            key={index}
-            className="px-1.5 py-0.5 mx-0.5 bg-dark-secondary/80 text-accent-blue rounded text-xs font-fira border border-dark-border"
-          >
+          <code key={index} className="px-1 py-0.5 rounded bg-paper-code text-[0.82em] font-fira text-ink">
             {part.slice(1, -1)}
           </code>
         )
       }
       if (part.startsWith('*') && part.endsWith('*') && part.length >= 2) {
         return (
-          <em key={index} className="italic text-text-primary">
+          <em key={index} className="italic">
             {part.slice(1, -1)}
           </em>
         )
@@ -172,7 +111,7 @@ export default function BlogClient({ blogs }: BlogClientProps) {
             href={linkMatch[2]}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-accent-blue underline hover:text-white transition-colors"
+            className="text-classic-accent underline underline-offset-2 hover:no-underline"
           >
             {linkMatch[1]}
           </a>
@@ -182,7 +121,7 @@ export default function BlogClient({ blogs }: BlogClientProps) {
     })
   }
 
-  // Robust Markdown parser that never splits inside code blocks and supports advanced MDX features
+  // Markdown parser that never splits inside code blocks and supports the MDX features used in posts
   const renderMarkdownContent = (content: string) => {
     const normalizedContent = content.replace(/\r\n/g, '\n').replace(/\r/g, '')
     const parts = normalizedContent.split(/(```[\s\S]*?```)/g)
@@ -196,31 +135,17 @@ export default function BlogClient({ blogs }: BlogClientProps) {
         const currentCodeIdx = codeBlockCounter++
 
         return (
-          <div key={pIdx} className="my-4 rounded-lg overflow-hidden border border-dark-border bg-dark-primary shadow">
-            <div className="flex items-center justify-between px-3 py-1.5 bg-dark-secondary border-b border-dark-border text-xs font-fira text-text-secondary">
-              <span className="text-accent-orange uppercase font-bold tracking-wider">{lang}</span>
+          <div key={pIdx} className="my-6 rounded border border-paper-border bg-paper-code">
+            <div className="flex items-center justify-between px-4 pt-2 font-fira text-xs text-ink-muted">
+              <span>{lang}</span>
               <button
                 onClick={() => handleCopyCode(codeText, currentCodeIdx)}
-                className="flex items-center gap-1.5 hover:text-white transition-colors"
+                className="hover:text-classic-accent transition-colors"
               >
-                {copiedCodeIndex === currentCodeIdx ? (
-                  <>
-                    <svg className="w-3.5 h-3.5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span className="text-green-400">Copied!</span>
-                  </>
-                ) : (
-                  <>
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2" />
-                    </svg>
-                    <span>Copy code</span>
-                  </>
-                )}
+                {copiedCodeIndex === currentCodeIdx ? 'copied!' : 'copy'}
               </button>
             </div>
-            <pre className="p-3.5 overflow-x-auto text-xs sm:text-sm font-fira leading-relaxed text-text-primary">
+            <pre className="px-4 pt-2 pb-4 overflow-x-auto text-[13px] sm:text-sm font-fira leading-relaxed text-ink">
               <code>{codeText}</code>
             </pre>
           </div>
@@ -233,7 +158,7 @@ export default function BlogClient({ blogs }: BlogClientProps) {
         const key = `${pIdx}-${idx}`
         const trimmed = section.trim()
 
-        // GitHub Callout Alerts (> [!TIP], > [!WARNING], > [!NOTE], etc.)
+        // GitHub callout alerts (> [!TIP], > [!WARNING], > [!NOTE], etc.)
         const calloutMatch = trimmed.match(/^>\s*\[!(TIP|WARNING|NOTE|IMPORTANT|CAUTION)\]/i)
         if (calloutMatch) {
           const type = calloutMatch[1].toUpperCase()
@@ -242,46 +167,28 @@ export default function BlogClient({ blogs }: BlogClientProps) {
             .filter((line) => !line.match(/^>\s*\[!/i))
             .map((line) => line.replace(/^>\s?/, '').trim())
 
-          let bgClass = 'bg-accent-blue/10 border-accent-blue/40'
-          let textClass = 'text-accent-blue'
-          let label = 'KEY TAKEAWAYS / TÓM TẮT NHANH CHO DEV'
-          let icon = (
-            <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          )
-
+          let boxClass = 'border-classic-accent bg-classic-accent/5'
+          let label = 'Tóm tắt'
           if (type === 'WARNING' || type === 'CAUTION') {
-            bgClass = 'bg-accent-orange/10 border-accent-orange/40'
-            textClass = 'text-accent-orange'
-            label = 'LƯU Ý / CẢNH BÁO QUAN TRỌNG'
-            icon = (
-              <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-              </svg>
-            )
+            boxClass = 'border-amber-600 bg-amber-50'
+            label = 'Lưu ý'
           } else if (type === 'IMPORTANT' || type === 'NOTE') {
-            bgClass = 'bg-purple-500/10 border-purple-500/40'
-            textClass = 'text-purple-400'
-            label = 'THÔNG TIN QUAN TRỌNG'
+            label = 'Ghi chú'
           }
 
           return (
-            <div key={key} className={`my-4 p-4 rounded-lg border ${bgClass} text-text-primary`}>
-              <div className={`flex items-center gap-2 ${textClass} font-fira font-semibold mb-2 text-xs sm:text-sm`}>
-                {icon}
-                <span>{label}</span>
-              </div>
-              <div className="space-y-1.5 text-xs sm:text-sm leading-relaxed font-inter text-text-secondary">
+            <aside key={key} className={`my-6 border-l-4 px-4 py-3 ${boxClass}`}>
+              <p className="font-bold mb-1">{label}</p>
+              <div className="space-y-1 text-[17px] leading-relaxed">
                 {lines.map((line, lIdx) => (
                   <p key={lIdx}>{parseInlineMarkdown(line)}</p>
                 ))}
               </div>
-            </div>
+            </aside>
           )
         }
 
-        // Markdown Tables (| Header 1 | Header 2 |)
+        // Markdown tables (| Header 1 | Header 2 |)
         if (trimmed.startsWith('|') || (trimmed.includes('\n|') && trimmed.split('\n').some((l) => l.trim().startsWith('|')))) {
           const lines = trimmed.split('\n').filter((line) => line.trim().startsWith('|'))
           if (lines.length >= 2) {
@@ -295,22 +202,22 @@ export default function BlogClient({ blogs }: BlogClientProps) {
             const dataRows = lines.slice(2).map(parseRow)
 
             return (
-              <div key={key} className="my-4 overflow-x-auto rounded-lg border border-dark-border shadow">
-                <table className="w-full border-collapse text-left text-xs sm:text-sm font-inter">
+              <div key={key} className="my-6 overflow-x-auto">
+                <table className="w-full border-collapse text-left text-[15px]">
                   <thead>
-                    <tr className="bg-dark-secondary/80 border-b border-dark-border text-text-primary font-fira">
+                    <tr className="border-b-2 border-ink/70">
                       {headers.map((h, hIdx) => (
-                        <th key={hIdx} className="p-2.5 sm:p-3 font-semibold text-white whitespace-nowrap">
+                        <th key={hIdx} className="py-2 pr-4 font-bold whitespace-nowrap">
                           {parseInlineMarkdown(h)}
                         </th>
                       ))}
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-dark-border/40 bg-dark-primary/40 text-text-secondary">
+                  <tbody>
                     {dataRows.map((row, rIdx) => (
-                      <tr key={rIdx} className="hover:bg-dark-secondary/30 transition-colors">
+                      <tr key={rIdx} className="border-b border-paper-border">
                         {row.map((cell, cIdx) => (
-                          <td key={cIdx} className="p-2.5 sm:p-3 leading-normal">
+                          <td key={cIdx} className="py-2 pr-4 align-top leading-snug">
                             {parseInlineMarkdown(cell)}
                           </td>
                         ))}
@@ -325,50 +232,36 @@ export default function BlogClient({ blogs }: BlogClientProps) {
 
         // Horizontal rule (---)
         if (trimmed === '---' || trimmed === '***' || trimmed === '___') {
-          return <hr key={key} className="my-5 border-dark-border" />
+          return <hr key={key} className="my-8 border-paper-border" />
         }
 
-        // Headers H1 (# )
-        if (trimmed.startsWith('# ')) {
-          const headerText = trimmed.replace(/^#\s+/, '')
+        // Headings (the article title is the page's only h1, so content starts at h2)
+        const headingMatch = trimmed.match(/^(#{1,4})\s+(.*)$/)
+        if (headingMatch) {
+          const level = headingMatch[1].length
+          const text = parseInlineMarkdown(headingMatch[2])
+          if (level <= 2) {
+            return (
+              <h2 key={key} className="text-2xl font-bold leading-snug mt-10 mb-3">
+                {text}
+              </h2>
+            )
+          }
+          if (level === 3) {
+            return (
+              <h3 key={key} className="text-xl font-bold leading-snug mt-8 mb-2">
+                {text}
+              </h3>
+            )
+          }
           return (
-            <h1 key={key} className="text-xl sm:text-2xl font-fira font-bold text-white mt-6 mb-3 border-b border-dark-border/80 pb-2">
-              {parseInlineMarkdown(headerText)}
-            </h1>
-          )
-        }
-
-        // Headers H2 (## )
-        if (trimmed.startsWith('## ')) {
-          const headerText = trimmed.replace(/^##\s+/, '')
-          return (
-            <h2 key={key} className="text-lg sm:text-xl font-fira font-bold text-white mt-5 mb-2 border-b border-dark-border/40 pb-1.5">
-              {parseInlineMarkdown(headerText)}
-            </h2>
-          )
-        }
-
-        // Headers H3 (### )
-        if (trimmed.startsWith('### ')) {
-          const headerText = trimmed.replace(/^###\s+/, '')
-          return (
-            <h3 key={key} className="text-base sm:text-lg font-fira font-semibold text-accent-blue mt-4 mb-1.5">
-              {parseInlineMarkdown(headerText)}
-            </h3>
-          )
-        }
-
-        // Headers H4 (#### )
-        if (trimmed.startsWith('#### ')) {
-          const headerText = trimmed.replace(/^####\s+/, '')
-          return (
-            <h4 key={key} className="text-sm sm:text-base font-fira font-semibold text-white mt-3 mb-1">
-              {parseInlineMarkdown(headerText)}
+            <h4 key={key} className="text-lg font-bold mt-6 mb-2">
+              {text}
             </h4>
           )
         }
 
-        // Numbered / Ordered Lists (1. , 2. )
+        // Numbered / ordered lists (1. , 2. )
         if (trimmed.split('\n').some((line) => /^\d+\.\s+/.test(line.trim()))) {
           const lines = trimmed.split('\n')
           const listItems: { num: string; text: string }[] = []
@@ -380,27 +273,18 @@ export default function BlogClient({ blogs }: BlogClientProps) {
               listItems.push({ num: match[1], text: match[2] })
             } else if (listItems.length === 0) {
               if (line.trim().length > 0) introText.push(line.trim())
-            } else {
-              if (line.trim().length > 0) {
-                listItems[listItems.length - 1].text += ' ' + line.trim()
-              }
+            } else if (line.trim().length > 0) {
+              listItems[listItems.length - 1].text += ' ' + line.trim()
             }
           })
 
           return (
-            <div key={key} className="my-2.5 space-y-2">
-              {introText.length > 0 && (
-                <p className="text-text-secondary text-sm sm:text-base leading-normal font-inter mb-2">
-                  {parseInlineMarkdown(introText.join(' '))}
-                </p>
-              )}
-              <ol className="space-y-1.5 pl-1">
+            <div key={key} className="my-4">
+              {introText.length > 0 && <p className="mb-3">{parseInlineMarkdown(introText.join(' '))}</p>}
+              <ol start={Number(listItems[0]?.num) || 1} className="list-decimal pl-7 space-y-1.5">
                 {listItems.map((item, iIdx) => (
-                  <li key={iIdx} className="flex items-start gap-2 text-text-secondary text-sm sm:text-base leading-normal">
-                    <span className="flex-shrink-0 font-fira text-accent-blue font-bold w-5 text-right mt-0.5">
-                      {item.num}.
-                    </span>
-                    <span className="flex-1 font-inter">{parseInlineMarkdown(item.text)}</span>
+                  <li key={iIdx} className="pl-1">
+                    {parseInlineMarkdown(item.text)}
                   </li>
                 ))}
               </ol>
@@ -408,7 +292,7 @@ export default function BlogClient({ blogs }: BlogClientProps) {
           )
         }
 
-        // Bullet Lists (- or *)
+        // Bullet lists (- or *)
         if (trimmed.split('\n').some((line) => /^[-*]\s+/.test(line.trim()))) {
           const lines = trimmed.split('\n')
           const listItems: string[] = []
@@ -420,25 +304,18 @@ export default function BlogClient({ blogs }: BlogClientProps) {
               listItems.push(match[1])
             } else if (listItems.length === 0) {
               if (line.trim().length > 0) introText.push(line.trim())
-            } else {
-              if (line.trim().length > 0) {
-                listItems[listItems.length - 1] += ' ' + line.trim()
-              }
+            } else if (line.trim().length > 0) {
+              listItems[listItems.length - 1] += ' ' + line.trim()
             }
           })
 
           return (
-            <div key={key} className="my-2.5 space-y-2">
-              {introText.length > 0 && (
-                <p className="text-text-secondary text-sm sm:text-base leading-normal font-inter mb-2">
-                  {parseInlineMarkdown(introText.join(' '))}
-                </p>
-              )}
-              <ul className="space-y-1.5 pl-2">
+            <div key={key} className="my-4">
+              {introText.length > 0 && <p className="mb-3">{parseInlineMarkdown(introText.join(' '))}</p>}
+              <ul className="list-disc pl-7 space-y-1.5">
                 {listItems.map((item, iIdx) => (
-                  <li key={iIdx} className="flex items-start gap-2 text-text-secondary text-sm sm:text-base leading-normal">
-                    <span className="text-accent-orange font-bold mt-0.5">•</span>
-                    <span className="flex-1 font-inter">{parseInlineMarkdown(item)}</span>
+                  <li key={iIdx} className="pl-1">
+                    {parseInlineMarkdown(item)}
                   </li>
                 ))}
               </ul>
@@ -450,9 +327,9 @@ export default function BlogClient({ blogs }: BlogClientProps) {
         if (trimmed.startsWith('>')) {
           const lines = trimmed.split('\n').map((l) => l.replace(/^>\s?/, '').trim())
           return (
-            <blockquote key={key} className="my-3 border-l-3 border-accent-blue/60 pl-3 py-1.5 italic text-text-secondary bg-dark-secondary/15 rounded-r font-inter text-sm sm:text-base">
+            <blockquote key={key} className="my-6 border-l-4 border-paper-border pl-4 italic text-ink-muted">
               {lines.map((l, lIdx) => (
-                <p key={lIdx} className="my-1">{parseInlineMarkdown(l)}</p>
+                <p key={lIdx}>{parseInlineMarkdown(l)}</p>
               ))}
             </blockquote>
           )
@@ -460,7 +337,7 @@ export default function BlogClient({ blogs }: BlogClientProps) {
 
         // Paragraphs
         return (
-          <p key={key} className="my-2.5 text-text-secondary text-sm sm:text-base leading-normal font-inter">
+          <p key={key} className="my-4">
             {parseInlineMarkdown(trimmed)}
           </p>
         )
@@ -468,522 +345,156 @@ export default function BlogClient({ blogs }: BlogClientProps) {
     })
   }
 
+  // Previous / next article by date, for the article footer
+  const activeIndex = activeBlog ? sortedBlogs.findIndex((b) => b.id === activeBlog.id) : -1
+  const newerPost = activeIndex > 0 ? sortedBlogs[activeIndex - 1] : null
+  const olderPost = activeIndex >= 0 && activeIndex < sortedBlogs.length - 1 ? sortedBlogs[activeIndex + 1] : null
+
   return (
-    <div className="flex-1 flex flex-col lg:flex-row bg-dark-bg min-h-0 overflow-hidden">
-      {/* Left Column: Explorer - FILE EXPLORER (Staggered slide from left matching _projects) */}
-      <motion.div
-        initial={{ x: -50, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-        transition={{ duration: 0.8, delay: 0.2 }}
-        className={`w-full lg:w-72 bg-dark-secondary/60 border-b lg:border-b-0 lg:border-r border-dark-border flex-col shrink-0 ${
-          activeBlog ? 'hidden lg:flex' : 'flex'
-        }`}
-      >
-        {/* Explorer Title - toggles the topic tree on mobile */}
-        <button
-          type="button"
-          onClick={() => setIsMobileTreeOpen((prev) => !prev)}
-          aria-expanded={isMobileTreeOpen}
-          className="px-4 py-3 border-b border-dark-border flex items-center justify-between text-left lg:cursor-default"
-        >
-          <span className="flex items-center gap-2 text-xs font-fira font-semibold text-text-primary uppercase tracking-wider">
-            <motion.span
-              animate={{ rotate: isMobileTreeOpen ? 90 : 0 }}
-              transition={{ duration: 0.2 }}
-              className="lg:hidden inline-block text-text-secondary"
+    <div ref={scrollRef} className="flex-1 min-h-0 overflow-y-auto bg-paper text-ink font-serif">
+      <div className="max-w-[720px] mx-auto px-4 sm:px-6 pt-6 pb-16 text-[17px] sm:text-[18px] leading-[1.7]">
+        {/* Top navigation bar */}
+        <nav className="flex flex-wrap gap-x-4 gap-y-1 bg-classic-accent px-3 py-1.5 font-fira text-[13px] text-white">
+          <Link
+            href="/blog"
+            onClick={() => setSelectedCategory('all')}
+            className={`hover:underline ${!activeBlog && selectedCategory === 'all' ? 'underline underline-offset-4' : ''}`}
+          >
+            ~/blog
+          </Link>
+          {categories.map((cat) => (
+            <Link
+              key={cat.id}
+              href="/blog"
+              onClick={() => setSelectedCategory(cat.id)}
+              className={`hover:underline ${!activeBlog && selectedCategory === cat.id ? 'underline underline-offset-4' : ''}`}
             >
-              ▶
-            </motion.span>
-            FILE EXPLORER
-          </span>
-          <span className="text-[11px] font-fira text-text-secondary">
-            {blogs.length} articles
-          </span>
-        </button>
+              ~/{cat.path}
+            </Link>
+          ))}
+        </nav>
 
-        {/* Search Input */}
-        <div className="p-3 border-b border-dark-border">
-          <div className="relative">
+        {!activeBlog ? (
+          /* ================= Article list (/blog) ================= */
+          <>
+            <header className="mt-10 mb-8">
+              <h1 className="text-4xl font-bold leading-tight">Blog</h1>
+              <p className="mt-2 font-bold">Ghi chép kỹ thuật của Smile</p>
+              <p className="mt-3">
+                Những gì mình học được khi làm việc với Next.js, NestJS, cơ sở dữ liệu và kiến trúc hệ thống.
+                Hiện có {blogs.length} bài viết.
+              </p>
+            </header>
+
             <input
-              type="text"
+              type="search"
               value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value)
-                goToArticleList() // Switch to grid view when searching
-              }}
-              placeholder="Search topics, titles or #tags..."
-              className="w-full bg-dark-primary border border-dark-border rounded-lg pl-8 pr-3 py-2 lg:py-1.5 text-base lg:text-xs font-fira text-text-primary placeholder-text-secondary/60 focus:outline-none focus:border-accent-blue transition-colors"
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Tìm theo tiêu đề, nội dung tóm tắt hoặc tag..."
+              className="w-full border border-paper-border bg-white px-3 py-2 text-base placeholder:text-ink-muted/70 focus:outline-none focus:border-classic-accent"
             />
-            <svg
-              className="w-4 h-4 text-text-secondary absolute left-2.5 top-1/2 -translate-y-1/2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </div>
-        </div>
 
-        {/* Collapsible Tree Explorer */}
-        <div className={`${isMobileTreeOpen ? 'block' : 'hidden'} lg:block flex-1 max-h-[45vh] lg:max-h-none overflow-y-auto p-2 space-y-1 font-fira text-xs`}>
-          {/* Root Folder: All Articles */}
-          <div>
-            <button
-              onClick={() => {
-                setExpandedFolders((prev) => ({ ...prev, all: !prev.all }))
-              }}
-              className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-dark-primary/60 transition-colors text-left"
-            >
-              <motion.span
-                animate={{ rotate: expandedFolders.all ? 90 : 0 }}
-                transition={{ duration: 0.2 }}
-                className={`text-xs ${getFolderColor('all')} inline-block`}
-              >
-                ▶
-              </motion.span>
-              <Image
-                src="/images/icon-folder.svg"
-                alt="folder"
-                width={16}
-                height={16}
-                className="shrink-0"
-              />
-              <span className={`font-fira font-medium ${getFolderColor('all')}`}>
-                All Articles
-              </span>
-            </button>
-
-            {/* Indented child: blogs.json */}
-            <AnimatePresence>
-              {expandedFolders.all && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.25 }}
-                  className="pl-6 pt-1 overflow-hidden"
-                >
-                  <button
-                    onClick={() => {
-                      setSelectedCategory('all')
-                      goToArticleList()
-                      setIsMobileTreeOpen(false)
-                    }}
-                    className={`w-full text-left px-2.5 py-1.5 rounded-md flex items-center gap-2 transition-colors ${
-                      selectedCategory === 'all' && !activeBlog
-                        ? 'bg-white/10 text-white font-semibold'
-                        : 'text-text-secondary hover:text-white hover:bg-dark-primary/40'
-                    }`}
-                  >
-                    <Image
-                      src="/images/icon-personal-info.svg"
-                      alt="json"
-                      width={14}
-                      height={14}
-                      className="shrink-0"
-                    />
-                    <span>blogs.json</span>
-                  </button>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          <div className="pt-2 border-t border-dark-border/40 my-1">
-            <div className="text-[10px] text-text-secondary uppercase px-2 py-1 tracking-wider">TOPIC CATEGORIES</div>
-          </div>
-
-          {/* Category Folders with Indented Articles */}
-          {categories.map((cat) => {
-            const isExpanded = expandedFolders[cat.id]
-            const catArticles = blogs.filter((b) => b.category === cat.id)
-
-            return (
-              <div key={cat.id} className="space-y-0.5">
-                {/* Folder Row */}
-                <button
-                  onClick={() => toggleFolder(cat.id)}
-                  className={`w-full flex items-center justify-between px-2 py-1.5 rounded-lg transition-colors text-left ${
-                    selectedCategory === cat.id && !activeBlog
-                      ? 'bg-dark-primary text-white font-medium border border-dark-border'
-                      : 'hover:bg-dark-primary/40'
-                  }`}
-                >
-                  <span className="flex items-center gap-2 truncate">
-                    <motion.span
-                      animate={{ rotate: isExpanded ? 90 : 0 }}
-                      transition={{ duration: 0.2 }}
-                      className={`text-xs ${getFolderColor(cat.id)} inline-block`}
-                    >
-                      ▶
-                    </motion.span>
-                    <Image
-                      src="/images/icon-folder.svg"
-                      alt="folder"
-                      width={16}
-                      height={16}
-                      className="shrink-0"
-                    />
-                    <span className={`font-fira font-medium truncate ${getFolderColor(cat.id)}`}>
-                      {cat.label}
-                    </span>
-                  </span>
-                  <span className="px-1.5 py-0.5 rounded text-[10px] bg-dark-primary text-text-secondary shrink-0">
-                    {cat.count}
-                  </span>
+            {selectedCategory !== 'all' && (
+              <p className="mt-4 text-base text-ink-muted">
+                Chủ đề: <span className="font-bold text-ink">{getCategoryLabel(selectedCategory)}</span>{' '}
+                <button onClick={() => setSelectedCategory('all')} className="text-classic-accent underline hover:no-underline">
+                  (xem tất cả)
                 </button>
+              </p>
+            )}
 
-                {/* Indented child `.md` articles */}
-                <AnimatePresence>
-                  {isExpanded && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.25 }}
-                      className="pl-6 space-y-0.5 border-l border-dark-border/40 ml-3 py-1 overflow-hidden"
-                    >
-                      {catArticles.map((blog) => {
-                        const isSelected = activeBlog?.id === blog.id
-                        return (
+            {blogsByYear.length === 0 ? (
+              <p className="mt-10 text-ink-muted">Không tìm thấy bài viết nào.</p>
+            ) : (
+              blogsByYear.map(({ year, posts }) => (
+                <section key={year}>
+                  <h2 className="mt-10 mb-4 border-b border-paper-border pb-1 text-2xl font-bold">{year}</h2>
+                  <ul className="space-y-6">
+                    {posts.map((blog) => (
+                      <li key={blog.id} className="sm:flex sm:gap-4">
+                        <time dateTime={blog.date} className="block shrink-0 pt-1 font-fira text-sm text-ink-muted sm:w-24">
+                          {formatDate(blog.date)}
+                        </time>
+                        <div>
                           <Link
-                            key={blog.id}
                             href={`/blog/${blog.slug}`}
-                            onClick={() => {
-                              setSelectedCategory(cat.id)
-                              setIsMobileTreeOpen(false)
-                            }}
-                            className={`w-full text-left px-2.5 py-1.5 rounded-md flex items-center gap-2 truncate text-xs transition-colors ${
-                              isSelected
-                                ? 'bg-white/10 text-white font-semibold'
-                                : 'text-text-secondary hover:text-white hover:bg-dark-primary/40'
-                            }`}
+                            className="text-xl font-bold leading-snug text-classic-accent hover:underline"
                           >
-                            <Image
-                              src="/images/icon-markdown.svg"
-                              alt="markdown"
-                              width={14}
-                              height={14}
-                              className="shrink-0"
-                            />
-                            <span className="truncate">{blog.fileName}</span>
+                            {blog.title}
                           </Link>
-                        )
-                      })}
-                    </motion.div>
+                          <p className="mt-1 text-base text-ink-muted">{blog.summary}</p>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              ))
+            )}
+          </>
+        ) : (
+          /* ================= Article view (/blog/[slug]) ================= */
+          <article className="mt-8">
+            <Link href="/blog" className="font-fira text-sm text-classic-accent hover:underline">
+              ← ~/blog
+            </Link>
+
+            <header className="mt-6 mb-8">
+              <h1 className="text-3xl sm:text-4xl font-bold leading-tight">{activeBlog.title}</h1>
+              <p className="mt-3 font-fira text-[13px] text-ink-muted">
+                <time dateTime={activeBlog.date}>{formatDate(activeBlog.date)}</time>
+                {' · '}
+                {activeBlog.readTime}
+                {' · '}
+                {getCategoryLabel(activeBlog.category)}
+              </p>
+              <p className="mt-5 italic text-ink-muted">{activeBlog.summary}</p>
+            </header>
+
+            <div>{renderMarkdownContent(activeBlog.content)}</div>
+
+            <footer className="mt-12 border-t border-paper-border pt-6 text-base">
+              <p className="text-ink-muted">
+                Tags:{' '}
+                {activeBlog.tags.map((tag, i) => (
+                  <span key={tag}>
+                    {i > 0 && ', '}
+                    <Link
+                      href="/blog"
+                      onClick={() => {
+                        setSelectedCategory('all')
+                        setSearchQuery(tag)
+                      }}
+                      className="text-classic-accent hover:underline"
+                    >
+                      #{tag}
+                    </Link>
+                  </span>
+                ))}
+              </p>
+
+              {(newerPost || olderPost) && (
+                <nav className="mt-6 grid gap-4 sm:grid-cols-2">
+                  {olderPost ? (
+                    <Link href={`/blog/${olderPost.slug}`} className="group">
+                      <span className="block font-fira text-xs text-ink-muted">← Bài cũ hơn</span>
+                      <span className="text-classic-accent group-hover:underline">{olderPost.title}</span>
+                    </Link>
+                  ) : (
+                    <span />
                   )}
-                </AnimatePresence>
-              </div>
-            )
-          })}
-        </div>
-      </motion.div>
+                  {newerPost && (
+                    <Link href={`/blog/${newerPost.slug}`} className="group sm:text-right">
+                      <span className="block font-fira text-xs text-ink-muted">Bài mới hơn →</span>
+                      <span className="text-classic-accent group-hover:underline">{newerPost.title}</span>
+                    </Link>
+                  )}
+                </nav>
+              )}
 
-      {/* Right Column: Dynamic Content Area (Grid Cards OR Article Detail View) */}
-      <div className="flex-1 flex flex-col min-h-0 bg-dark-bg overflow-hidden">
-        <AnimatePresence mode="wait">
-          {!activeBlog ? (
-            /* ========================================================
-               STATE 1: GRID CARD VIEW (/blog)
-               ======================================================== */
-            <motion.div
-              key="grid-view"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="flex-1 flex flex-col min-h-0 overflow-hidden"
-            >
-              {/* Grid Top Header Bar - Slides down from top matching _projects filter bar */}
-              <motion.div
-                initial={{ y: -50, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.4, duration: 0.8 }}
-                className="flex items-center justify-between gap-3 bg-dark-secondary border-b border-dark-border px-4 lg:px-6 py-3 text-xs font-fira shrink-0"
-              >
-                <div className="flex items-center gap-2 text-white font-medium">
-                  <span className="text-text-secondary">{"// _"}</span>
-                  <Image
-                    src={selectedCategory === 'all' ? '/images/icon-personal-info.svg' : '/images/icon-folder.svg'}
-                    alt="icon"
-                    width={16}
-                    height={16}
-                    className="shrink-0"
-                  />
-                  <span>
-                    {selectedCategory === 'all'
-                      ? 'All Articles'
-                      : categories.find((c) => c.id === selectedCategory)?.label}
-                  </span>
-                </div>
-                <div className="text-text-secondary">
-                  Showing <span className="text-white font-bold">{filteredBlogs.length}</span> articles
-                </div>
-              </motion.div>
-
-              {/* Cards Grid Area with Staggered Animations */}
-              <div className="flex-1 overflow-y-auto p-4 sm:p-8">
-                {filteredBlogs.length === 0 ? (
-                  <div className="text-center py-20 text-text-secondary font-fira text-sm">
-                    No articles found matching your criteria.
-                  </div>
-                ) : (
-                  <motion.div
-                    key={`${selectedCategory}-${searchQuery}`}
-                    variants={containerVariants}
-                    initial="hidden"
-                    animate="visible"
-                    exit="hidden"
-                    className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 max-w-7xl mx-auto"
-                  >
-                    {filteredBlogs.map((blog) => {
-                      return (
-                        <Link key={blog.id} href={`/blog/${blog.slug}`} className="block">
-                        <motion.div
-                          variants={itemVariants}
-                          layout
-                          whileHover={{
-                            y: -6,
-                            scale: 1.02,
-                            boxShadow: '0 12px 35px rgba(0,0,0,0.4)',
-                            transition: { duration: 0.2 },
-                          }}
-                          whileTap={{ scale: 0.98 }}
-                          className="h-full bg-dark-secondary/60 border border-dark-border hover:border-accent-blue/60 rounded-2xl p-5 transition-all group flex flex-col justify-between shadow-xl cursor-pointer"
-                        >
-                          <div>
-                            {/* Card Title */}
-                            <div className="text-base font-fira font-bold text-white group-hover:text-accent-blue transition-colors line-clamp-2">
-                              {blog.title}
-                            </div>
-
-                            {/* Excerpt */}
-                            <p className="text-text-secondary text-xs font-inter line-clamp-3 mt-2.5 leading-relaxed">
-                              {blog.summary}
-                            </p>
-
-                            {/* Card Image Banner */}
-                            {blog.image && (
-                              <div className="relative w-full h-36 bg-dark-primary rounded-xl overflow-hidden border border-dark-border my-4">
-                                <Image
-                                  src={blog.image}
-                                  alt={blog.title}
-                                  fill
-                                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                                />
-                              </div>
-                            )}
-                          </div>
-
-                          <div>
-                            {/* Tag Pills */}
-                            <div className="flex flex-wrap items-center gap-1.5 mb-3">
-                              {blog.tags.map((tag) => (
-                                <span
-                                  key={tag}
-                                  className="px-2 py-0.5 rounded-full text-[10px] font-fira bg-dark-primary border border-dark-border text-text-secondary group-hover:text-white transition-colors"
-                                >
-                                  #{tag}
-                                </span>
-                              ))}
-                            </div>
-
-                            {/* Footer Row: Date & Read Time */}
-                            <div className="flex items-center justify-between text-[11px] font-fira text-text-secondary pt-3 border-t border-dark-border/60">
-                              <div className="flex items-center gap-1.5">
-                                <svg className="w-3.5 h-3.5 text-text-secondary/60 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                </svg>
-                                <span>{blog.date}</span>
-                              </div>
-                              <div className="flex items-center gap-1 text-[11px] text-text-secondary">
-                                <svg className="w-3.5 h-3.5 text-text-secondary/60 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                <span>{blog.readTime}</span>
-                              </div>
-                            </div>
-                          </div>
-                        </motion.div>
-                        </Link>
-                      )
-                    })}
-                  </motion.div>
-                )}
-              </div>
-            </motion.div>
-          ) : (
-            /* ========================================================
-               STATE 2: DETAIL ARTICLE VIEW (/blog/[slug])
-               ======================================================== */
-            <motion.div
-              key="detail-view"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="flex-1 flex flex-col min-h-0 overflow-hidden"
-            >
-              {/* Detail Top Back Navigation Bar - Staggered slide from top */}
-              <motion.div
-                initial={{ y: -50, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="flex flex-wrap items-center justify-between gap-2 bg-dark-secondary border-b border-dark-border px-3 sm:px-6 py-2 sm:py-2.5 text-xs font-fira shrink-0"
-              >
-                <Link
-                  href="/blog"
-                  className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-lg bg-dark-primary border border-dark-border text-text-secondary hover:text-white hover:border-accent-blue transition-colors font-medium"
-                >
-                  <span>←</span>
-                  <span className="sm:inline">Back to All Articles</span>
-                </Link>
-                <div className="flex items-center gap-3 text-text-secondary text-xs">
-                  <span className="flex items-center gap-1.5 text-accent-orange font-semibold">
-                    <Image
-                      src="/images/icon-markdown.svg"
-                      alt="markdown"
-                      width={14}
-                      height={14}
-                      className="shrink-0"
-                    />
-                    <span>{activeBlog.fileName}</span>
-                  </span>
-                  <span className="hidden sm:inline">•</span>
-                  <span className="hidden sm:inline">UTF-8</span>
-                </div>
-              </motion.div>
-
-              {/* Article Viewer Content with Staggered Component Transitions */}
-              <div id="article-scroll-container" className="flex-1 overflow-y-auto flex">
-                {/* Left Line Numbers Margin */}
-                <div className="w-12 py-8 bg-dark-secondary/30 border-r border-dark-border/40 text-right pr-3 font-fira text-xs text-text-secondary/40 select-none hidden sm:block shrink-0 overflow-hidden space-y-3">
-                  {Array.from({
-                    length: Math.max(12, Math.min(Math.ceil(activeBlog.content.length / 450), 22)),
-                  }).map((_, i) => (
-                    <div key={i} className="h-5">
-                      {i + 1}
-                    </div>
-                  ))}
-                </div>
-
-                {/* Main Article Body */}
-                <motion.div
-                  key={activeBlog.id}
-                  variants={containerVariants}
-                  initial="hidden"
-                  animate="visible"
-                  exit="hidden"
-                  className="flex-1 p-4 sm:p-8 lg:p-10 w-full overflow-x-hidden"
-                >
-                  {/* Anchor for Top of file button */}
-                  <div id="article-top-anchor" className="h-0 w-0" />
-
-                  {/* Topic & Metadata Header */}
-                  <motion.div
-                    variants={itemVariants}
-                    className="flex flex-wrap items-center justify-between gap-3 mb-6"
-                  >
-                    <div className="flex items-center gap-2">
-                      {(() => {
-                        const badge = getCategoryBadge(activeBlog.category)
-                        return (
-                          <span
-                            className={`px-3 py-1 rounded-full text-xs font-fira font-semibold border ${badge.color}`}
-                          >
-                            {badge.label}
-                          </span>
-                        )
-                      })()}
-                      <div className="flex items-center gap-3 text-xs font-fira text-text-secondary">
-                        <span className="flex items-center gap-1.5">
-                          <svg className="w-3.5 h-3.5 text-text-secondary/60 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                          </svg>
-                          <span>{activeBlog.date}</span>
-                        </span>
-                        <span>•</span>
-                        <span className="flex items-center gap-1.5 text-text-secondary">
-                          <svg className="w-3.5 h-3.5 text-text-secondary/60 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
-                          <span>{activeBlog.readTime}</span>
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Tags */}
-                    <div className="flex flex-wrap items-center gap-1.5">
-                      {activeBlog.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="px-2.5 py-1 rounded-full text-xs font-fira bg-dark-secondary border border-dark-border text-text-secondary"
-                        >
-                          #{tag}
-                        </span>
-                      ))}
-                    </div>
-                  </motion.div>
-
-                  {/* Article Title */}
-                  <motion.h1
-                    variants={itemVariants}
-                    className="text-2xl sm:text-3xl lg:text-4xl font-fira font-bold text-white leading-tight mb-4"
-                  >
-                    {activeBlog.title}
-                  </motion.h1>
-
-                  {/* Article Summary */}
-                  <motion.p
-                    variants={itemVariants}
-                    className="text-base sm:text-lg text-text-secondary font-inter leading-relaxed border-b border-dark-border pb-6 mb-6"
-                  >
-                    {activeBlog.summary}
-                  </motion.p>
-
-                  {/* Rendered Markdown Body */}
-                  <motion.div
-                    variants={itemVariants}
-                    className="space-y-4"
-                  >
-                    {renderMarkdownContent(activeBlog.content)}
-                  </motion.div>
-
-                  {/* Article Footer */}
-                  <motion.div
-                    variants={itemVariants}
-                    className="mt-12 pt-6 border-t border-dark-border flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-fira text-text-secondary"
-                  >
-                    <div>
-                      © 2026 Nguyen Hong Hai • Written with passion for the developer community
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <Link
-                        href="/blog"
-                        className="px-3 py-1.5 rounded-lg bg-dark-secondary border border-dark-border hover:border-accent-blue hover:text-white transition-colors"
-                      >
-                        ← Back to All Articles
-                      </Link>
-                      <button
-                        onClick={() => {
-                          const anchor = document.getElementById('article-top-anchor')
-                          if (anchor) anchor.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                          const container = document.getElementById('article-scroll-container')
-                          if (container) container.scrollTo({ top: 0, behavior: 'smooth' })
-                          window.scrollTo({ top: 0, behavior: 'smooth' })
-                        }}
-                        className="px-3 py-1.5 rounded-lg bg-dark-secondary border border-dark-border hover:border-accent-blue hover:text-white transition-colors"
-                      >
-                        ↑ Top of file
-                      </button>
-                    </div>
-                  </motion.div>
-                </motion.div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+              <p className="mt-8 text-sm text-ink-muted">© 2026 Nguyen Hong Hai</p>
+            </footer>
+          </article>
+        )}
       </div>
     </div>
   )

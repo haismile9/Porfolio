@@ -16,10 +16,9 @@ summary: "Thiết kế kiến trúc Event-Driven Microservices với NestJS, s�
 ---
 
 > [!TIP]
-> **Key Takeaways / Tóm tắt nhanh cho Dev:**
-> 1. Kiến trúc **Event-Driven Microservices** giúp tách biệt hoàn toàn logic giữa các service (Orders, Users, Notifications).
-> 2. **Redis Pub/Sub** đóng vai trò là Message Broker siêu nhanh với độ trễ chỉ vài millisecond.
-> 3. Sử dụng **Connection Pooling** với Prisma/TypeORM trên PostgreSQL để tránh lỗi quá tải connection khi traffic tăng đột biến.
+> 1. Kiến trúc Event-Driven Microservices giúp tách logic giữa các service (Orders, Users, Notifications).
+> 2. Redis Pub/Sub đóng vai trò message broker với độ trễ thấp.
+> 3. Sử dụng Connection Pooling với Prisma/TypeORM trên PostgreSQL để tránh lỗi quá tải connection khi traffic tăng đột biến.
 
 ## 1. Bài toán Monolithic vs Microservices
 
@@ -29,7 +28,7 @@ Khi ứng dụng phát triển lớn (chẳng hạn hệ thống E-commerce vớ
 
 ### Giải pháp: Event-Driven Architecture với NestJS
 
-Với **NestJS Microservices**, chúng ta dễ dàng chuyển đổi từ HTTP REST đồng bộ sang giao tiếp bất đồng bộ qua **Redis** hoặc **RabbitMQ**.
+Với NestJS Microservices, có thể chuyển từ HTTP REST đồng bộ sang giao tiếp bất đồng bộ qua Redis hoặc RabbitMQ.
 
 ---
 
@@ -61,7 +60,7 @@ export class OrderController {
 }
 ```
 
-Ở phía **Order Processor Service**, lắng nghe event `order_created` qua Redis:
+Ở phía Order Processor Service, lắng nghe event `order_created` qua Redis:
 
 ```typescript
 // src/order/order.processor.ts
@@ -86,4 +85,4 @@ export class OrderProcessor {
 
 Khi chạy nhiều instance microservice, mỗi instance đều mở các kết nối tới PostgreSQL. Để tối ưu:
 - Đặt tham số `connection_limit` phù hợp trong connection string: `postgresql://user:password@localhost:5432/mydb?connection_limit=10`
-- Sử dụng **PgBouncer** ở tầng trước PostgreSQL nếu số lượng kết nối đồng thời vượt quá 200.
+- Sử dụng PgBouncer ở tầng trước PostgreSQL nếu số lượng kết nối đồng thời vượt quá 200.

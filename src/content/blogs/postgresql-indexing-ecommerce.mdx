@@ -12,18 +12,17 @@ tags:
   - "Performance"
   - "E-commerce"
 image: "/images/blog/postgres-logo.png"
-summary: "Hướng dẫn chi tiết tối ưu B-Tree Index, Partial Index và Composite Index trong PostgreSQL để giảm thời gian query từ 2000ms xuống 2ms."
+summary: "Tối ưu B-Tree Index, Composite Index và Partial Index trong PostgreSQL qua ví dụ một bảng đơn hàng 5 triệu dòng."
 ---
 
 > [!TIP]
-> **Key Takeaways / Tóm tắt nhanh cho Dev:**
-> 1. Index giống như mục lục của cuốn sách: giúp PostgreSQL tìm thấy bản ghi cực nhanh mà không phải quét toàn bộ bảng (Full Table Scan).
-> 2. **Composite Index** (Index tổ hợp trên nhiều cột) phải tuân theo nguyên tắc **Prefix Rule** (cột nào query bằng dấu `=` phải đặt trước cột dùng `>`, `<`).
-> 3. **Partial Index** (Index có mệnh đề WHERE) giúp tiết kiệm 80% dung lượng RAM và đĩa cứng cho các bảng dữ liệu lớn.
+> 1. Index giống như mục lục của cuốn sách: giúp PostgreSQL tìm thấy bản ghi mà không phải quét toàn bộ bảng (Full Table Scan).
+> 2. Composite Index (Index tổ hợp trên nhiều cột) phải tuân theo nguyên tắc Prefix Rule (cột nào query bằng dấu `=` phải đặt trước cột dùng `>`, `<`).
+> 3. Partial Index (index có mệnh đề WHERE) chỉ đánh chỉ mục một phần dữ liệu, nên nhỏ hơn đáng kể khi bảng lớn.
 
 ## 1. Vấn đề "Full Table Scan" khi bảng lớn
 
-Hãy xem xét bảng `orders` trong một hệ thống E-commerce với **5 triệu đơn hàng**:
+Hãy xem xét bảng `orders` trong một hệ thống E-commerce với 5 triệu đơn hàng:
 
 ```sql
 -- Câu query phổ biến: tìm các đơn hàng chưa xử lý của khách hàng ID = 1042
@@ -32,13 +31,13 @@ WHERE user_id = 1042 AND status = 'PENDING'
 ORDER BY created_at DESC;
 ```
 
-Nếu không có chỉ mục, PostgreSQL buộc phải đọc qua 5 triệu dòng dữ liệu trên đĩa cứng, mất khoảng **1500ms - 2500ms**.
+Nếu không có chỉ mục, PostgreSQL buộc phải đọc qua 5 triệu dòng dữ liệu trên đĩa cứng, mất khoảng 1500ms - 2500ms.
 
 ---
 
 ## 2. Giải pháp: Composite Index (Chỉ mục kết hợp)
 
-Một sai lầm phổ biến là tạo 2 index rời rạc trên cột `user_id` và `status`. Thay vào đó, hãy tạo **1 Composite Index** đúng thứ tự:
+Một sai lầm phổ biến là tạo 2 index rời rạc trên cột `user_id` và `status`. Thay vào đó, hãy tạo 1 Composite Index đúng thứ tự:
 
 ```sql
 -- Tạo Composite Index tối ưu cho câu query trên
@@ -46,17 +45,17 @@ CREATE INDEX idx_orders_user_status_date
 ON orders (user_id, status, created_at DESC);
 ```
 
-### Kết quả sau khi đánh giá bằng EXPLAIN ANALYZE:
-- Thời gian thực thi giảm từ **1850 ms** xuống chỉ còn **1.8 ms** (nhanh gấp **1000 lần**!).
-- PostgreSQL sử dụng **Index Only Scan**, đọc trực tiếp từ bộ nhớ đệm B-Tree.
+### Kết quả với EXPLAIN ANALYZE
+- Thời gian thực thi giảm từ 1850 ms xuống 1.8 ms.
+- PostgreSQL dùng Index Scan trên index mới thay vì quét toàn bảng. Vì câu query dùng `SELECT *` nên Postgres vẫn phải đọc dòng dữ liệu trong bảng; muốn có Index Only Scan thì chỉ chọn các cột nằm trong index.
 
 ---
 
-## 3. Partial Index - Nghệ thuật tiết kiệm bộ nhớ
+## 3. Partial Index: chỉ đánh chỉ mục phần dữ liệu cần dùng
 
 Trong hệ thống E-commerce, 95% đơn hàng đã ở trạng thái `COMPLETED` hoặc `CANCELLED`. Các query của nhân viên vận hành thường chỉ quan tâm đến đơn hàng `PENDING` hoặc `PROCESSING`.
 
-Tạo **Partial Index** chỉ đánh chỉ mục cho các đơn chưa hoàn thành:
+Tạo Partial Index chỉ đánh chỉ mục cho các đơn chưa hoàn thành:
 
 ```sql
 CREATE INDEX idx_orders_active_only 
@@ -64,6 +63,6 @@ ON orders (user_id, created_at DESC)
 WHERE status IN ('PENDING', 'PROCESSING');
 ```
 
-### Lợi ích của Partial Index:
-- Kích thước Index nhỏ hơn **10 lần**, vừa vặn trong RAM.
-- Tốc độ `INSERT` và `UPDATE` đơn hàng mới cực nhanh vì ít phải cập nhật cây B-Tree.
+### Lợi ích
+- Index nhỏ hơn nhiều (trong ví dụ này chỉ khoảng 5% số dòng được đánh chỉ mục), nên dễ nằm gọn trong RAM.
+- Chi phí cập nhật index khi `INSERT`/`UPDATE` thấp hơn, vì chỉ các dòng thỏa điều kiện `WHERE` mới nằm trong index.

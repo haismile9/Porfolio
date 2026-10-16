@@ -11,22 +11,21 @@ tags:
   - "Frontend"
   - "Performance"
 image: "/images/blog/Next_Js.jpg"
-summary: "Tìm hiểu sâu về Server Components, Client Components và 4 tầng Caching trong Next.js 14 App Router để đạt 100 điểm Lighthouse."
+summary: "Tìm hiểu sâu về Server Components, Client Components và 4 tầng Caching trong Next.js 14 App Router."
 ---
 
 > [!TIP]
-> **Key Takeaways / Tóm tắt nhanh cho Dev:**
-> 1. **React Server Components (RSC)** chạy hoàn toàn trên server, giảm tối đa bundle JS gửi xuống browser.
-> 2. Next.js 14 có **4 tầng Cache chính**: Request Memoization, Data Cache, Full Route Cache, và Router Cache.
-> 3. Sử dụng `revalidateTag` và `revalidatePath` là cách hiệu quả nhất để làm mới dữ liệu mà không cần tải lại toàn bộ trang.
+> 1. React Server Components (RSC) chạy hoàn toàn trên server, giảm tối đa bundle JS gửi xuống browser.
+> 2. Next.js 14 có 4 tầng Cache chính: Request Memoization, Data Cache, Full Route Cache, và Router Cache.
+> 3. `revalidateTag` và `revalidatePath` cho phép làm mới dữ liệu theo tag hoặc theo đường dẫn mà không cần build lại toàn bộ trang.
 
 ## 1. Giới thiệu App Router & Server Components
 
-Từ Next.js 13+, **App Router** (`src/app/`) đã hoàn toàn thay thế Pages Router truyền thống. Mặc định, mọi component trong thư mục `app/` đều là **React Server Components (RSC)**.
+Từ Next.js 13+, App Router (`src/app/`) là cách tổ chức route mới, thay cho Pages Router. Mặc định, mọi component trong thư mục `app/` đều là React Server Components (RSC).
 
 ### Tại sao Server Components lại quan trọng?
 
-- **Zero Bundle Size**: Các thư viện nặng (như parse markdown, format ngày tháng, query database) được thực thi trên server và không bao giờ bị gom vào bundle JavaScript gửi xuống client.
+- **Không làm tăng bundle JS**: Các thư viện nặng (như parse markdown, format ngày tháng, query database) được thực thi trên server và không bao giờ bị gom vào bundle JavaScript gửi xuống client.
 - **Truy cập Backend trực tiếp**: Bạn có thể query PostgreSQL hoặc gọi nội bộ microservice ngay trong component mà không cần qua API route trung gian.
 
 ```tsx
@@ -55,15 +54,15 @@ export default async function ProjectsPage() {
 
 ---
 
-## 2. Làm chủ 4 Tầng Caching của Next.js 14
+## 2. Các tầng cache trong Next.js 14
 
-Hiểu rõ cơ chế Caching giúp ứng dụng của bạn đạt tốc độ phản hồi dưới **50ms**:
+Next.js 14 có bốn tầng cache. Phần này đi qua hai tầng phía server, nơi bạn kiểm soát trực tiếp nhất:
 
 ### 2.1. Request Memoization
-Nếu bạn gọi cùng một hàm `fetch()` với cùng URL nhiều lần trong một chu kỳ render (chẳng hạn ở cả Layout và Page), Next.js sẽ tự động **memoize** kết quả để chỉ thực hiện 1 network request duy nhất.
+Nếu bạn gọi cùng một hàm `fetch()` với cùng URL nhiều lần trong một chu kỳ render (chẳng hạn ở cả Layout và Page), Next.js sẽ tự động memoize kết quả để chỉ thực hiện 1 network request duy nhất.
 
 ### 2.2. Data Cache (Persistent Server Cache)
-Dữ liệu trả về từ `fetch` được lưu giữ liên tục trên server cho đến khi bạn chủ động **revalidate**:
+Dữ liệu trả về từ `fetch` được lưu giữ liên tục trên server cho đến khi bạn chủ động revalidate:
 
 ```tsx
 // Tự động làm mới cache sau mỗi 3600 giây (1 giờ) - ISR
@@ -86,5 +85,6 @@ Chỉ thêm chỉ thị `'use client'` ở trên cùng của file khi component 
 - Gắn các event listener (`onClick`, `onChange`).
 - Sử dụng Browser API (`window`, `localStorage`, `navigator`).
 
-### Nguyên tắc vàng:
-> *"Để Server Component ở tầng trên cùng (Layout/Page), đẩy Client Component xuống các lá nhỏ nhất (Button, Modal, Input)."*
+### Nguyên tắc chung
+
+Để Server Component ở tầng trên cùng (Layout/Page) và đẩy Client Component xuống các component lá nhỏ nhất (Button, Modal, Input).

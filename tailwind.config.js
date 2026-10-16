@@ -63,9 +63,17 @@ module.exports = {
         'accent-green': '#00D5BE',
         'accent-teal': '#43D9AD',
         'code-surface': '#1D293D',
+        // Light, classic palette used by the blog
+        'paper': '#FCFBF8',
+        'paper-code': '#F3F2EE',
+        'paper-border': '#E2DFD8',
+        'ink': '#1F2328',
+        'ink-muted': '#5F646B',
+        'classic-accent': '#4F48B8',
       },
       fontFamily: {
         'fira': ['Fira Code', 'monospace'],
+        'serif': ['var(--font-serif)', 'Georgia', 'Cambria', 'serif'],
       },
       gridTemplateColumns: {
         '20': 'repeat(20, minmax(0, 1fr))',
