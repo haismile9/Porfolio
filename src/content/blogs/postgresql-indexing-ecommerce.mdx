@@ -5,7 +5,8 @@ slug: "index-trong-postgresql-nhung-dieu-minh-uoc-duoc-biet-som-hon"
 previousSlugs:
   - "toi-uu-hoa-chi-muc-indexing-postgresql-cho-he-thong-e-commerce-hang-trieu-ban-ghi"
 date: "2026-07-10"
-readTime: "7 min read"
+updated: "2026-10-17"
+readTime: "12 min read"
 category: "database"
 tags:
   - "PostgreSQL"
@@ -14,13 +15,15 @@ tags:
   - "Performance"
   - "E-commerce"
 image: "/images/blog/postgres-logo.png"
-summary: "Index là gì, vì sao query chậm dần khi bảng lớn lên, và khi nào nên dùng B-Tree, Composite hay Partial Index. Giải thích cho người mới bắt đầu, kèm ví dụ bảng đơn hàng."
+summary: "Index là gì, khi nào dùng B-Tree, Composite, Partial, GIN hay BRIN, index làm chậm ghi dữ liệu ra sao và cách tìm index thừa. Giải thích cho người mới, kèm ví dụ bảng đơn hàng."
 ---
 
 > [!TIP]
 > 1. Index giống như mục lục của cuốn sách: giúp PostgreSQL tìm thấy bản ghi mà không phải quét toàn bộ bảng (Full Table Scan).
 > 2. Composite Index (Index tổ hợp trên nhiều cột) phải tuân theo nguyên tắc Prefix Rule (cột nào query bằng dấu `=` phải đặt trước cột dùng `>`, `<`).
 > 3. Partial Index (index có mệnh đề WHERE) chỉ đánh chỉ mục một phần dữ liệu, nên nhỏ hơn đáng kể khi bảng lớn.
+> 4. Index không miễn phí: mỗi index làm `INSERT`/`UPDATE` chậm hơn và tốn thêm dung lượng, nên hãy xoá index thừa (tìm bằng `pg_stat_user_indexes`).
+> 5. Ngoài B-Tree còn có GIN (JSONB, mảng, full-text), GiST (không gian, range), BRIN (bảng log cực lớn) và Hash.
 
 ## 1. Vấn đề "Full Table Scan" khi bảng lớn
 
@@ -68,3 +71,91 @@ WHERE status IN ('PENDING', 'PROCESSING');
 ### Lợi ích
 - Index nhỏ hơn nhiều (trong ví dụ này chỉ khoảng 5% số dòng được đánh chỉ mục), nên dễ nằm gọn trong RAM.
 - Chi phí cập nhật index khi `INSERT`/`UPDATE` thấp hơn, vì chỉ các dòng thỏa điều kiện `WHERE` mới nằm trong index.
+
+---
+
+## 4. Index có làm chậm INSERT, UPDATE, DELETE không?
+
+Có. Index giúp đọc nhanh hơn nhưng làm ghi chậm hơn, vì mỗi lần dữ liệu thay đổi PostgreSQL phải cập nhật cả bảng lẫn các index liên quan. Bảng càng nhiều index thì thao tác ghi càng chậm và càng tốn dung lượng ổ đĩa.
+
+Cụ thể với bảng `orders`:
+
+- **`INSERT`**: mỗi đơn hàng mới phải được ghi vào bảng **và** vào từng index. Bảng có 6 index nghĩa là 1 lần ghi bảng cộng thêm 6 lần ghi index.
+- **`UPDATE`**: PostgreSQL không sửa dòng tại chỗ mà tạo một phiên bản dòng mới, và thường phải thêm entry mới vào mọi index. Có một ngoại lệ là HOT update: nếu không cột nào nằm trong index bị đổi và trang dữ liệu còn chỗ trống, Postgres bỏ qua bước cập nhật index. Index trên cột hay bị sửa (như `status`, `updated_at`) sẽ làm mất tối ưu này.
+- **`DELETE`**: dòng bị xoá chỉ được đánh dấu là "chết". Entry tương ứng trong index vẫn nằm đó cho tới khi `VACUUM` dọn, nên index nhiều thì `VACUUM` cũng tốn công hơn.
+
+Ngoài tốc độ ghi, mỗi index còn chiếm dung lượng ổ đĩa và RAM (shared buffers). Index trên bảng vài triệu dòng có thể nặng hàng trăm MB. Xem kích thước bảng so với tổng các index:
+
+```sql
+SELECT pg_size_pretty(pg_table_size('orders'))   AS table_size,
+       pg_size_pretty(pg_indexes_size('orders')) AS indexes_size;
+```
+
+Nguyên tắc: chỉ tạo index cho các câu query thật sự chạy thường xuyên và đang chậm, kiểm tra bằng `EXPLAIN ANALYZE` chứ không tạo "phòng hờ". Khi tạo index trên bảng đang chạy production, dùng `CREATE INDEX CONCURRENTLY` để không khoá thao tác ghi trong lúc build index.
+
+---
+
+## 5. Tìm và xoá index thừa với pg_stat_user_indexes
+
+Index thừa là index không được query nào dùng tới, nhưng vẫn tốn chi phí ghi và dung lượng như phân tích ở trên. PostgreSQL đếm số lần mỗi index được quét trong view `pg_stat_user_indexes`. Index có `idx_scan = 0` sau một thời gian dài là ứng viên để xoá.
+
+```sql
+-- Các index chưa từng được dùng, lớn nhất trước
+-- (bỏ qua index UNIQUE / PRIMARY KEY vì chúng còn đảm bảo ràng buộc dữ liệu)
+SELECT s.relname                                      AS table_name,
+       s.indexrelname                                 AS index_name,
+       s.idx_scan,
+       pg_size_pretty(pg_relation_size(s.indexrelid)) AS index_size
+FROM pg_stat_user_indexes s
+JOIN pg_index i ON i.indexrelid = s.indexrelid
+WHERE s.idx_scan = 0
+  AND NOT i.indisunique
+ORDER BY pg_relation_size(s.indexrelid) DESC;
+```
+
+Trước khi xoá, kiểm tra thêm vài điều:
+
+- **Thống kê đã chạy đủ lâu chưa**: số liệu được đếm từ lần reset thống kê gần nhất. Nên quan sát ít nhất qua một chu kỳ nghiệp vụ đầy đủ (ví dụ cả các báo cáo chạy cuối tháng).
+- **Read replica**: mỗi server tự đếm riêng. Index chỉ được dùng bởi query trên replica sẽ hiện `idx_scan = 0` trên primary.
+- **Index trùng lặp**: index `(user_id)` là thừa khi đã có `(user_id, status, created_at)`, vì theo Prefix Rule ở mục 2, index tổ hợp phục vụ được cả query chỉ lọc theo `user_id`. Loại này có thể vẫn có `idx_scan > 0`, nên cần đọc danh sách index (`\d orders` trong psql) để phát hiện.
+
+Xoá index mà không khoá bảng:
+
+```sql
+DROP INDEX CONCURRENTLY idx_orders_user_id;
+```
+
+---
+
+## 6. Ngoài B-Tree, PostgreSQL còn những loại index nào?
+
+B-Tree là loại mặc định và phù hợp với phần lớn trường hợp. Nhưng với JSON, mảng, tìm kiếm full-text hay bảng log cực lớn, PostgreSQL có các loại index chuyên dụng hiệu quả hơn nhiều:
+
+| Loại index | Dùng khi nào | Toán tử / ví dụ query |
+|---|---|---|
+| **B-Tree** (mặc định) | Số, chuỗi, ngày tháng; so sánh và sắp xếp | `=`, `<`, `>`, `BETWEEN`, `IN`, `ORDER BY` |
+| **Hash** | Chỉ so sánh bằng, trên giá trị dài | `=` |
+| **GIN** | `JSONB`, mảng, full-text search | `@>`, `?`, `&&`, `@@` |
+| **GiST** | Dữ liệu không gian (PostGIS), khoảng thời gian (range), tìm điểm gần nhất | `&&`, `<->`, exclusion constraint |
+| **BRIN** | Bảng rất lớn mà thứ tự lưu trữ khớp với giá trị cột (log, event theo thời gian) | `created_at BETWEEN ...` |
+
+Hai ví dụ trong hệ thống E-commerce:
+
+```sql
+-- GIN: lọc sản phẩm theo thuộc tính lưu trong cột JSONB
+CREATE INDEX idx_products_attributes ON products USING GIN (attributes);
+SELECT * FROM products WHERE attributes @> '{"color": "red", "size": "M"}';
+
+-- BRIN: bảng lịch sử trạng thái đơn hàng chỉ thêm mới, dòng nằm theo thứ tự thời gian
+CREATE INDEX idx_order_events_created ON order_events USING BRIN (created_at);
+SELECT * FROM order_events WHERE created_at >= now() - interval '1 day';
+```
+
+BRIN chỉ lưu giá trị nhỏ nhất và lớn nhất của từng khối trang dữ liệu, nên với bảng hàng trăm triệu dòng nó thường chỉ nặng vài trăm KB, trong khi B-Tree trên cùng cột có thể lên tới vài GB. Đổi lại, BRIN chỉ hiệu quả khi dữ liệu được ghi theo thứ tự (như `created_at` của bảng chỉ thêm mới).
+
+Muốn tìm kiếm kiểu `LIKE '%áo thun%'` (ký tự `%` ở đầu), B-Tree không giúp được. Hãy dùng GIN kết hợp extension `pg_trgm`:
+
+```sql
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+CREATE INDEX idx_products_name_trgm ON products USING GIN (name gin_trgm_ops);
+```
