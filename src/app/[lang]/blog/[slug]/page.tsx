@@ -49,6 +49,7 @@ export function generateMetadata({ params }: BlogPostPageProps): Metadata {
       title: blog.title,
       description: blog.summary,
       publishedTime: blog.publishedAt,
+      modifiedTime: blog.modifiedAt,
       authors: [siteConfig.author],
       tags: blog.tags,
       images,
@@ -94,7 +95,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     headline: blog.title,
     description: blog.summary,
     datePublished: blog.publishedAt,
-    dateModified: blog.publishedAt,
+    dateModified: blog.modifiedAt,
     inLanguage: 'vi',
     keywords: blog.tags.join(', '),
     image: `${siteConfig.url}${getShareImage(blog)}`,
@@ -130,6 +131,12 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         <h1 className="text-3xl sm:text-4xl font-bold leading-tight">{blog.title}</h1>
         <p className="mt-3 font-fira text-[13px] text-ink-muted">
           <time dateTime={blog.publishedAt}>{formatDate(blog.date)}</time>
+          {blog.modifiedAt !== blog.publishedAt && (
+            <>
+              {' · updated '}
+              <time dateTime={blog.modifiedAt}>{formatDate(blog.modifiedAt.slice(0, 10))}</time>
+            </>
+          )}
           {' · '}
           {blog.readTime}
           {' · '}

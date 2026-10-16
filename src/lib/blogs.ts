@@ -12,6 +12,8 @@ export interface BlogPost {
   date: string
   // Exact publish moment with the Vietnam offset ("2026-10-16T15:21:00+07:00"), for metadata
   publishedAt: string
+  // Last substantial edit, from frontmatter `updated` (same format as `date`); publishedAt if never edited
+  modifiedAt: string
   readTime: string
   category: 'react' | 'nextjs' | 'backend' | 'database' | 'architecture'
   tags: string[]
@@ -46,6 +48,8 @@ export function getAllBlogs(): BlogPost[] {
 
       // Parse YAML frontmatter with gray-matter
       const matterResult = matter(fileContents)
+      const published = parsePublishDate(String(matterResult.data.date || ''))
+      const updated = matterResult.data.updated ? parsePublishDate(String(matterResult.data.updated)) : null
 
       return {
         id: matterResult.data.id || fileName,
@@ -53,7 +57,8 @@ export function getAllBlogs(): BlogPost[] {
         slug: matterResult.data.slug || slugify(matterResult.data.title || fileName.replace(/\.mdx?$/, '')),
         fileName,
         title: matterResult.data.title || '',
-        ...parsePublishDate(String(matterResult.data.date || '')),
+        ...published,
+        modifiedAt: updated?.publishedAt ?? published.publishedAt,
         readTime: matterResult.data.readTime || '5 min read',
         category: matterResult.data.category || 'nextjs',
         tags: matterResult.data.tags || [],

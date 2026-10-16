@@ -33,7 +33,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // Posts are Vietnamese only
   const posts: MetadataRoute.Sitemap = blogs.map((blog) => ({
     url: `${siteConfig.url}/blog/${blog.slug}`,
-    lastModified: blog.publishedAt ? new Date(blog.publishedAt) : undefined,
+    lastModified: blog.modifiedAt ? new Date(blog.modifiedAt) : undefined,
     changeFrequency: 'monthly',
     priority: 0.7,
   }))
