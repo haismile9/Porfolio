@@ -10,7 +10,7 @@ export interface BlogPost {
   title: string
   date: string
   readTime: string
-  category: 'nextjs' | 'backend' | 'database' | 'architecture'
+  category: 'react' | 'nextjs' | 'backend' | 'database' | 'architecture'
   tags: string[]
   image?: string
   summary: string

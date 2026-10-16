@@ -1,5 +1,6 @@
 // Blog topics, shared by the blog page and the site sidebar
 export const categories = [
+  { id: 'react', label: 'React' },
   { id: 'nextjs', label: 'Next.js' },
   { id: 'backend', label: 'Backend & Microservices' },
   { id: 'database', label: 'Database & SQL' },

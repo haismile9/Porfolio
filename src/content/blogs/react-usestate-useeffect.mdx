@@ -1,0 +1,240 @@
+---
+id: "6"
+title: "useState và useEffect trong React: giải thích cho người mới"
+slug: "usestate-va-useeffect-trong-react-giai-thich-cho-nguoi-moi"
+date: "2026-10-16"
+readTime: "8 min read"
+category: "react"
+tags:
+  - "React"
+  - "Hooks"
+  - "useState"
+  - "useEffect"
+  - "Frontend"
+image: "/images/blog/react-logo-share.png"
+summary: "Vì sao biến thường không làm giao diện React cập nhật, useState hoạt động ra sao, khi nào cần useEffect, mảng phụ thuộc và hàm cleanup là gì, kèm mấy lỗi người mới hay gặp."
+---
+
+> [!TIP]
+> 1. **useState**: lưu dữ liệu thay đổi theo thời gian. Mỗi lần gọi hàm set, React vẽ lại component với giá trị mới.
+> 2. **useEffect**: chạy code "bên ngoài" React sau khi giao diện đã vẽ xong, như gọi API, hẹn giờ, đổi tiêu đề tab.
+> 3. **Mảng phụ thuộc** quyết định khi nào effect chạy lại. Hàm **cleanup** dọn dẹp những gì effect đã tạo ra.
+
+Hồi mới học React, hai thứ làm mình rối nhất là `useState` và `useEffect`. Đọc docs thì hiểu từng chữ, nhưng tới lúc tự viết thì giao diện không cập nhật, hoặc effect chạy hoài không dừng. Bài này mình viết lại theo cách mình ước có người giải thích cho mình hồi đó.
+
+Bạn chỉ cần biết JavaScript cơ bản (biến, hàm, mảng) và đã từng viết một component React đơn giản.
+
+## 1. Vì sao biến thường không đủ?
+
+Thử làm một nút đếm số lần bấm bằng biến bình thường:
+
+```jsx
+function Counter() {
+  let count = 0
+
+  return <button onClick={() => (count = count + 1)}>Đã bấm {count} lần</button>
+}
+```
+
+Bấm bao nhiêu lần thì nút vẫn ghi "Đã bấm 0 lần". Có hai lý do:
+
+- **React không biết `count` đã đổi**, nên không vẽ lại giao diện.
+- Kể cả khi React có vẽ lại, hàm `Counter` sẽ chạy lại từ đầu và `let count = 0` đặt lại về 0.
+
+Mình cần một chỗ lưu dữ liệu mà React **nhớ được giữa các lần vẽ**, và **tự vẽ lại** khi dữ liệu đổi. Đó chính là `useState`.
+
+## 2. useState hoạt động thế nào?
+
+```jsx
+import { useState } from 'react'
+
+function Counter() {
+  const [count, setCount] = useState(0)
+
+  return <button onClick={() => setCount(count + 1)}>Đã bấm {count} lần</button>
+}
+```
+
+`useState(0)` trả về một mảng hai phần tử:
+
+- `count`: giá trị hiện tại. Lần đầu là `0`, giá trị khởi tạo bạn truyền vào.
+- `setCount`: hàm để đổi giá trị. Gọi nó thì React lưu giá trị mới và **vẽ lại component**.
+
+Bạn có thể đặt tên tuỳ ý, nhưng quy ước là `[thứGì, setThứGì]`.
+
+### Giá trị mới chỉ có ở lần vẽ sau
+
+Đây là chỗ người mới hay vấp nhất:
+
+```jsx
+function handleClick() {
+  setCount(count + 1)
+  console.log(count) // vẫn in ra giá trị cũ!
+}
+```
+
+`setCount` không đổi biến `count` ngay lập tức. Nó báo cho React "lần vẽ tới hãy dùng giá trị này". Trong lần chạy hiện tại, `count` vẫn là giá trị cũ.
+
+Vì vậy nếu gọi `setCount(count + 1)` ba lần liên tiếp, kết quả chỉ tăng 1, vì cả ba lần đều cộng vào cùng một giá trị cũ. Khi giá trị mới phụ thuộc vào giá trị trước đó, hãy truyền **một hàm**:
+
+```jsx
+function addThree() {
+  setCount((prev) => prev + 1)
+  setCount((prev) => prev + 1)
+  setCount((prev) => prev + 1) // tăng đúng 3
+}
+```
+
+React sẽ lần lượt đưa giá trị mới nhất vào `prev`, nên lần nào cũng cộng đúng.
+
+### Với object và mảng: tạo bản mới, đừng sửa trực tiếp
+
+React so sánh giá trị cũ và mới để biết có cần vẽ lại không. Nếu bạn sửa thẳng vào object hay mảng cũ, React thấy "vẫn là cái cũ" và có thể bỏ qua.
+
+```jsx
+const [todos, setTodos] = useState([])
+
+// Sai: sửa trực tiếp mảng cũ
+todos.push('Học useState')
+setTodos(todos)
+
+// Đúng: tạo mảng mới
+setTodos([...todos, 'Học useState'])
+```
+
+Object cũng vậy: `setUser({ ...user, name: 'Hải' })` thay vì `user.name = 'Hải'`.
+
+## 3. useEffect dùng để làm gì?
+
+Một component React nên giống một công thức: nhận dữ liệu vào, trả giao diện ra. Nhưng ứng dụng thật còn phải làm những việc **bên ngoài** việc vẽ giao diện, gọi là side effect (tác dụng phụ):
+
+- Gọi API để lấy dữ liệu.
+- Hẹn giờ bằng `setInterval`.
+- Đổi tiêu đề tab trình duyệt.
+- Lắng nghe sự kiện của `window`, như cuộn trang hay đổi kích thước.
+
+`useEffect` là chỗ đặt những việc đó. Code trong effect chạy **sau khi** React đã vẽ xong giao diện.
+
+```jsx
+import { useState, useEffect } from 'react'
+
+function Counter() {
+  const [count, setCount] = useState(0)
+
+  useEffect(() => {
+    document.title = `Đã bấm ${count} lần`
+  }, [count])
+
+  return <button onClick={() => setCount(count + 1)}>Bấm mình</button>
+}
+```
+
+Mỗi lần `count` đổi, tiêu đề tab đổi theo.
+
+## 4. Mảng phụ thuộc: khi nào effect chạy lại?
+
+Tham số thứ hai của `useEffect` là **mảng phụ thuộc** (dependency array). Nó quyết định khi nào effect chạy lại:
+
+| Cách viết | Khi nào chạy |
+| --- | --- |
+| `useEffect(fn)` | Sau **mọi** lần vẽ |
+| `useEffect(fn, [])` | **Một lần**, sau lần vẽ đầu tiên |
+| `useEffect(fn, [a, b])` | Lần đầu, và mỗi khi `a` hoặc `b` đổi |
+
+Quy tắc đơn giản: **giá trị nào từ component (state, props) được dùng trong effect thì cho vào mảng phụ thuộc.** Nếu thiếu, effect sẽ dùng giá trị cũ mà không biết. Cài plugin ESLint `eslint-plugin-react-hooks` để nó nhắc bạn khi quên.
+
+Ví dụ lấy thông tin người dùng mỗi khi `userId` đổi:
+
+```jsx
+function Profile({ userId }) {
+  const [user, setUser] = useState(null)
+
+  useEffect(() => {
+    fetch(`/api/users/${userId}`)
+      .then((res) => res.json())
+      .then((data) => setUser(data))
+  }, [userId])
+
+  if (!user) return <p>Đang tải...</p>
+  return <h1>{user.name}</h1>
+}
+```
+
+## 5. Cleanup: dọn dẹp sau effect
+
+Có những effect tạo ra thứ cần dọn: bộ hẹn giờ, event listener, kết nối. Nếu không dọn, chúng vẫn chạy ngầm kể cả khi component đã biến mất khỏi màn hình.
+
+Để dọn, effect **trả về một hàm**. React gọi hàm đó trước khi chạy lại effect, và khi component bị gỡ khỏi màn hình:
+
+```jsx
+function Clock() {
+  const [time, setTime] = useState(new Date())
+
+  useEffect(() => {
+    const id = setInterval(() => setTime(new Date()), 1000)
+
+    return () => clearInterval(id) // cleanup
+  }, [])
+
+  return <p>{time.toLocaleTimeString()}</p>
+}
+```
+
+Gọi API cũng nên có cleanup. Nếu người dùng đổi `userId` nhanh, request cũ có thể trả về **sau** request mới và ghi đè dữ liệu sai. Một cách đơn giản để bỏ qua kết quả cũ:
+
+```jsx
+useEffect(() => {
+  let ignore = false
+
+  fetch(`/api/users/${userId}`)
+    .then((res) => res.json())
+    .then((data) => {
+      if (!ignore) setUser(data)
+    })
+
+  return () => {
+    ignore = true
+  }
+}, [userId])
+```
+
+## 6. Mấy lỗi người mới hay gặp
+
+### Effect chạy vô hạn
+
+```jsx
+useEffect(() => {
+  setCount(count + 1)
+}) // không có mảng phụ thuộc
+```
+
+Effect đổi state, state đổi làm component vẽ lại, vẽ lại làm effect chạy tiếp... và cứ thế mãi. Hãy luôn tự hỏi: effect này cần chạy lại khi nào? Rồi ghi đúng mảng phụ thuộc.
+
+### Dùng useEffect cho thứ tính được ngay
+
+```jsx
+// Không cần thiết
+const [fullName, setFullName] = useState('')
+useEffect(() => {
+  setFullName(firstName + ' ' + lastName)
+}, [firstName, lastName])
+
+// Đơn giản hơn: tính thẳng trong lúc vẽ
+const fullName = firstName + ' ' + lastName
+```
+
+Nếu một giá trị tính được từ state hoặc props có sẵn, cứ tính thẳng. `useEffect` chỉ dành cho việc **đồng bộ với thứ bên ngoài React**.
+
+### "Sao effect của mình chạy hai lần?"
+
+Ở chế độ development, `<React.StrictMode>` cố ý chạy effect hai lần (chạy, dọn, rồi chạy lại) để giúp bạn phát hiện effect thiếu cleanup. Khi build production, effect chỉ chạy một lần. Nếu effect của bạn bị lỗi vì chạy hai lần, thường là đang thiếu hàm cleanup.
+
+## Tóm lại
+
+- **useState** lưu dữ liệu thay đổi theo thời gian. Gọi hàm set thì React vẽ lại. Giá trị mới chỉ có ở lần vẽ sau. Khi giá trị mới dựa trên giá trị cũ, dùng dạng hàm `setX(prev => ...)`.
+- Với object và mảng, luôn **tạo bản mới** thay vì sửa trực tiếp.
+- **useEffect** dành cho việc bên ngoài React: gọi API, hẹn giờ, event listener.
+- **Mảng phụ thuộc** liệt kê mọi state và props mà effect dùng. **Cleanup** dọn dẹp những gì effect tạo ra.
+- Giá trị tính được thì tính thẳng, không cần effect.
+
+Cách học nhanh nhất là tự gõ lại từng ví dụ, rồi cố tình làm sai (bỏ mảng phụ thuộc, bỏ cleanup) để xem chuyện gì xảy ra. Mình học được nhiều nhất từ mấy lần làm sai đó.

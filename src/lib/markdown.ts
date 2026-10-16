@@ -118,7 +118,7 @@ export async function renderMarkdown(markdown: string): Promise<{ html: string; 
     .use(rehypeBlogStructure, toc)
     .use(rehypeShiki, {
       theme: 'github-light',
-      langs: ['tsx', 'typescript', 'javascript', 'json', 'sql', 'bash'],
+      langs: ['tsx', 'jsx', 'typescript', 'javascript', 'json', 'sql', 'bash'],
       defaultLanguage: 'text',
       fallbackLanguage: 'text',
     })
