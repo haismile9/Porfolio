@@ -8,7 +8,7 @@ export const dictionaries = {
     languageName: 'Tiếng Việt',
     footer: { cv: 'CV (PDF)', rss: 'RSS' },
     sidebar: {
-      name: 'Smile',
+      name: 'haismile',
       bio: 'Trên con đường trở thành một lập trình viên giỏi.',
       downloadCv: 'Tải CV',
       elsewhere: 'Liên kết',
@@ -33,7 +33,7 @@ export const dictionaries = {
     languageName: 'English',
     footer: { cv: 'CV (PDF)', rss: 'RSS' },
     sidebar: {
-      name: 'Smile',
+      name: 'haismile',
       bio: 'On the way to becoming a good developer.',
       downloadCv: 'Download CV',
       elsewhere: 'Elsewhere',

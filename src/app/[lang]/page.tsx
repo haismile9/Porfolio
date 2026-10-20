@@ -9,7 +9,7 @@ const linkClass = 'text-classic-accent underline underline-offset-2 hover:no-und
 const copy = {
   vi: {
     greeting: 'Xin chào, mình là',
-    name: 'Smile',
+    name: 'haismile',
     role: 'Full-stack Developer · TP. Hồ Chí Minh',
     recentPosts: 'Bài viết mới',
     allPosts: 'Xem tất cả bài viết →',
@@ -18,7 +18,7 @@ const copy = {
   },
   en: {
     greeting: "Hi, I'm",
-    name: 'Smile',
+    name: 'haismile',
     role: 'Full-stack Developer · Ho Chi Minh City, Vietnam',
     recentPosts: 'Recent posts (in Vietnamese)',
     allPosts: 'All posts →',
@@ -35,8 +35,8 @@ const jsonLd = (lang: Locale) => ({
       '@type': 'WebSite',
       '@id': `${siteConfig.url}/#website`,
       url: siteConfig.url,
-      name: 'Smile',
-      alternateName: ['haismile.dev', siteConfig.title[lang]],
+      name: 'haismile',
+      alternateName: ['haismile.dev', 'Smile', siteConfig.title[lang]],
       inLanguage: lang,
       author: { '@id': `${siteConfig.url}/#person` },
     },
@@ -44,7 +44,7 @@ const jsonLd = (lang: Locale) => ({
       '@type': 'Person',
       '@id': `${siteConfig.url}/#person`,
       name: siteConfig.author,
-      alternateName: 'Smile',
+      alternateName: ['haismile', 'Smile'],
       url: siteConfig.url,
       image: `${siteConfig.url}/icon.png`,
       jobTitle: 'Full-stack Developer',
