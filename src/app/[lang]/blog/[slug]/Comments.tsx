@@ -12,6 +12,7 @@ const config = {
 }
 
 export function Comments() {
+  const sectionRef = useRef<HTMLElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const isConfigured = Boolean(config.repo && config.repoId && config.category && config.categoryId)
 
@@ -39,7 +40,20 @@ export function Comments() {
     }).forEach(([key, value]) => script.setAttribute(key, value))
 
     container.appendChild(script)
+
+    // Signing in to GitHub redirects back here with ?giscus=<session> as a fresh page load, which
+    // starts at the top. Bring the reader back to the comments; client.js strips the param later.
+    const section = sectionRef.current
+    const scrollToComments = () => section?.scrollIntoView({ block: 'start' })
+    const isReturningFromSignIn = new URLSearchParams(window.location.search).has('giscus')
+    if (isReturningFromSignIn) {
+      scrollToComments()
+      // Images above may still be loading and push the section down, so settle once more.
+      if (document.readyState !== 'complete') window.addEventListener('load', scrollToComments, { once: true })
+    }
+
     return () => {
+      window.removeEventListener('load', scrollToComments)
       container.innerHTML = ''
     }
   }, [isConfigured])
@@ -47,7 +61,7 @@ export function Comments() {
   if (!isConfigured) return null
 
   return (
-    <section className="mt-12 border-t border-paper-border pt-6">
+    <section ref={sectionRef} className="mt-12 border-t border-paper-border pt-6">
       <h2 className="mb-4 text-2xl font-bold">Bình luận</h2>
       <div ref={containerRef} className="giscus" />
     </section>
