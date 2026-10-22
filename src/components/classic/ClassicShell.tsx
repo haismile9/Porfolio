@@ -184,7 +184,7 @@ export function ClassicShell({
       {!isChatOpen && (
         <button
           onClick={() => setIsChatOpen(true)}
-          aria-label={hasUnread ? 'Open chat (new messages)' : 'Open chat'}
+          aria-label={hasUnread ? getDictionary(lang).chat.openUnread : getDictionary(lang).chat.open}
           className="fixed bottom-4 right-4 z-40 bg-classic-accent px-3 py-1.5 font-fira text-[13px] text-white shadow-md hover:opacity-90"
         >
           ~/chat
@@ -197,7 +197,7 @@ export function ClassicShell({
       {/* Global chat overlays the page: a right-hand panel on larger screens, a bottom sheet on phones */}
       {isChatOpen && (
         <aside className="fixed inset-x-0 bottom-0 z-50 h-[60vh] border-t border-paper-border bg-paper px-4 pt-3 pb-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] md:inset-x-auto md:right-0 md:top-0 md:h-full md:w-[380px] md:border-t-0 md:border-l md:shadow-[-8px_0_24px_rgba(0,0,0,0.08)]">
-          <ChatBox onClose={() => setIsChatOpen(false)} />
+          <ChatBox lang={lang} onClose={() => setIsChatOpen(false)} />
         </aside>
       )}
     </div>

@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { ref, push, onValue, serverTimestamp } from 'firebase/database';
 import { db } from '@/lib/firebase';
+import type { Locale } from '@/i18n/config';
+import { getDictionary } from '@/i18n/dictionaries';
 
 interface Message {
   id: string;
@@ -38,14 +40,12 @@ const stringToColor = (str: string) => {
   return colors[Math.abs(hash) % colors.length];
 };
 
-const WELCOME_TEXT =
-  'Welcome to the haismile.dev chat! Messages are public. Type "/help" for commands, "/cv" to download my CV, or just say hi.';
-
-export function ChatBox({ onClose }: { onClose?: () => void }) {
+export function ChatBox({ lang, onClose }: { lang: Locale; onClose?: () => void }) {
+  const t = getDictionary(lang).chat;
   const [messages, setMessages] = useState<Message[]>([]);
   // Seed the welcome message in the initial state so it isn't added twice in StrictMode
   const [localMessages, setLocalMessages] = useState<Message[]>(() => [
-    { id: 'local-welcome', username: 'system', text: WELCOME_TEXT, createdAt: Date.now(), isSystem: true },
+    { id: 'local-welcome', username: 'system', text: t.welcome, createdAt: Date.now(), isSystem: true },
   ]);
   const [inputText, setInputText] = useState('');
   const [username, setUsername] = useState('guest');
@@ -143,12 +143,12 @@ export function ChatBox({ onClose }: { onClose?: () => void }) {
         setClearTimestamp(Date.now());
         setLocalMessages([]);
       } else if (cmd === '/help') {
-        addLocalMessage(`Available commands:\n  /help       - Show this help message\n  /cv         - Download Resume/CV (PDF)\n  /blog       - Open the blog\n  /whoami     - Print current user information\n  /contact    - Show contact information\n  /clear      - Clear the chat window\n  /name <username> - Change your username`, true);
+        addLocalMessage(t.help, true);
       } else if (cmd === '/blog' || cmd === '/articles') {
-        addLocalMessage('Opening the blog...', true);
+        addLocalMessage(t.openingBlog, true);
         window.location.href = '/blog';
       } else if (cmd === '/cv' || cmd === '/resume' || cmd === '/cat resume.md' || cmd === '/download cv') {
-        addLocalMessage(`Downloading Smile's CV (.pdf)...\nFile path: /CV/FullStack.pdf`, true);
+        addLocalMessage(t.downloadingCv, true);
         const link = document.createElement('a');
         link.href = '/CV/FullStack.pdf';
         link.download = 'Nguyen-Hong-Hai-CV.pdf';
@@ -157,17 +157,17 @@ export function ChatBox({ onClose }: { onClose?: () => void }) {
         link.click();
         document.body.removeChild(link);
       } else if (cmd === '/whoami') {
-        addLocalMessage(`You are logged in as: ${username}\nYou are a special guest exploring my portfolio!`, true);
+        addLocalMessage(t.whoami(username), true);
       } else if (cmd === '/contact') {
-        addLocalMessage(`Contact Information:\n  Email    : smilenotdev@gmail.com\n  GitHub   : @haismile9\n  LinkedIn : /in/smile9`, true);
+        addLocalMessage(t.contact, true);
       } else if (cmd === '/sudo rm -rf /') {
-        addLocalMessage("Nice try! But I don't give sudo privileges to strangers. 😉", true);
+        addLocalMessage(t.sudo, true);
       } else if (cmd.startsWith('/name ')) {
         const newName = cmd.replace('/name ', '').trim();
         if (newName) {
           setUsername(newName);
           localStorage.setItem('chat_username', newName);
-          addLocalMessage(`Username changed to: ${newName}`, true);
+          addLocalMessage(t.nameChanged(newName), true);
         }
       }
       return;
@@ -175,7 +175,7 @@ export function ChatBox({ onClose }: { onClose?: () => void }) {
 
     // Normal global chat message
     if (countdown > 0) {
-      addLocalMessage(`Please wait ${countdown}s before sending another message.`, true);
+      addLocalMessage(t.cooldown(countdown), true);
       return;
     }
 
@@ -190,7 +190,7 @@ export function ChatBox({ onClose }: { onClose?: () => void }) {
       setCountdown(3); // 3 seconds cooldown
     } catch (error) {
       console.error('Error sending message:', error);
-      addLocalMessage('Error connecting to chat server.', true);
+      addLocalMessage(t.error, true);
     }
   };
 
@@ -209,8 +209,8 @@ export function ChatBox({ onClose }: { onClose?: () => void }) {
       {/* Title bar, matching the site navigation */}
       <div className="flex items-center justify-between bg-classic-accent px-3 py-1.5 font-fira text-[13px] text-white select-none">
         <span>~/chat</span>
-        <button onClick={onClose} className="hover:underline" title="Close chat">
-          close ×
+        <button onClick={onClose} className="hover:underline" title={t.closeTitle}>
+          {t.close}
         </button>
       </div>
 
@@ -264,8 +264,8 @@ export function ChatBox({ onClose }: { onClose?: () => void }) {
           type="text"
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
-          placeholder="Write a message or /help"
-          aria-label={`Message as ${username}`}
+          placeholder={t.placeholder}
+          aria-label={t.messageAs(username)}
           className="min-w-0 flex-1 border border-paper-border bg-white px-3 py-1.5 text-base placeholder:text-ink-muted/70 focus:outline-none focus:border-classic-accent"
           autoFocus
           spellCheck="false"
@@ -275,7 +275,7 @@ export function ChatBox({ onClose }: { onClose?: () => void }) {
           type="submit"
           className="shrink-0 bg-classic-accent px-3 py-1.5 font-fira text-[13px] text-white hover:opacity-90"
         >
-          send
+          {t.send}
         </button>
       </form>
     </div>
